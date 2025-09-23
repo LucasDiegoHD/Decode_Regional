@@ -57,10 +57,17 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     // --- FÁBRICAS DE COMANDOS ---
+    /**
+     * Retorna um comando que LIGA o shooter para a velocidade alvo.
+     * Usa o ShootCommand que já tínhamos, mas agora é mais claro o seu propósito.
+     */
     public Command spinUpCommand() {
         return new ShootCommand(this, ShootCommand.Action.SPIN_UP, Constants.Shooter.TARGET_VELOCITY);
     }
 
+    /**
+     * Retorna um comando que PARA o shooter.
+     */
     public Command stopCommand() {
         return new ShootCommand(this, ShootCommand.Action.STOP);
     }

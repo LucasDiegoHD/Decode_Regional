@@ -15,10 +15,12 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @Configurable
 public class Constants {
     private Constants() {} // Impede a instanciação
-    public static int teste = 0;
+
+    // ... (As suas classes Drivetrain e Shooter permanecem as mesmas) ...
     public static class Drivetrain {
         public static class Hardware {
             public static String LEFT_FRONT_MOTOR = "leftFront";
@@ -85,17 +87,39 @@ public class Constants {
         public static double VELOCITY_TOLERANCE = 50.0;
     }
 
+
     public static class Vision {
+        public static final String LIMELIGHT_NAME = "limelight";
         public static double TURN_KP = 0.02;
         public static double TURN_KI = 0.0015;
         public static double TURN_KD = 0.0030;
-    public static Vision vision = new Vision();
+    }
+
     public static class Intake {
         public static String INTAKE_MOTOR = "intakeMotor";
     }
 
-    public static class FieldPositions {
-        public static Pose SCORING_POSITION = new Pose(48, 72, Math.toRadians(90));
+    /**
+     * NOVO: Contém a lógica geométrica do campo de jogo.
+     */
+    public static class FieldGeometry {
+        /**
+         * Verifica se o robô está dentro do triângulo de lançamento definido.
+         * A lógica é: a posição x do robô deve ser positiva e a sua posição y
+         * deve ser menor que a sua posição x.
+         * @param robotPose A pose atual do robô.
+         * @return true se o robô estiver na zona de lançamento.
+         */
+        public static boolean isInLaunchTriangle(Pose robotPose) {
+            if (robotPose == null) return false;
+            // A sua regra: x > 0 e y < x
+            return robotPose.getX() > 0 && robotPose.getY() < robotPose.getX();
+        }
     }
-}
+
+    public static class FieldPositions {
+        public static final Pose START_POSE = new Pose(0, 0, Math.toRadians(-60));
+        public static final Pose SHOOTING_POSE = new Pose(12, 60, Math.toRadians(90));
+        public static final Pose PARK_POSE = new Pose(10, 120, Math.toRadians(0));
+    }
 }

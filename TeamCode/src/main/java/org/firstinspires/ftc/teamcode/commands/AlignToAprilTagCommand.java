@@ -15,7 +15,7 @@ public class AlignToAprilTagCommand extends CommandBase {
     private final TelemetryManager telemetry;
     private final PIDController turnController;
 
-    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision,TelemetryManager telemetry) {
+    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision) {
         this.follower = drivetrain.getFollower();
         this.vision = vision;
         this.telemetry = telemetry;

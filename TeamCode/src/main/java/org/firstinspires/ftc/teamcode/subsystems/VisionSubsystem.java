@@ -1,10 +1,18 @@
+// Ficheiro: subsystems/VisionSubsystem.java
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+// ** AS IMPORTAÇÕES CORRETAS E NATIVAS DO SDK DA FTC **
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+
 import java.util.Optional;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -14,19 +22,13 @@ public class VisionSubsystem extends SubsystemBase {
     private final TelemetryManager telemetry;
 
     public VisionSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
-
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.start(); // Inicia a coleta de dados da câmera
-        limelight.pipelineSwitch(0);
         this.telemetry = telemetry;
+        // O nome da Limelight deve corresponder à sua configuração de hardware.
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.start();
+        limelight.pipelineSwitch(0);
     }
 
-    /**
-     * Retorna o desvio horizontal (ângulo) do alvo em graus.
-     * Valor negativo significa que o alvo está à esquerda, positivo à direita.
-     *
-     * @return um Optional contendo o valor de 'tx', ou vazio se nenhum alvo for válido.
-     */
     public Optional<Double> getTargetTx() {
         if (hasTarget()) {
             return Optional.of(latestResult.getTx());
@@ -34,38 +36,40 @@ public class VisionSubsystem extends SubsystemBase {
         return Optional.empty();
     }
 
-    /**
-     * Retorna o desvio vertical (ângulo) do alvo em graus.
-     * Pode ser usado como um indicador de distância.
-     *
-     * @return um Optional contendo o valor de 'ty', ou vazio se nenhum alvo for válido.
-     */
-    public Optional<Double> getTargetTy() {
-        if (hasTarget()) {
-            return Optional.of(latestResult.getTy());
-        }
-        return Optional.empty();
+    public boolean hasTarget() {
+        return latestResult != null && latestResult.isValid();
     }
 
     /**
-     * Verifica se a Limelight tem um alvo válido.
+     * VERSÃO FINAL: Calcula a Pose 2D do robô usando o objeto Pose3D nativo do SDK da FTC,
+     * que é o que a biblioteca da Limelight retorna.
      *
-     * @return true se um alvo válido for detectado, false caso contrário.
+     * @return um Optional<Pose> contendo a pose do robô no sistema de coordenadas da FTC.
      */
-    public boolean hasTarget() {
-        return latestResult != null && latestResult.isValid();
+    public Optional<Pose> getRobotPoseFromVision() {
+        if (!hasTarget()) {
+            return Optional.empty();
+        }
+
+        // A API retorna um objeto Pose3D do SDK da FTC.
+        Pose3D botpose = latestResult.getBotpose();
+        if (botpose == null) {
+            return Optional.empty();
+        }
+
+        // --- TRANSFORMAÇÃO DE COORDENADAS USANDO OS MÉTODOS NATIVOS ---
+        // Acesso aos dados através dos métodos do objeto Pose3D do SDK.
+        double ftcX = botpose.getPosition().z;
+        double ftcY = -botpose.getPosition().x;
+        // Obter o Yaw diretamente em radianos é o método mais limpo.
+        double ftcHeading = botpose.getOrientation().getYaw(AngleUnit.RADIANS);
+
+        return Optional.of(new Pose(ftcX, ftcY, ftcHeading));
     }
 
     @Override
     public void periodic() {
         latestResult = limelight.getLatestResult();
-
-        if (latestResult != null) {
-            telemetry.addData("LL Valid", latestResult.isValid());
-            telemetry.addData("LL tx", latestResult.getTx());
-            telemetry.addData("LL ty", latestResult.getTy());
-        } else {
-            telemetry.addLine("LL sem resultado");
-        }
     }
 }
+
