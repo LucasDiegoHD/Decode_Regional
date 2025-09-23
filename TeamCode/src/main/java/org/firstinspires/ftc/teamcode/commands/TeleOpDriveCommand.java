@@ -1,38 +1,42 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.pedropathing.follower.Follower;
+
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
 
 public class TeleOpDriveCommand extends CommandBase {
 
     private final DrivetrainSubsystem drivetrain;
-    private final GamepadEx driverGamepad;
+    private final GamepadEx driver;
+    private Follower follower;
 
-    public TeleOpDriveCommand(DrivetrainSubsystem drivetrain, GamepadEx driverGamepad) {
+
+    public TeleOpDriveCommand(DrivetrainSubsystem drivetrain, GamepadEx driver, Follower follower) {
         this.drivetrain = drivetrain;
-        this.driverGamepad = driverGamepad;
+        this.driver = driver;
+        this.follower = follower;
         addRequirements(drivetrain);
     }
 
     @Override
-    public void initialize() {
-        drivetrain.getFollower().startTeleopDrive();
-    }
-
-    @Override
     public void execute() {
-        // O método foi renomeado para setTeleOpMovementVectors na v2.0
-        drivetrain.getFollower().setTeleOpDrive(
-                driverGamepad.getLeftY(),
-                driverGamepad.getLeftX(),
-                -driverGamepad.getRightX(),
-                false
-        );
-    }
+        // Obtenha a direção do robô a partir do subsistema Drivetrain
+        double botHeading = drivetrain.getFollower().getHeading();
 
-    @Override
-    public boolean isFinished() {
-        return false;
+        double x = driver.getLeftX();
+        double y = -driver.getLeftY(); // O Y no gamepad é invertido
+        double rx = driver.getRightX();
+
+        // Rotação dos vetores de movimento
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+        follower = Constants.Drivetrain.createFollower(hardwareMap);
+
+
     }
 }

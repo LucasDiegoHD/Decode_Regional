@@ -9,13 +9,13 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.bylazar.telemetry.TelemetryManager;
-import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.AlignToAprilTagCommand;
+import org.firstinspires.ftc.teamcode.commands.DriveInTriangleCommand;
 import org.firstinspires.ftc.teamcode.commands.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -30,18 +30,23 @@ public class RobotContainer {
     private final IntakeSubsystem intake;
     private final ShooterSubsystem shooter;
     private final VisionSubsystem vision;
+    private final TelemetryManager telemetry;
+    private Follower follower;
+
     Pose startPose = new Pose(0, 0, Math.toRadians(-60));
     Pose shootingPose = new Pose(12, 60, Math.toRadians(90));
-    Pose parkPose = new Pose(10, 120, Math.toRadians(0));
+    Pose parkPose = new Pose(120, 10, Math.toRadians(0));
 
     public RobotContainer(HardwareMap hardwareMap, TelemetryManager telemetry, GamepadEx driver, GamepadEx operator) {
-        drivetrain = new DrivetrainSubsystem(hardwareMap);
+        this.telemetry = telemetry;
+        this.follower = follower;
+        vision = new VisionSubsystem(hardwareMap, telemetry);
+        drivetrain = new DrivetrainSubsystem(hardwareMap, telemetry, vision);
         intake = new IntakeSubsystem(hardwareMap);
         shooter = new ShooterSubsystem(hardwareMap, telemetry);
-        vision = new VisionSubsystem(hardwareMap, telemetry);
 
         if (driver != null) {
-            drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver));
+            drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver, follower));
 
             new GamepadButton(driver, GamepadKeys.Button.Y)
                     .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry));
@@ -59,13 +64,21 @@ public class RobotContainer {
                                         .build();
 
                                 // Agenda o comando para seguir o caminho recém-criado.
-                                // Este comando será executado como parte do grupo sequencial.
-                                new FollowPathCommand(drivetrain, parkPath).schedule();
+                                // O TelemetryManager é passado para o comando.
+                                new FollowPathCommand(drivetrain, parkPath, telemetry).schedule();
                             }),
                             // Adiciona uma pequena espera para a execução do comando de FollowPath
                             new WaitCommand(100),
                             // Retorna o comando de controle do driver
-                            new InstantCommand(() -> drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver)))
+                            new InstantCommand(() -> drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver, follower)))
+                    ));
+
+            // Adicionado novo binding para o botão A do gamepad do driver
+            // Agora o botão A dispara o novo comando que contém a lógica do triângulo
+            new GamepadButton(driver, GamepadKeys.Button.A)
+                    .whenPressed(new SequentialCommandGroup(
+                            new DriveInTriangleCommand(drivetrain, telemetry),
+                            new InstantCommand(() -> drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver, follower)))
                     ));
         }
         if (operator != null) {
@@ -111,7 +124,7 @@ public class RobotContainer {
         // Retorna um grupo de comandos sequenciais para executar cada etapa da rotina.
         return new SequentialCommandGroup(
                 // 1. Segue o caminho para a posição de tiro. O shooter já deve ter sido acionado pelo callback.
-                new FollowPathCommand(drivetrain, driveAndShootPath),
+                new FollowPathCommand(drivetrain, driveAndShootPath, telemetry),
 
                 // 2. Aguarda até que o shooter atinja a velocidade alvo (com um timeout de segurança de 2s).
                 new WaitUntilCommand(() -> shooter.atTargetVelocity(Constants.Shooter.VELOCITY_TOLERANCE))
@@ -130,7 +143,7 @@ public class RobotContainer {
                 shooter.stopCommand(),
 
                 // 6. Segue o caminho para a posição de parking.
-                new FollowPathCommand(drivetrain, parkPath)
+                new FollowPathCommand(drivetrain, parkPath, telemetry)
         );
     }
 

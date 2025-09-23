@@ -30,14 +30,12 @@ public class Constants {
 
         public static class PedroPathing {
             public static FollowerConstants FOLLOWER_CONSTANTS = new FollowerConstants()
-                    .mass(13)
+                    .mass(10)
                     .forwardZeroPowerAcceleration(-25.138658560079815)
                     .lateralZeroPowerAcceleration(-78.96531426769552)
                     .translationalPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0.05, 0))
                     .headingPIDFCoefficients(new PIDFCoefficients(3, 0.1, 0.2, 0))
-                    .drivePIDFCoefficients(
-                            new FilteredPIDFCoefficients(0.025, 0, 0.0002, 1, 0)
-                    );
+                    .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025, 0, 0.0002, 1, 0));
 
             public static MecanumConstants MECANUM_CONSTANTS = new MecanumConstants()
                     .leftFrontMotorName(Hardware.LEFT_FRONT_MOTOR)
@@ -53,8 +51,9 @@ public class Constants {
                     .useBrakeModeInTeleOp(true);
 
             public static PinpointConstants LOCALIZER_CONSTANTS = new PinpointConstants()
-                    .forwardPodY(-5.5)
-                    .strafePodX(7)
+                    .forwardPodY(2.75)
+                    .strafePodX(-2.75)
+                    .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
                     .distanceUnit(DistanceUnit.INCH)
                     .hardwareMapName(Hardware.PINPOINT_LOCALIZER)
                     .encoderResolution(
