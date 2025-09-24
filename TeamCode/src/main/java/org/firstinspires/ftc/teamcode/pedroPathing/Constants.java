@@ -89,6 +89,7 @@ public class Constants {
         public static double TURN_KP = 0.02;
         public static double TURN_KI = 0.0015;
         public static double TURN_KD = 0.0030;
+        public static double TURN_KF = 0.1;
     public static Vision vision = new Vision();
     public static class Intake {
         public static String INTAKE_MOTOR = "intakeMotor";

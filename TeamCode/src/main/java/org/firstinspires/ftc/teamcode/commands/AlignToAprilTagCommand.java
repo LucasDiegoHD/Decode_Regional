@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -13,52 +14,57 @@ public class AlignToAprilTagCommand extends CommandBase {
     private final Follower follower;
     private final VisionSubsystem vision;
     private final TelemetryManager telemetry;
-    private final PIDController turnController;
+    private final PIDFController turnController;
 
-    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision,TelemetryManager telemetry) {
+    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, TelemetryManager telemetry) {
         this.follower = drivetrain.getFollower();
         this.vision = vision;
         this.telemetry = telemetry;
-        this.turnController = new PIDController(Constants.Vision.TURN_KP, Constants.Vision.TURN_KI, Constants.Vision.TURN_KD);
+        this.turnController = new  PIDFController(Constants.Vision.TURN_KP, Constants.Vision.TURN_KI, Constants.Vision.TURN_KD, Constants.Vision.TURN_KF);
         addRequirements(drivetrain, vision);
     }
 
     @Override
-    public void initialize() {turnController.reset();turnController.setSetPoint(0);turnController.setTolerance(0.5);}
+    public void initialize() {
+        turnController.reset();
+        turnController.setSetPoint(0);
+        turnController.setTolerance(0);
+    }
 
     @Override
     public void execute() {
-        turnController.setPID(
+        turnController.setPIDF(
                 Constants.Vision.TURN_KP,
                 Constants.Vision.TURN_KI,
-                Constants.Vision.TURN_KD
+                Constants.Vision.TURN_KD,
+                Constants.Vision.TURN_KF
         );
 
         if (!vision.hasTarget()) {
             follower.setTeleOpDrive(0, 0, 0, true);
-            telemetry.addLine("Nenhuma AprilTag detectada");
+            telemetry.debug("Nenhuma AprilTag detectada");
+            telemetry.update();
             return;
         }
 
-        double tx = vision.getTargetTx().orElse(0.0);
-
-        double turnPower = turnController.calculate(tx);
-        // limita a potência pra não travar motor
+        double turnPower = turnController.calculate(vision.getTargetTx().orElse(0.0));
         turnPower = Math.max(-0.4, Math.min(0.4, turnPower));
-
-        telemetry.addData("Align TX", tx);
-        telemetry.addData("Turn Power", turnPower);
+        telemetry.debug("Align TX: " + vision.getTargetTx().orElse(0.0));
+        telemetry.debug("Turn Power: " + turnPower);
+        telemetry.update();
 
         follower.setTeleOpDrive(0, 0, turnPower, true);
     }
 
     @Override
     public boolean isFinished() {
-        return turnController.atSetPoint();
+        return vision.hasTarget() && turnController.atSetPoint();
     }
 
     @Override
     public void end(boolean interrupted) {
         follower.setTeleOpDrive(0, 0, 0, true);
+        telemetry.debug("Alinhamento finalizado.");
+        telemetry.update();
     }
 }
