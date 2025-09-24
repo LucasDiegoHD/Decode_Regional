@@ -2,50 +2,56 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.bylazar.telemetry.TelemetryManager;
-
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import java.util.Optional;
 
+/**
+ * Comando de condução TeleOp, delega toda validação para o DrivetrainSubsystem.
+ * Agora também loga os valores dos joysticks para debug.
+ */
 public class TeleOpDriveCommand extends CommandBase {
 
     private final DrivetrainSubsystem drivetrain;
-    private final VisionSubsystem vision;
     private final GamepadEx driver;
-    private final TelemetryManager telemetry;
+    private boolean isFieldCentric = false; // Começa sempre no modo seguro
 
-    public TeleOpDriveCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, GamepadEx driver, TelemetryManager telemetry) {
+    public TeleOpDriveCommand(DrivetrainSubsystem drivetrain, GamepadEx driver) {
         this.drivetrain = drivetrain;
-        this.vision = vision;
         this.driver = driver;
-        this.telemetry = telemetry;
         addRequirements(drivetrain);
+    }
+
+    /**
+     * Método público para alternar o modo (chamado pelo RobotContainer).
+     */
+    public void toggleDriveMode() {
+        isFieldCentric = !isFieldCentric;
     }
 
     @Override
     public void execute() {
-        // Obtém as entradas do gamepad
-        double x = driver.getLeftX();
-        double y = -driver.getLeftY(); // O Y no gamepad é invertido
-        double rx = driver.getRightX();
+        // Lê os valores dos joysticks (com fallback 0.0 se driver for null)
+        double leftY = 0.0;
+        double leftX = 0.0;
+        double rightX = 0.0;
 
-        // Envia os comandos de movimento para o follower do Pedro Pathing.
-        // O `false` no final indica controle robot-centric, sem usar a orientação do robô.
-        drivetrain.getFollower().setTeleOpDrive(y, x, rx, false);
-
-        // Tenta obter a pose 3D da Limelight
-        Optional<Pose3D> botpose = vision.getBotpose();
-
-        // Envia telemetria para depuração
-        telemetry.addData("Vision Target Found", vision.hasTarget());
-        if (botpose.isPresent()) {
-            Pose3D pose = botpose.get();
-            // Posição x, y, z da Limelight em relação à AprilTag.
-            telemetry.addData("Botpose X (inch)", pose.getPosition().x);
-            telemetry.addData("Botpose Y (inch)", pose.getPosition().y);
-            telemetry.addData("Botpose Z (inch)", pose.getPosition().z);
+        if (driver != null) {
+            try {
+                leftY = driver.getLeftY();
+                leftX = driver.getLeftX();
+                rightX = driver.getRightX();
+            } catch (Exception e) {
+                // se algo der errado ao ler o gamepad, registrar e seguir com zeros
+                drivetrain.debug("Erro ao ler GamepadEx: " + e.getMessage());
+            }
+        } else {
+            drivetrain.debug("TeleOpDriveCommand: driver GamepadEx é null.");
         }
+
+        // Log dos valores para ajudar a depuração (verifique Driver Hub)
+        drivetrain.debug(String.format("Inputs joysticks -> LY=%.3f, LX=%.3f, RX=%.3f, FieldCentric=%b",
+                leftY, leftX, rightX, true));
+
+        // Chama o método seguro do subsistema (ele fará checagens e evitará NPEs)
+        drivetrain.teleOpDriveSafe(-leftY, leftX, -rightX, isFieldCentric);
     }
 }

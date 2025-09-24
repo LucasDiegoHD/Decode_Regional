@@ -10,7 +10,6 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.bylazar.telemetry.TelemetryManager;
-import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -24,13 +23,11 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
 public class RobotContainer {
 
-    // Enum para selecionar o autônomo. Pode ser ligado a um dashboard no futuro.
     public enum AutonomousRoutine {
         DO_NOTHING,
         SHOOT_THREE,
         DRIVE_AND_SHOOT_AND_PARK
     }
-    // **SELECIONE O SEU AUTÔNOMO AQUI**
     private final AutonomousRoutine selectedAuto = AutonomousRoutine.DRIVE_AND_SHOOT_AND_PARK;
 
     // Subsistemas
@@ -39,39 +36,50 @@ public class RobotContainer {
     private final ShooterSubsystem shooter;
     private final VisionSubsystem vision;
 
-    public RobotContainer(HardwareMap hardwareMap, TelemetryManager telemetry, GamepadEx driver, GamepadEx operator) {
+    // Comandos
+    private final TeleOpDriveCommand teleOpDriveCommand;
 
+    public RobotContainer(HardwareMap hardwareMap, TelemetryManager telemetry, GamepadEx driver, GamepadEx operator) {
+        // A ordem de inicialização dos subsistemas é importante
         this.vision = new VisionSubsystem(hardwareMap, telemetry);
-        this.drivetrain = new DrivetrainSubsystem(hardwareMap, telemetry);
+        this.drivetrain = new DrivetrainSubsystem(hardwareMap, vision, telemetry);
         this.intake = new IntakeSubsystem(hardwareMap);
         this.shooter = new ShooterSubsystem(hardwareMap, telemetry);
 
-        // Define o comando padrão para a transmissão (controlo do piloto)
-        drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, vision, driver, telemetry));
+        this.teleOpDriveCommand = new TeleOpDriveCommand(drivetrain, driver);
+        drivetrain.setDefaultCommand(teleOpDriveCommand);
 
-        // Configura as ligações dos botões do gamepad
+        // Só define como default se o drivetrain foi inicializado corretamente
+        if (drivetrain != null && drivetrain.isInitializedSuccessfully()) {
+            drivetrain.setDefaultCommand(teleOpDriveCommand);
+        } else {
+            telemetry.debug("Default command NÃO configurado: drivetrain não inicializado.");
+        }
+
+        // Configura todas as ligações de botões
         configureButtonBindings(driver, operator, telemetry);
     }
 
     private void configureButtonBindings(GamepadEx driver, GamepadEx operator, TelemetryManager telemetry) {
-        // --- DRIVER CONTROLS ---
+        // --- CONTROLOS DO PILOTO ---
         if (driver != null) {
             new GamepadButton(driver, GamepadKeys.Button.Y)
                     .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry));
 
             new GamepadButton(driver, GamepadKeys.Button.X)
                     .whenPressed(new GoToPoseCommand(drivetrain, Constants.FieldPositions.PARK_POSE));
+
+            // BOTÃO PARA ALTERNAR O MODO DE CONDUÇÃO (ex: BACK)
+            new GamepadButton(driver, GamepadKeys.Button.BACK)
+                    .whenPressed(() -> teleOpDriveCommand.toggleDriveMode());
         }
 
-        // --- OPERATOR CONTROLS ---
+        // --- CONTROLOS DO OPERADOR ---
         if (operator != null) {
             new GamepadButton(operator, GamepadKeys.Button.B)
                     .whenPressed(new ConditionalCommand(
-                            // Comando a executar se a condição for verdadeira
                             new LaunchSequenceCommand(shooter, intake),
-                            // Comando a executar se a condição for falsa
-                            new InstantCommand(), // Faz nada
-                            // A condição a ser verificada
+                            new InstantCommand(), // Não faz nada se a condição for falsa
                             () -> Constants.FieldGeometry.isInLaunchTriangle(drivetrain.getFollower().getPose())
                     ));
 
@@ -84,10 +92,6 @@ public class RobotContainer {
         }
     }
 
-    /**
-     * Usa o enum selectedAuto para construir e retornar a sequência de comandos do autônomo desejado.
-     * @return O comando autônomo selecionado.
-     */
     public Command getAutonomousCommand() {
         switch (selectedAuto) {
             case SHOOT_THREE:
@@ -96,7 +100,7 @@ public class RobotContainer {
                 return getDriveAndShootAndParkAutoCommand();
             case DO_NOTHING:
             default:
-                return new InstantCommand(); // Retorna um comando vazio que não faz nada.
+                return new InstantCommand();
         }
     }
 
@@ -115,7 +119,7 @@ public class RobotContainer {
 
         return new SequentialCommandGroup(
                 new FollowPathCommand(drivetrain, driveAndShootPath),
-                new LaunchSequenceCommand(shooter, intake), // Reutilizamos o nosso super-comando!
+                new LaunchSequenceCommand(shooter, intake),
                 new FollowPathCommand(drivetrain, parkPath)
         );
     }
@@ -125,18 +129,12 @@ public class RobotContainer {
                 shooter.spinUpCommand(),
                 new WaitUntilCommand(() -> shooter.atTargetVelocity(Constants.Shooter.VELOCITY_TOLERANCE))
                         .withTimeout(3000),
-                // Primeiro tiro
-                intake.feedCommand(),
-                new WaitCommand(500),
-                // Segundo tiro
-                intake.feedCommand(),
-                new WaitCommand(500),
-                // Terceiro tiro
-                intake.feedCommand(),
-                new WaitCommand(250),
-                // Parar tudo
+                intake.feedCommand(), new WaitCommand(500),
+                intake.feedCommand(), new WaitCommand(500),
+                intake.feedCommand(), new WaitCommand(250),
                 shooter.stopCommand(),
                 intake.stopCommand()
         );
     }
 }
+
