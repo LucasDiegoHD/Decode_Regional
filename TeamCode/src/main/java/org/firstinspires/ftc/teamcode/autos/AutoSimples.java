@@ -6,8 +6,10 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.bylazar.configurables.annotations.IgnoreConfigurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
+import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
 @Autonomous(name = "Auto: Atirar 3")
 public class AutoSimples extends CommandOpMode {
@@ -17,6 +19,7 @@ public class AutoSimples extends CommandOpMode {
 
     @IgnoreConfigurable
     static TelemetryManager telemetryM;
+    private VisionSubsystem vision;
 
     @Override
     public void initialize() {

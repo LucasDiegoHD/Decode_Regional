@@ -86,14 +86,15 @@ public class Constants {
         public static double TARGET_VELOCITY = 2200.0;
         public static double VELOCITY_TOLERANCE = 50.0;
     }
-
+    public static Shooter shooter = new Shooter();
 
     public static class Vision {
-        public static final String LIMELIGHT_NAME = "limelight";
-        public static double TURN_KP = 0.02;
-        public static double TURN_KI = 0.0015;
-        public static double TURN_KD = 0.0030;
+        public static double TURN_KP = 0.0325;
+        public static double TURN_KI = 0.07;
+        public static double TURN_KD = 0.0035;
+        public static double TURN_KF = 0.3;
     }
+        public static Vision vision = new Vision();
 
     public static class Intake {
         public static String INTAKE_MOTOR = "intakeMotor";
@@ -116,6 +117,7 @@ public class Constants {
             return robotPose.getX() > 0 && robotPose.getY() < robotPose.getX();
         }
     }
+
 
     public static class FieldPositions {
         public static final Pose START_POSE = new Pose(0, 0, Math.toRadians(-60));

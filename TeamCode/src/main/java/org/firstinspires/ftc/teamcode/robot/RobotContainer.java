@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -39,24 +40,24 @@ public class RobotContainer {
     private final VisionSubsystem vision;
 
     public RobotContainer(HardwareMap hardwareMap, TelemetryManager telemetry, GamepadEx driver, GamepadEx operator) {
-        // Inicializa todos os subsistemas
-        vision = new VisionSubsystem(hardwareMap, telemetry);
-        drivetrain = new DrivetrainSubsystem(hardwareMap, vision);
-        intake = new IntakeSubsystem(hardwareMap);
-        shooter = new ShooterSubsystem(hardwareMap, telemetry);
+
+        this.vision = new VisionSubsystem(hardwareMap, telemetry);
+        this.drivetrain = new DrivetrainSubsystem(hardwareMap, telemetry);
+        this.intake = new IntakeSubsystem(hardwareMap);
+        this.shooter = new ShooterSubsystem(hardwareMap, telemetry);
 
         // Define o comando padrão para a transmissão (controlo do piloto)
-        drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver));
+        drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, vision, driver, telemetry));
 
         // Configura as ligações dos botões do gamepad
-        configureButtonBindings(driver, operator);
+        configureButtonBindings(driver, operator, telemetry);
     }
 
-    private void configureButtonBindings(GamepadEx driver, GamepadEx operator) {
+    private void configureButtonBindings(GamepadEx driver, GamepadEx operator, TelemetryManager telemetry) {
         // --- DRIVER CONTROLS ---
         if (driver != null) {
             new GamepadButton(driver, GamepadKeys.Button.Y)
-                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision));
+                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry));
 
             new GamepadButton(driver, GamepadKeys.Button.X)
                     .whenPressed(new GoToPoseCommand(drivetrain, Constants.FieldPositions.PARK_POSE));
@@ -119,7 +120,7 @@ public class RobotContainer {
         );
     }
 
-    private Command getShootThreeAutoCommand() {
+    public Command getShootThreeAutoCommand() {
         return new SequentialCommandGroup(
                 shooter.spinUpCommand(),
                 new WaitUntilCommand(() -> shooter.atTargetVelocity(Constants.Shooter.VELOCITY_TOLERANCE))
@@ -139,4 +140,3 @@ public class RobotContainer {
         );
     }
 }
-

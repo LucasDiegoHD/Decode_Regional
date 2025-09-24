@@ -1,4 +1,3 @@
-// Ficheiro: subsystems/VisionSubsystem.java
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
@@ -7,26 +6,27 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-// ** AS IMPORTAÇÕES CORRETAS E NATIVAS DO SDK DA FTC **
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-
 import java.util.Optional;
 
 public class VisionSubsystem extends SubsystemBase {
 
-    private final Limelight3A limelight;
+    private Limelight3A limelight;
     private LLResult latestResult;
     private final TelemetryManager telemetry;
 
     public VisionSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         this.telemetry = telemetry;
-        // O nome da Limelight deve corresponder à sua configuração de hardware.
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.start();
-        limelight.pipelineSwitch(0);
+        // Tenta obter a Limelight do Hardware Map. Se não estiver lá, o objeto será null.
+        try {
+            limelight = hardwareMap.get(Limelight3A.class, "limelight");
+            limelight.start();
+            limelight.pipelineSwitch(0);
+        } catch (IllegalArgumentException e) {
+            telemetry.addData("VisionSubsystem Error", "Limelight 'limelight' não encontrada no Hardware Map. Visão desativada.");
+            telemetry.update();
+            limelight = null; // Garante que o objeto é nulo se a busca falhar
+        }
     }
 
     public Optional<Double> getTargetTx() {
@@ -41,35 +41,56 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     /**
-     * VERSÃO FINAL: Calcula a Pose 2D do robô usando o objeto Pose3D nativo do SDK da FTC,
-     * que é o que a biblioteca da Limelight retorna.
-     *
-     * @return um Optional<Pose> contendo a pose do robô no sistema de coordenadas da FTC.
+     * Sincroniza a orientação do robô com a Limelight para melhorar a precisão.
+     * @param headingInDegrees A orientação atual do robô, em graus.
      */
-    public Optional<Pose> getRobotPoseFromVision() {
+    public void updateRobotOrientation(double headingInDegrees) {
+        if (limelight != null) {
+            limelight.updateRobotOrientation(headingInDegrees);
+        }
+    }
+
+    /**
+     * Calcula a Pose 2D do robô usando o objeto Pose3D nativo do SDK da FTC.
+     * @param imuHeading O Heading atual do robô em radianos, obtido do odometria.
+     * @return um Optional<Pose> contendo a pose do robô.
+     */
+    public Optional<Pose> getRobotPoseFromVision(double imuHeading) {
         if (!hasTarget()) {
             return Optional.empty();
         }
 
-        // A API retorna um objeto Pose3D do SDK da FTC.
         Pose3D botpose = latestResult.getBotpose();
         if (botpose == null) {
             return Optional.empty();
         }
 
-        // --- TRANSFORMAÇÃO DE COORDENADAS USANDO OS MÉTODOS NATIVOS ---
-        // Acesso aos dados através dos métodos do objeto Pose3D do SDK.
         double ftcX = botpose.getPosition().z;
         double ftcY = -botpose.getPosition().x;
-        // Obter o Yaw diretamente em radianos é o método mais limpo.
-        double ftcHeading = botpose.getOrientation().getYaw(AngleUnit.RADIANS);
 
-        return Optional.of(new Pose(ftcX, ftcY, ftcHeading));
+        // O Pedro Pathing usa polegadas, mas a Pose do SDK da FTC usa milímetros.
+        double xInches = ftcX ;
+        double yInches = ftcY ;
+
+        return Optional.of(new Pose(xInches, yInches, imuHeading));
+    }
+
+    /**
+     * Retorna a pose 3D nativa da Limelight, se houver um alvo.
+     * Use este método para telemetria ou debug.
+     * @return Um Optional<Pose3D> que pode conter a pose do bot.
+     */
+    public Optional<Pose3D> getBotpose() {
+        if (hasTarget()) {
+            return Optional.ofNullable(latestResult.getBotpose());
+        }
+        return Optional.empty();
     }
 
     @Override
     public void periodic() {
-        latestResult = limelight.getLatestResult();
+        if (limelight != null) {
+            latestResult = limelight.getLatestResult();
+        }
     }
 }
-
