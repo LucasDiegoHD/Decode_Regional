@@ -1,4 +1,3 @@
-// Ficheiro: pedroPathing/Constants.java
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -15,10 +14,11 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @Configurable
 public class Constants {
-    private Constants() {} // Impede a instanciação
-    public static int teste = 0;
+    private Constants() {}
+
     public static class Drivetrain {
         public static class Hardware {
             public static String LEFT_FRONT_MOTOR = "leftFront";
@@ -92,13 +92,22 @@ public class Constants {
         public static double TURN_KF = 0.3;
     }
 
-    public static Vision vision = new Vision();
-
     public static class Intake {
         public static String INTAKE_MOTOR = "intakeMotor";
     }
 
     public static class FieldPositions {
         public static Pose SCORING_POSITION = new Pose(48, 72, Math.toRadians(90));
+        public static Pose START_POSE = new Pose(0, 0, Math.toRadians(-60));
+        public static Pose SHOOTING_POSE = new Pose(12, 60, Math.toRadians(90));
+        public static Pose PARK_POSE = new Pose(10, 120, Math.toRadians(0));
+    }
+
+    public static class FieldGeometry {
+        public static boolean isInLaunchTriangle(Pose robotPose) {
+            if (robotPose == null) return false;
+            return robotPose.getX() > 0 && robotPose.getY() < robotPose.getX();
+        }
     }
 }
+

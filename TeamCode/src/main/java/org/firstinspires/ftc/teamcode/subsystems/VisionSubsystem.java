@@ -2,9 +2,12 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import java.util.Optional;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -14,19 +17,12 @@ public class VisionSubsystem extends SubsystemBase {
     private final TelemetryManager telemetry;
 
     public VisionSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
-
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.start(); // Inicia a coleta de dados da câmera
-        limelight.pipelineSwitch(0);
         this.telemetry = telemetry;
+        this.limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.start();
+        limelight.pipelineSwitch(0);
     }
 
-    /**
-     * Retorna o desvio horizontal (ângulo) do alvo em graus.
-     * Valor negativo significa que o alvo está à esquerda, positivo à direita.
-     *
-     * @return um Optional contendo o valor de 'tx', ou vazio se nenhum alvo for válido.
-     */
     public Optional<Double> getTargetTx() {
         if (hasTarget()) {
             return Optional.of(latestResult.getTx());
@@ -34,38 +30,30 @@ public class VisionSubsystem extends SubsystemBase {
         return Optional.empty();
     }
 
-    /**
-     * Retorna o desvio vertical (ângulo) do alvo em graus.
-     * Pode ser usado como um indicador de distância.
-     *
-     * @return um Optional contendo o valor de 'ty', ou vazio se nenhum alvo for válido.
-     */
-    public Optional<Double> getTargetTy() {
-        if (hasTarget()) {
-            return Optional.of(latestResult.getTy());
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Verifica se a Limelight tem um alvo válido.
-     *
-     * @return true se um alvo válido for detectado, false caso contrário.
-     */
     public boolean hasTarget() {
         return latestResult != null && latestResult.isValid();
+    }
+
+    public Optional<Pose> getRobotPoseFromVision() {
+        if (!hasTarget()) {
+            return Optional.empty();
+        }
+
+        Pose3D botpose = latestResult.getBotpose();
+        if (botpose == null) {
+            return Optional.empty();
+        }
+
+        double ftcX = botpose.getPosition().z;
+        double ftcY = -botpose.getPosition().x;
+        double ftcHeading = botpose.getOrientation().getYaw(AngleUnit.RADIANS);
+
+        return Optional.of(new Pose(ftcX, ftcY, ftcHeading));
     }
 
     @Override
     public void periodic() {
         latestResult = limelight.getLatestResult();
-
-        if (latestResult != null) {
-            telemetry.addData("LL Valid", latestResult.isValid());
-            telemetry.addData("LL tx", latestResult.getTx());
-            telemetry.addData("LL ty", latestResult.getTy());
-        } else {
-            telemetry.addLine("LL sem resultado");
-        }
     }
 }
+
