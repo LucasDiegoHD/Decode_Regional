@@ -1,4 +1,3 @@
-// Ficheiro: pedroPathing/Constants.java
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -15,10 +14,12 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @Configurable
 public class Constants {
     private Constants() {} // Impede a instanciação
     public static int teste = 0;
+
     public static class Drivetrain {
         public static class Hardware {
             public static String LEFT_FRONT_MOTOR = "leftFront";
@@ -47,7 +48,7 @@ public class Constants {
                     .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
                     .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
                     .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-                    .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+                    .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
                     .xVelocity(82.00584290004647)
                     .yVelocity(65.006779349307)
                     .useBrakeModeInTeleOp(true);
@@ -76,14 +77,26 @@ public class Constants {
     }
 
     public static class Shooter {
-        public static String SHOOTER_MOTOR_NAME = "shooterMotor";
-        public static double kP = 0.01;
+        public static String RSHOOTER_MOTOR_NAME = "rightShooterMotor";
+        public static String LSHOOTER_MOTOR_NAME = "leftShooterMotor";
+        public static String TRIGGER_MOTOR_NAME = "triggerMotor";
+        public static String HOOD_SERVO_NAME = "Hood_Servo";
+        public static double kP = 0.05;
         public static double kI = 0.0;
         public static double kD = 0.0001;
         public static double kF = 0.05;
-        public static double TARGET_VELOCITY = 2200.0;
+        public static double TARGET_VELOCITY = 2500.0;
         public static double VELOCITY_TOLERANCE = 50.0;
+
+        public static class ShooterHood {
+            public static double LOW_SHOT_POSITION = 0.1;
+            public static double MID_SHOT_POSITION = 0.55;
+            public static double LONG_SHOT_POSITION = 0.6;
+            public static double RETRACTED_POSITION = 1.0;
+        }
     }
+    public static Shooter shooter = new Shooter();
+    public static Shooter.ShooterHood shooterHood = new Shooter.ShooterHood();
 
     public static class Vision {
         public static double TURN_KP = 0.0325;
@@ -99,6 +112,15 @@ public class Constants {
     }
 
     public static class FieldPositions {
+        public static Pose START_POSE = new Pose(10, -60, Math.toRadians(90));
+        public static Pose SHOOTING_POSE = new Pose(20, -35, Math.toRadians(90));
+        public static Pose PARK_POSE = new Pose(10, 5, Math.toRadians(90));
         public static Pose SCORING_POSITION = new Pose(48, 72, Math.toRadians(90));
+
+        public static boolean isInLaunchTriangle(Pose currentPose) {
+            // Implementação de verificação de área de arremesso, se necessário.
+            // Por enquanto, retorna true para fins de demonstração.
+            return true;
+        }
     }
 }

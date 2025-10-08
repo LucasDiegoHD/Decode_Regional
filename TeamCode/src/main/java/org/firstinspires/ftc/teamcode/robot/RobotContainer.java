@@ -9,14 +9,14 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.bylazar.telemetry.TelemetryManager;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import org.firstinspires.ftc.teamcode.commands.AlignToAprilTagCommand;
 import org.firstinspires.ftc.teamcode.commands.FollowPathCommand;
+import org.firstinspires.ftc.teamcode.commands.SetHoodPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
@@ -30,6 +30,7 @@ public class RobotContainer {
     private final IntakeSubsystem intake;
     private final ShooterSubsystem shooter;
     private final VisionSubsystem vision;
+
     Pose startPose = new Pose(0, 0, Math.toRadians(-60));
     Pose shootingPose = new Pose(12, 60, Math.toRadians(90));
     Pose parkPose = new Pose(10, 120, Math.toRadians(0));
@@ -39,6 +40,7 @@ public class RobotContainer {
         intake = new IntakeSubsystem(hardwareMap);
         shooter = new ShooterSubsystem(hardwareMap, telemetry);
         vision = new VisionSubsystem(hardwareMap, telemetry);
+
 
         if (driver != null) {
             drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver));
@@ -70,16 +72,41 @@ public class RobotContainer {
         }
         if (operator != null) {
             configureTeleOpBindings(operator, telemetry);
+
         }
     }
 
     private void configureTeleOpBindings(GamepadEx operator, TelemetryManager telemetry) {
-        new GamepadButton(operator, GamepadKeys.Button.B)
+       new GamepadButton(operator, GamepadKeys.Button.B)
                 .whenPressed(shooter.spinUpCommand());
 
-        new GamepadButton(operator, GamepadKeys.Button.X)
-                .whenPressed(shooter.stopCommand());
 
+        new GamepadButton(operator, GamepadKeys.Button.LEFT_STICK_BUTTON)
+                .whenPressed(new SetHoodPositionCommand(shooter, Constants.Shooter.ShooterHood.LONG_SHOT_POSITION));
+
+        new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(new SetHoodPositionCommand(shooter, Constants.Shooter.ShooterHood.LOW_SHOT_POSITION));
+
+        new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(new SetHoodPositionCommand(shooter, Constants.Shooter.ShooterHood.MID_SHOT_POSITION));
+
+        new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(new SetHoodPositionCommand(shooter, Constants.Shooter.ShooterHood.RETRACTED_POSITION));
+
+        new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new InstantCommand(shooter::spin, shooter));
+        new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(shooter::stop,shooter));
+        new GamepadButton(operator, GamepadKeys.Button.Y)
+                .whenPressed(new InstantCommand(intake::run,intake))
+                .whenReleased(new InstantCommand(intake::stop,intake));
+        new GamepadButton(operator, GamepadKeys.Button.A)
+                .whenPressed(new InstantCommand(intake::reverse,intake))
+                .whenReleased(new InstantCommand(intake::stop,intake));
+
+        new GamepadButton(operator, GamepadKeys.Button.DPAD_UP)
+                .whenPressed(new InstantCommand(intake::runTrigger,intake))
+                .whenReleased(new InstantCommand(intake::stopTrigger,intake));
 
     }
 
