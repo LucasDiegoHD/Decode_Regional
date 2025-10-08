@@ -24,7 +24,7 @@ public class TeleOpDriveCommand extends CommandBase {
     public void execute() {
         // O método foi renomeado para setTeleOpMovementVectors na v2.0
         drivetrain.getFollower().setTeleOpDrive(
-                driverGamepad.getLeftY(),
+                -driverGamepad.getLeftY(),
                 driverGamepad.getLeftX(),
                 -driverGamepad.getRightX(),
                 false
