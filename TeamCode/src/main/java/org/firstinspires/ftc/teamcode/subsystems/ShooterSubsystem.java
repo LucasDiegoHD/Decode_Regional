@@ -30,8 +30,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final PIDFController pidfController;
     private final TelemetryManager telemetry;
     private double targetVelocity = 0.0;
-    public static final double MAX_HOOD_POSITION = 0.5;
-    public static final double MIN_HOOD_POSITION = 0.1;
+
     public ShooterSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         this.telemetry = telemetry;
         rshooterMotor = hardwareMap.get(DcMotorEx.class, Constants.Shooter.RSHOOTER_MOTOR_NAME);

@@ -76,41 +76,6 @@ public class Constants {
         }
     }
 
-    public static class Shooter {
-        public static String RSHOOTER_MOTOR_NAME = "rightShooterMotor";
-        public static String LSHOOTER_MOTOR_NAME = "leftShooterMotor";
-        public static String TRIGGER_MOTOR_NAME = "triggerMotor";
-        public static String HOOD_SERVO_NAME = "Hood_Servo";
-        public static double kP = 0.05;
-        public static double kI = 0.0;
-        public static double kD = 0.0001;
-        public static double kF = 0.05;
-        public static double TARGET_VELOCITY = 2500.0;
-        public static double VELOCITY_TOLERANCE = 50.0;
-
-        public static class ShooterHood {
-            public static double LOW_SHOT_POSITION = 0.1;
-            public static double MID_SHOT_POSITION = 0.55;
-            public static double LONG_SHOT_POSITION = 0.6;
-            public static double RETRACTED_POSITION = 1.0;
-        }
-    }
-    public static Shooter shooter = new Shooter();
-    public static Shooter.ShooterHood shooterHood = new Shooter.ShooterHood();
-
-    public static class Vision {
-        public static double TURN_KP = 0.0325;
-        public static double TURN_KI = 0.07;
-        public static double TURN_KD = 0.0035;
-        public static double TURN_KF = 0.3;
-    }
-
-    public static Vision vision = new Vision();
-
-    public static class Intake {
-        public static String INTAKE_MOTOR = "intakeMotor";
-    }
-
     public static class FieldPositions {
         public static Pose START_POSE = new Pose(10, -60, Math.toRadians(90));
         public static Pose SHOOTING_POSE = new Pose(20, -35, Math.toRadians(90));
