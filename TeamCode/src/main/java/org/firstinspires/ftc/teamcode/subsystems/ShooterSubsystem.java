@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -28,6 +30,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final PIDFController pidfController;
     private final TelemetryManager telemetry;
     private double targetVelocity = 0.0;
+    public static final double MAX_HOOD_POSITION = 0.5;
+    public static final double MIN_HOOD_POSITION = 0.1;
     public ShooterSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         this.telemetry = telemetry;
         rshooterMotor = hardwareMap.get(DcMotorEx.class, Constants.Shooter.RSHOOTER_MOTOR_NAME);
@@ -52,9 +56,17 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param position O valor do servo entre 0.0 e 1.0.
      */
     public void setHoodPosition(double position) {
+        position = Math.max(Math.min(position,MAX_HOOD_POSITION),MIN_HOOD_POSITION);
         hoodServo.setPosition(position);
     }
+    public void increaseHoodPosition(){
+        setHoodPosition(hoodServo.getPosition()+0.05);
 
+    }
+    public void decreaseHoodPosition(){
+        setHoodPosition(hoodServo.getPosition()-0.05);
+
+    }
     public void setTargetVelocity(double velocity) {
         this.targetVelocity = velocity;
     }
@@ -83,7 +95,10 @@ public class ShooterSubsystem extends SubsystemBase {
             shooterMotor.setPower(0);
         }
 */
-        telemetry.addData("Shooter Velocity", getCurrentVelocity());
+        telemetry.addData("Shooter L Velocity", lshooterMotor.getVelocity(AngleUnit.RADIANS));
+        telemetry.addData("Shooter L Current",lshooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetry.addData("Shooter R Velocity", rshooterMotor.getVelocity(AngleUnit.RADIANS));
+        telemetry.addData("Shooter R Current",rshooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
         telemetry.addData("Target Velocity", targetVelocity);
         telemetry.addData("Hood Position", hoodServo.getPosition());
     }

@@ -81,17 +81,12 @@ public class RobotContainer {
                 .whenPressed(shooter.spinUpCommand());
 
 
-        new GamepadButton(operator, GamepadKeys.Button.LEFT_STICK_BUTTON)
-                .whenPressed(new SetHoodPositionCommand(shooter, Constants.Shooter.ShooterHood.LONG_SHOT_POSITION));
-
-        new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(new SetHoodPositionCommand(shooter, Constants.Shooter.ShooterHood.LOW_SHOT_POSITION));
 
         new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(new SetHoodPositionCommand(shooter, Constants.Shooter.ShooterHood.MID_SHOT_POSITION));
+                .whenPressed(new SetHoodPositionCommand(shooter, ShooterSubsystem.MIN_HOOD_POSITION));
 
         new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(new SetHoodPositionCommand(shooter, Constants.Shooter.ShooterHood.RETRACTED_POSITION));
+                .whenPressed(new SetHoodPositionCommand(shooter, ShooterSubsystem.MAX_HOOD_POSITION));
 
         new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new InstantCommand(shooter::spin, shooter));
