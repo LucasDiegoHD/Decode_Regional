@@ -7,6 +7,7 @@ import com.pedropathing.follower.Follower;
 
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.VisionConstants;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
@@ -14,16 +15,19 @@ public class AlignToAprilTagCommand extends CommandBase {
 
     private final Follower follower;
     private final VisionSubsystem vision;
+    private final ShooterSubsystem shooter;
     private final TelemetryManager telemetry;
     private final PIDFController turnController;
-    private boolean isApriltagNotSeem = false;
+    private int IsAprilTagNotSeemCounter = 0;
+    private static final int ApriltagNotSeemMaximumCounter = 20;
 
-    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, TelemetryManager telemetry) {
+    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, ShooterSubsystem shooter, TelemetryManager telemetry) {
         this.follower = drivetrain.getFollower();
         this.vision = vision;
+        this.shooter = shooter;
         this.telemetry = telemetry;
         this.turnController = new  PIDFController(VisionConstants.TURN_KP, VisionConstants.TURN_KI, VisionConstants.TURN_KD, VisionConstants.TURN_KF);
-        addRequirements(drivetrain, vision);
+        addRequirements(drivetrain, vision, shooter);
     }
 
     @Override
@@ -46,7 +50,10 @@ public class AlignToAprilTagCommand extends CommandBase {
             follower.setTeleOpDrive(0, 0, 0, true);
             telemetry.debug("Nenhuma AprilTag detectada");
             telemetry.update();
-            isApriltagNotSeem = true;
+            IsAprilTagNotSeemCounter++;
+        }
+        else{
+            IsAprilTagNotSeemCounter = 0;
         }
 
         double turnPower = turnController.calculate(vision.getTargetTx().orElse(0.0));
@@ -56,14 +63,17 @@ public class AlignToAprilTagCommand extends CommandBase {
 
 
         follower.setTeleOpDrive(0, 0, turnPower, true);
-        double hoodPosition = vision.getTargetTa().orElse(0.0)*(ShooterConstants.MAXIMUM_HOOD-ShooterConstants.MINIMUM_HOOD)/(VisionConstants.MAXIMUM_TA-VisionConstants.MINIMUM_TA);
+        double hoodPosition = ShooterConstants.MINIMUM_HOOD +(ShooterConstants.MAXIMUM_HOOD-ShooterConstants.MINIMUM_HOOD) *
+                ((VisionConstants.MAXIMUM_TA-vision.getTargetTa().orElse(0.0))/(VisionConstants.MAXIMUM_TA-VisionConstants.MINIMUM_TA));
+
+        shooter.setHoodPosition(hoodPosition);
         telemetry.addData("Hood Setting",hoodPosition);
     }
 
     @Override
     public boolean isFinished() {
 
-        return (vision.hasTarget() && turnController.atSetPoint()) || isApriltagNotSeem;
+        return (vision.hasTarget() && turnController.atSetPoint()) || IsAprilTagNotSeemCounter>ApriltagNotSeemMaximumCounter;
     }
 
     @Override

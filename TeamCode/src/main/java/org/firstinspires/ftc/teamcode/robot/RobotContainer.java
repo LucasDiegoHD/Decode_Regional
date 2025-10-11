@@ -47,7 +47,7 @@ public class RobotContainer {
             drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver));
 
             new GamepadButton(driver, GamepadKeys.Button.Y)
-                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry));
+                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision,shooter, telemetry));
 
 
             /*new GamepadButton(driver, GamepadKeys.Button.X)
