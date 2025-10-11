@@ -50,7 +50,7 @@ public class RobotContainer {
                     .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry));
 
 
-            new GamepadButton(driver, GamepadKeys.Button.X)
+            /*new GamepadButton(driver, GamepadKeys.Button.X)
                     .whenPressed(new SequentialCommandGroup(
                             // Obtém a pose atual do robô.
                             new InstantCommand(() -> {
@@ -69,7 +69,7 @@ public class RobotContainer {
                             new WaitCommand(100),
                             // Retorna o comando de controle do driver
                             new InstantCommand(() -> drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver)))
-                    ));
+                    ));*/
         }
         if (operator != null) {
             configureTeleOpBindings(operator, telemetry);
@@ -84,10 +84,10 @@ public class RobotContainer {
 
 
         new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(new SetHoodPositionCommand(shooter, ShooterConstants.Shooter.ShooterHood.MINIMAL_HOOD));
+                .whenPressed(new InstantCommand(shooter::decreaseHoodPosition, shooter));
 
         new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(new SetHoodPositionCommand(shooter, ShooterConstants.Shooter.ShooterHood.MAXIMUM_HOOD));
+                .whenPressed(new InstantCommand(shooter::increaseHoodPosition, shooter));
 
         new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new InstantCommand(shooter::spin, shooter));
@@ -137,7 +137,7 @@ public class RobotContainer {
                 new FollowPathCommand(drivetrain, driveAndShootPath),
 
                 // 2. Aguarda até que o shooter atinja a velocidade alvo (com um timeout de segurança de 2s).
-                new WaitUntilCommand(() -> shooter.atTargetVelocity(ShooterConstants.Shooter.VELOCITY_TOLERANCE))
+                new WaitUntilCommand(() -> shooter.atTargetVelocity(ShooterConstants.VELOCITY_TOLERANCE))
                         .withTimeout(2000),
 
                 // 3. Empurra a peça para ser atirada. Substitua por um comando real de seu subsistema de Intake.
@@ -168,7 +168,7 @@ public class RobotContainer {
                 shooter.spinUpCommand(),
 
                 // 2. Espera ATÉ que o shooter atinja a velocidade (com um timeout de segurança de 3s).
-                new WaitUntilCommand(() -> shooter.atTargetVelocity(ShooterConstants.Shooter.VELOCITY_TOLERANCE))
+                new WaitUntilCommand(() -> shooter.atTargetVelocity(ShooterConstants.VELOCITY_TOLERANCE))
                         .withTimeout(3000),
 
                 // 3. Realiza o primeiro tiro.

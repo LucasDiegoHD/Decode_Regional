@@ -44,7 +44,7 @@ public class ShootCommand extends CommandBase {
         if (action == Action.STOP) {
             return true;
         }
-        return shooter.atTargetVelocity(ShooterConstants.Shooter.VELOCITY_TOLERANCE);
+        return shooter.atTargetVelocity(ShooterConstants.VELOCITY_TOLERANCE);
     }
 
     @Override

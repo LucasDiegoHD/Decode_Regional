@@ -48,6 +48,19 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     /**
+     * Retorna o desvio vertical (ângulo) do alvo em graus.
+     * Pode ser usado como um indicador de distância.
+     *
+     * @return um Optional contendo o valor de 'ty', ou vazio se nenhum alvo for válido.
+     */
+    public Optional<Double> getTargetTa() {
+        if (hasTarget()) {
+            return Optional.of(latestResult.getTa());
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Verifica se a Limelight tem um alvo válido.
      *
      * @return true se um alvo válido for detectado, false caso contrário.
@@ -64,6 +77,7 @@ public class VisionSubsystem extends SubsystemBase {
             telemetry.addData("LL Valid", latestResult.isValid());
             telemetry.addData("LL tx", latestResult.getTx());
             telemetry.addData("LL ty", latestResult.getTy());
+            telemetry.addData("LL ta", latestResult.getTa());
         } else {
             telemetry.addLine("LL sem resultado");
         }
