@@ -15,12 +15,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+
 
 @Configurable
 public class ShooterSubsystem extends SubsystemBase {
 
     private final DcMotorEx rshooterMotor;
     private final DcMotorEx lshooterMotor;
+    private VoltageSensor myControlHubVoltageSensor;
 
     private final Servo hoodServo;
     private final PIDFController pidfController;
@@ -39,6 +42,7 @@ public class ShooterSubsystem extends SubsystemBase {
         lshooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lshooterMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rshooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        myControlHubVoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
         pidfController = new PIDFController(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD, ShooterConstants.kF);
 
@@ -53,6 +57,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setHoodPosition(double position) {
         position = Math.max(Math.min(position,ShooterConstants.MAXIMUM_HOOD),ShooterConstants.MINIMUM_HOOD);
         hoodServo.setPosition(position);
+    }
+    public double getBatteryVoltage() {
+        return myControlHubVoltageSensor.getVoltage();
+
     }
     public void increaseHoodPosition(){
         setHoodPosition(hoodServo.getPosition()+0.05);
@@ -97,6 +105,7 @@ public class ShooterSubsystem extends SubsystemBase {
         telemetry.addData("Shooter R Current",rshooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
         telemetry.addData("Target Velocity", targetVelocity);
         telemetry.addData("Hood Position", hoodServo.getPosition());
+        telemetry.addData("Battery Voltage", getBatteryVoltage());
     }
 
     // --- FÁBRICAS DE COMANDOS ---
