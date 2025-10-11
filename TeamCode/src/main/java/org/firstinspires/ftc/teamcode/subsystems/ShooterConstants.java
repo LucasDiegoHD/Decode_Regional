@@ -1,20 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.control.FilteredPIDFCoefficients;
-import com.pedropathing.control.PIDFCoefficients;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.follower.FollowerConstants;
-import com.pedropathing.ftc.FollowerBuilder;
-import com.pedropathing.ftc.drivetrains.MecanumConstants;
-import com.pedropathing.ftc.localization.constants.PinpointConstants;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathConstraints;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Configurable
 public class ShooterConstants {
@@ -33,8 +19,9 @@ public class ShooterConstants {
         public static double VELOCITY_TOLERANCE = 50.0;
 
         public static class ShooterHood {
-            public static double MINIMAL_HOOD = 0.1;
-            public static double MAXUMUM_HOOD = 0.55;
+            public static double MINIMAL_HOOD = 0.25;
+            public static double MAXIMUM_HOOD = 1.0
+                    ;
         }
     }
     public static Shooter shooter = new Shooter();

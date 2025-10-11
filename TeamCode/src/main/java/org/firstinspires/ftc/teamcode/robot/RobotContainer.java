@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
@@ -83,10 +84,10 @@ public class RobotContainer {
 
 
         new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(new SetHoodPositionCommand(shooter, ShooterSubsystem.MIN_HOOD_POSITION));
+                .whenPressed(new SetHoodPositionCommand(shooter, ShooterConstants.Shooter.ShooterHood.MINIMAL_HOOD));
 
         new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(new SetHoodPositionCommand(shooter, ShooterSubsystem.MAX_HOOD_POSITION));
+                .whenPressed(new SetHoodPositionCommand(shooter, ShooterConstants.Shooter.ShooterHood.MAXIMUM_HOOD));
 
         new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new InstantCommand(shooter::spin, shooter));
@@ -136,7 +137,7 @@ public class RobotContainer {
                 new FollowPathCommand(drivetrain, driveAndShootPath),
 
                 // 2. Aguarda até que o shooter atinja a velocidade alvo (com um timeout de segurança de 2s).
-                new WaitUntilCommand(() -> shooter.atTargetVelocity(Constants.Shooter.VELOCITY_TOLERANCE))
+                new WaitUntilCommand(() -> shooter.atTargetVelocity(ShooterConstants.Shooter.VELOCITY_TOLERANCE))
                         .withTimeout(2000),
 
                 // 3. Empurra a peça para ser atirada. Substitua por um comando real de seu subsistema de Intake.
@@ -167,7 +168,7 @@ public class RobotContainer {
                 shooter.spinUpCommand(),
 
                 // 2. Espera ATÉ que o shooter atinja a velocidade (com um timeout de segurança de 3s).
-                new WaitUntilCommand(() -> shooter.atTargetVelocity(Constants.Shooter.VELOCITY_TOLERANCE))
+                new WaitUntilCommand(() -> shooter.atTargetVelocity(ShooterConstants.Shooter.VELOCITY_TOLERANCE))
                         .withTimeout(3000),
 
                 // 3. Realiza o primeiro tiro.

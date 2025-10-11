@@ -7,6 +7,7 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.VisionConstants;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
 public class AlignToAprilTagCommand extends CommandBase {
@@ -20,7 +21,7 @@ public class AlignToAprilTagCommand extends CommandBase {
         this.follower = drivetrain.getFollower();
         this.vision = vision;
         this.telemetry = telemetry;
-        this.turnController = new  PIDFController(Constants.Vision.TURN_KP, Constants.Vision.TURN_KI, Constants.Vision.TURN_KD, Constants.Vision.TURN_KF);
+        this.turnController = new  PIDFController(VisionConstants.Vision.TURN_KP, VisionConstants.Vision.TURN_KI, VisionConstants.Vision.TURN_KD, VisionConstants.Vision.TURN_KF);
         addRequirements(drivetrain, vision);
     }
 
@@ -34,10 +35,10 @@ public class AlignToAprilTagCommand extends CommandBase {
     @Override
     public void execute() {
         turnController.setPIDF(
-                Constants.Vision.TURN_KP,
-                Constants.Vision.TURN_KI,
-                Constants.Vision.TURN_KD,
-                Constants.Vision.TURN_KF
+                VisionConstants.Vision.TURN_KP,
+                VisionConstants.Vision.TURN_KI,
+                VisionConstants.Vision.TURN_KD,
+                VisionConstants.Vision.TURN_KF
         );
 
         if (!vision.hasTarget()) {

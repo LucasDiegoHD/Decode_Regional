@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 
 public class ShootCommand extends CommandBase {
@@ -43,7 +44,7 @@ public class ShootCommand extends CommandBase {
         if (action == Action.STOP) {
             return true;
         }
-        return shooter.atTargetVelocity(Constants.Shooter.VELOCITY_TOLERANCE);
+        return shooter.atTargetVelocity(ShooterConstants.Shooter.VELOCITY_TOLERANCE);
     }
 
     @Override
