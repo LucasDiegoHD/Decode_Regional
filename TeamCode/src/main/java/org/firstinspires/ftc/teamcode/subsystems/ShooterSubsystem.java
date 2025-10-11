@@ -90,9 +90,10 @@ public class ShooterSubsystem extends SubsystemBase {
             shooterMotor.setPower(0);
         }
 */
-        telemetry.addData("Shooter L Velocity", lshooterMotor.getVelocity(AngleUnit.RADIANS));
+
+        telemetry.addData("Shooter L Velocity", ticksPerSecondToRPM(lshooterMotor.getVelocity()));
         telemetry.addData("Shooter L Current",lshooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
-        telemetry.addData("Shooter R Velocity", rshooterMotor.getVelocity(AngleUnit.RADIANS));
+        telemetry.addData("Shooter R Velocity", ticksPerSecondToRPM(rshooterMotor.getVelocity()));
         telemetry.addData("Shooter R Current",rshooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
         telemetry.addData("Target Velocity", targetVelocity);
         telemetry.addData("Hood Position", hoodServo.getPosition());
@@ -102,7 +103,12 @@ public class ShooterSubsystem extends SubsystemBase {
     public Command spinUpCommand() {
         return new ShootCommand(this, ShootCommand.Action.SPIN_UP, ShooterConstants.Shooter.TARGET_VELOCITY);
     }
-
+    double radiansPerSecondToRPM(double rps){
+        return rps * 60/(2*Math.PI);
+    }
+    double ticksPerSecondToRPM(double tps){
+        return (tps/28)*60;
+    }
     public Command stopCommand() {
         return new ShootCommand(this, ShootCommand.Action.STOP);
     }
