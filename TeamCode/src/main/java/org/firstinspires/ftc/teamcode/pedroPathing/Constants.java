@@ -54,8 +54,8 @@ public class Constants {
                     .useBrakeModeInTeleOp(true);
 
             public static PinpointConstants LOCALIZER_CONSTANTS = new PinpointConstants()
-                    .forwardPodY(-5.5)
-                    .strafePodX(7)
+                    .forwardPodY(7)
+                    .strafePodX(-5.5)
                     .distanceUnit(DistanceUnit.INCH)
                     .hardwareMapName(Hardware.PINPOINT_LOCALIZER)
                     .encoderResolution(

@@ -12,7 +12,9 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.commands.AlignToAprilTagCommand;
 import org.firstinspires.ftc.teamcode.commands.FollowPathCommand;
@@ -31,6 +33,8 @@ public class RobotContainer {
     private final IntakeSubsystem intake;
     private final ShooterSubsystem shooter;
     private final VisionSubsystem vision;
+    private final IMU imu;
+
 
     Pose startPose = new Pose(0, 0, Math.toRadians(-60));
     Pose shootingPose = new Pose(12, 60, Math.toRadians(90));
@@ -42,9 +46,19 @@ public class RobotContainer {
         shooter = new ShooterSubsystem(hardwareMap, telemetry);
         vision = new VisionSubsystem(hardwareMap, telemetry);
 
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        IMU.Parameters myIMUparameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                )
+        );
+
+        imu.initialize(myIMUparameters);
 
         if (driver != null) {
-            drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver));
+            drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver, imu));
 
             new GamepadButton(driver, GamepadKeys.Button.Y)
                     .whileHeld(new AlignToAprilTagCommand(drivetrain, vision,shooter, telemetry));
