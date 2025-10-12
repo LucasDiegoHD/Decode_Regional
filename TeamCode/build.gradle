@@ -7,22 +7,49 @@
 // the build definitions, you can place those customizations in this file, but
 // please think carefully as to whether such customizations are really necessary
 // before doing so.
+//
 
+// ============================================================================
+// ✅ Custom FTC TeamCode Build Configuration
+// ============================================================================
 
-// Custom definitions may go here
-
-// Include common definitions from above.
+// Inclui definições padrão do SDK FTC
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+// ----------------------------------------------------------------------------
+// Configurações específicas do módulo TeamCode
+// ----------------------------------------------------------------------------
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
+    // Corrige empacotamento de bibliotecas JNI (necessário para Dashboard e KoalaLog)
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
 }
 
+// ----------------------------------------------------------------------------
+// Dependências adicionais para o módulo TeamCode
+// ----------------------------------------------------------------------------
+repositories {
+    mavenCentral()
+    google()
+    maven { url 'https://jitpack.io' }          // Necessário para KoalaLog
+    maven { url = 'https://maven.brott.dev/' }  // Necessário para RoadRunner / PedroPathing
+}
+
 dependencies {
+    // Dependência base do SDK FTC
     implementation project(':FtcRobotController')
+
+    // FTC Dashboard (para visualização e telemetria)
+    implementation('com.acmerobotics.dashboard:dashboard:0.5.0') {
+        exclude group: 'org.firstinspires.ftc'
+    }
+
+    // KoalaLog (para logs compatíveis com AdvantageScope)
+    // ⚠️ Substitua <version> pela versão atual listada no GitHub (ex: 1.0.1)
+    implementation 'com.github.ori-coval.Koala-Log:KoalaLogger:1.4.0'
+    annotationProcessor 'com.github.ori-coval.Koala-Log:KoalaLoggingProcessor:1.4.0'
 }

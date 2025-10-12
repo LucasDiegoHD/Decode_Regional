@@ -17,7 +17,9 @@ import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import Ori.Coval.Logging.AutoLog;
 
+@AutoLog
 @Configurable
 public class ShooterSubsystem extends SubsystemBase {
 
