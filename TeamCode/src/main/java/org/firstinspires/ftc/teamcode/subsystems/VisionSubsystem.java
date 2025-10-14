@@ -14,19 +14,12 @@ public class VisionSubsystem extends SubsystemBase {
     private final TelemetryManager telemetry;
 
     public VisionSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
-
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.start(); // Inicia a coleta de dados da câmera
-        limelight.pipelineSwitch(0);
         this.telemetry = telemetry;
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.start();
+        limelight.pipelineSwitch(0);
     }
 
-    /**
-     * Retorna o desvio horizontal (ângulo) do alvo em graus.
-     * Valor negativo significa que o alvo está à esquerda, positivo à direita.
-     *
-     * @return um Optional contendo o valor de 'tx', ou vazio se nenhum alvo for válido.
-     */
     public Optional<Double> getTargetTx() {
         if (hasTarget()) {
             return Optional.of(latestResult.getTx());
@@ -34,12 +27,6 @@ public class VisionSubsystem extends SubsystemBase {
         return Optional.empty();
     }
 
-    /**
-     * Retorna o desvio vertical (ângulo) do alvo em graus.
-     * Pode ser usado como um indicador de distância.
-     *
-     * @return um Optional contendo o valor de 'ty', ou vazio se nenhum alvo for válido.
-     */
     public Optional<Double> getTargetTy() {
         if (hasTarget()) {
             return Optional.of(latestResult.getTy());
@@ -47,12 +34,6 @@ public class VisionSubsystem extends SubsystemBase {
         return Optional.empty();
     }
 
-    /**
-     * Retorna o desvio vertical (ângulo) do alvo em graus.
-     * Pode ser usado como um indicador de distância.
-     *
-     * @return um Optional contendo o valor de 'ty', ou vazio se nenhum alvo for válido.
-     */
     public Optional<Double> getTargetTa() {
         if (hasTarget()) {
             return Optional.of(latestResult.getTa());
@@ -60,14 +41,53 @@ public class VisionSubsystem extends SubsystemBase {
         return Optional.empty();
     }
 
-    /**
-     * Verifica se a Limelight tem um alvo válido.
-     *
-     * @return true se um alvo válido for detectado, false caso contrário.
-     */
     public boolean hasTarget() {
         return latestResult != null && latestResult.isValid();
     }
+
+    /**
+     * Calcula a distância HORIZONTAL (no chão) até o alvo.
+     * Ideal para a maioria das interpolações.
+     * @return um Optional<Double> contendo a distância em polegadas.
+     */
+    public Optional<Double> getHorizontalDistanceToTarget() {
+        if (!hasTarget()) {
+            return Optional.empty();
+        }
+
+        double ty = latestResult.getTy();
+        double totalAngleRadians = Math.toRadians(VisionConstants.CAMERA_PITCH_DEGREES + ty);
+
+        if (Math.tan(totalAngleRadians) == 0) {
+            return Optional.empty();
+        }
+
+        double distance = (VisionConstants.TARGET_HEIGHT_INCHES - VisionConstants.CAMERA_HEIGHT_INCHES) / Math.tan(totalAngleRadians);
+
+        return Optional.of(distance);
+    }
+
+    /**
+     * Calcula a distância DIRETA (hipotenusa) da câmara até o alvo.
+     * @return um Optional<Double> contendo a distância em polegadas.
+     */
+    public Optional<Double> getDirectDistanceToTarget() {
+        if (!hasTarget()) {
+            return Optional.empty();
+        }
+
+        double ty = latestResult.getTy();
+        double totalAngleRadians = Math.toRadians(VisionConstants.CAMERA_PITCH_DEGREES + ty);
+        
+        if (Math.sin(totalAngleRadians) == 0) {
+            return Optional.empty();
+        }
+
+        double distance = (VisionConstants.TARGET_HEIGHT_INCHES - VisionConstants.CAMERA_HEIGHT_INCHES) / Math.sin(totalAngleRadians);
+
+        return Optional.of(Math.abs(distance));
+    }
+
 
     @Override
     public void periodic() {
@@ -78,8 +98,17 @@ public class VisionSubsystem extends SubsystemBase {
             telemetry.addData("LL tx", latestResult.getTx());
             telemetry.addData("LL ty", latestResult.getTy());
             telemetry.addData("LL ta", latestResult.getTa());
+
+            getHorizontalDistanceToTarget().ifPresent(distance -> {
+                telemetry.addData("Distância Horizontal (pol)", distance);
+            });
+            getDirectDistanceToTarget().ifPresent(distance -> {
+                telemetry.addData("Distância Direta (Hipotenusa)", distance);
+            });
+
         } else {
             telemetry.addLine("LL sem resultado");
         }
     }
 }
+
