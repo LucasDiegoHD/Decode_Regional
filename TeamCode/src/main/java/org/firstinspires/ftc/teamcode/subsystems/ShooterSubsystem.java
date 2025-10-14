@@ -95,15 +95,15 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public double getCurrentVelocity() {
-        return rshooterMotor.getVelocity();
+        return (ticksPerSecondToRPM(rshooterMotor.getVelocity()+lshooterMotor.getVelocity()));
     }
 
     @Override
     public void periodic() {
         pidfController.setPIDF(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD, ShooterConstants.kF);
+        double power = pidfController.calculate(getCurrentVelocity(), targetVelocity);
 
         if (targetVelocity != 0) {
-            double power = pidfController.calculate(getCurrentVelocity(), targetVelocity);
             lshooterMotor.setPower(power);
             rshooterMotor.setPower(power);
         } else {
@@ -115,6 +115,7 @@ public class ShooterSubsystem extends SubsystemBase {
         telemetry.addData("Shooter R Velocity", ticksPerSecondToRPM(rshooterMotor.getVelocity()));
         telemetry.addData("Shooter R Current",rshooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
         telemetry.addData("Target Velocity", targetVelocity);
+        telemetry.addData("Power",power);
         telemetry.addData("Hood Position", hoodServo.getPosition());
         telemetry.addData("Battery Voltage", getBatteryVoltage());
     }

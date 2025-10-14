@@ -39,18 +39,4 @@ public class ShootCommand extends CommandBase {
         }
     }
 
-    @Override
-    public boolean isFinished() {
-        if (action == Action.STOP) {
-            return true;
-        }
-        return shooter.atTargetVelocity(ShooterConstants.VELOCITY_TOLERANCE);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        if (interrupted && action == Action.SPIN_UP) {
-            shooter.stop();
-        }
-    }
 }
