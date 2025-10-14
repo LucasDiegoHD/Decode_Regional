@@ -66,7 +66,7 @@ public class AlignToAprilTagCommand extends CommandBase {
         double hoodPosition = ShooterConstants.MINIMUM_HOOD +(ShooterConstants.MAXIMUM_HOOD-ShooterConstants.MINIMUM_HOOD) *
                 ((VisionConstants.MAXIMUM_TA-vision.getTargetTa().orElse(0.0))/(VisionConstants.MAXIMUM_TA-VisionConstants.MINIMUM_TA));
 
-        shooter.setHoodPosition(hoodPosition);
+        //shooter.setHoodPosition(hoodPosition);
         telemetry.addData("Hood Setting",hoodPosition);
     }
 

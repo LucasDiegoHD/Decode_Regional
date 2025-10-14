@@ -30,6 +30,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final TelemetryManager telemetry;
     private double targetVelocity = 0.0;
 
+    private double voltage = 0.0;
+
     public ShooterSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         this.telemetry = telemetry;
         rshooterMotor = hardwareMap.get(DcMotorEx.class, ShooterConstants.RSHOOTER_MOTOR_NAME);
@@ -46,7 +48,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
         pidfController = new PIDFController(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD, ShooterConstants.kF);
 
-        // Define uma posição inicial segura para o servo.
         setHoodPosition(ShooterConstants.MAXIMUM_HOOD);
     }
 
@@ -62,19 +63,29 @@ public class ShooterSubsystem extends SubsystemBase {
         return myControlHubVoltageSensor.getVoltage();
 
     }
+    private void reloadShooterVoltage(){
+        double power = (voltage+0.9)/getBatteryVoltage();
+        lshooterMotor.setPower(power);
+        rshooterMotor.setPower(power);
+    }
+    public void setShooterVoltage(double voltage){
+        this.voltage = voltage;
+
+    }
     public void increaseHoodPosition(){
-        setHoodPosition(hoodServo.getPosition()+0.05);
+        setHoodPosition(hoodServo.getPosition()+0.1);
 
     }
     public void decreaseHoodPosition(){
-        setHoodPosition(hoodServo.getPosition()-0.05);
+        setHoodPosition(hoodServo.getPosition()-0.1);
 
     }
-    public void setTargetVelocity(double velocity) {
-        this.targetVelocity = velocity;
+    public void setTargetVelocity() {
+        this.targetVelocity = ShooterConstants.TARGET_VELOCITY;
     }
 
     public void stop() {
+        targetVelocity = 0;
         rshooterMotor.setPower(0);
         lshooterMotor.setPower(0);
     }
@@ -89,16 +100,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        /*pidfController.setPIDF(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD, Constants.Shooter.kF);
+        pidfController.setPIDF(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD, ShooterConstants.kF);
 
         if (targetVelocity != 0) {
             double power = pidfController.calculate(getCurrentVelocity(), targetVelocity);
-            shooterMotor.setPower(power);
+            lshooterMotor.setPower(power);
+            rshooterMotor.setPower(power);
         } else {
-            shooterMotor.setPower(0);
+            lshooterMotor.setPower(0);
+            rshooterMotor.setPower(0);
         }
-*/
-
         telemetry.addData("Shooter L Velocity", ticksPerSecondToRPM(lshooterMotor.getVelocity()));
         telemetry.addData("Shooter L Current",lshooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
         telemetry.addData("Shooter R Velocity", ticksPerSecondToRPM(rshooterMotor.getVelocity()));
@@ -123,7 +134,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void spin() {
-        rshooterMotor.setPower(1.0);
-        lshooterMotor.setPower(1.0);
+        rshooterMotor.setPower(0.75);
+        lshooterMotor.setPower(0.75);
     }
 }

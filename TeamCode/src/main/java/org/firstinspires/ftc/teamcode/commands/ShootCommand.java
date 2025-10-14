@@ -31,7 +31,7 @@ public class ShootCommand extends CommandBase {
     public void initialize() {
         switch (action) {
             case SPIN_UP:
-                shooter.setTargetVelocity(targetVelocity);
+                shooter.setTargetVelocity();
                 break;
             case STOP:
                 shooter.stop();

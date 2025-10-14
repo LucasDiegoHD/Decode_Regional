@@ -62,7 +62,7 @@ public class VisionSubsystem extends SubsystemBase {
             return Optional.empty();
         }
 
-        double distance = (VisionConstants.TARGET_HEIGHT_INCHES - VisionConstants.CAMERA_HEIGHT_INCHES) / Math.tan(totalAngleRadians);
+        double distance = (VisionConstants.TARGET_HEIGHT_METERS - VisionConstants.CAMERA_HEIGHT_METERS) / Math.tan(totalAngleRadians);
 
         return Optional.of(distance);
     }
@@ -83,7 +83,7 @@ public class VisionSubsystem extends SubsystemBase {
             return Optional.empty();
         }
 
-        double distance = (VisionConstants.TARGET_HEIGHT_INCHES - VisionConstants.CAMERA_HEIGHT_INCHES) / Math.sin(totalAngleRadians);
+        double distance = (VisionConstants.TARGET_HEIGHT_METERS - VisionConstants.CAMERA_HEIGHT_METERS) / Math.sin(totalAngleRadians);
 
         return Optional.of(Math.abs(distance));
     }
@@ -100,7 +100,7 @@ public class VisionSubsystem extends SubsystemBase {
             telemetry.addData("LL ta", latestResult.getTa());
 
             getHorizontalDistanceToTarget().ifPresent(distance -> {
-                telemetry.addData("Distância Horizontal (pol)", distance);
+                telemetry.addData("Distância Horizontal (M)", distance);
             });
             getDirectDistanceToTarget().ifPresent(distance -> {
                 telemetry.addData("Distância Direta (Hipotenusa)", distance);

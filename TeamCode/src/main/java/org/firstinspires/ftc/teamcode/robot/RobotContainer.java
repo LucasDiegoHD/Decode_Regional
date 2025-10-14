@@ -104,7 +104,7 @@ public class RobotContainer {
                 .whenPressed(new InstantCommand(shooter::increaseHoodPosition, shooter));
 
         new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(new InstantCommand(shooter::spin, shooter));
+                .whenPressed(new InstantCommand(() -> shooter.setShooterVoltage(10), shooter));
         new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(shooter::stop,shooter));
         new GamepadButton(operator, GamepadKeys.Button.Y)
