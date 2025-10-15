@@ -25,9 +25,9 @@ public class AutoSimples extends CommandOpMode {
         robot = new RobotContainer(hardwareMap, telemetryM, null, null);
 
         // Pega o NOVO comando que criamos para atirar 3
-        autonomousCommand = robot.getShootThreeAutoCommand();
+        //autonomousCommand = robot.getShootThreeAutoCommand();
 
         // Agenda o comando para ser executado após o START
-        schedule(autonomousCommand);
+        //schedule(autonomousCommand);
     }
 }

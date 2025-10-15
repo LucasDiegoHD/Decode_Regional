@@ -1,141 +1,126 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.controller.PIDFController;
-import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.commands.ShootCommand;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-
-@Configurable
 public class ShooterSubsystem extends SubsystemBase {
 
-    private final DcMotorEx rshooterMotor;
-    private final DcMotorEx lshooterMotor;
-    private VoltageSensor myControlHubVoltageSensor;
-
-    private final Servo hoodServo;
-    private final PIDFController pidfController;
+    private final DcMotorEx rShooterMotor;
+    private final DcMotorEx lShooterMotor;
+    private final VoltageSensor voltageSensor;
     private final TelemetryManager telemetry;
-    private double targetVelocity = 0.0;
+    private final Servo hoodServo;
 
-    private double voltage = 0.0;
+    private double targetRPM = 0.0;
+    private double lastError = 0.0;
+    private double integralSum = 0.0;
+    private long lastTime = System.nanoTime();
+
+    // Valores de posição do hood
+    private double hoodPosition = 0.5; // posição inicial (0.0 - 1.0)
+    private static final double HOOD_INCREMENT = 0.02; // passo de ajuste
 
     public ShooterSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         this.telemetry = telemetry;
-        rshooterMotor = hardwareMap.get(DcMotorEx.class, ShooterConstants.RSHOOTER_MOTOR_NAME);
-        lshooterMotor = hardwareMap.get(DcMotorEx.class, ShooterConstants.LSHOOTER_MOTOR_NAME);
+        rShooterMotor = hardwareMap.get(DcMotorEx.class, ShooterConstants.RSHOOTER_MOTOR_NAME);
+        lShooterMotor = hardwareMap.get(DcMotorEx.class, ShooterConstants.LSHOOTER_MOTOR_NAME);
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
         hoodServo = hardwareMap.get(Servo.class, ShooterConstants.HOOD_SERVO_NAME);
-        rshooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rshooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rshooterMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        lshooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lshooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lshooterMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        rshooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        myControlHubVoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
+        rShooterMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lShooterMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        pidfController = new PIDFController(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD, ShooterConstants.kF);
+        rShooterMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        lShooterMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        rShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        setHoodPosition(ShooterConstants.MAXIMUM_HOOD);
+        // Inicializa o hood na posição padrão
+        hoodServo.setPosition(hoodPosition);
     }
 
-    /**
-     * Define a posição do servo do capuz do shooter.
-     * @param position O valor do servo entre 0.0 e 1.0.
-     */
-    public void setHoodPosition(double position) {
-        position = Math.max(Math.min(position,ShooterConstants.MAXIMUM_HOOD),ShooterConstants.MINIMUM_HOOD);
-        hoodServo.setPosition(position);
-    }
-    public double getBatteryVoltage() {
-        return myControlHubVoltageSensor.getVoltage();
-
-    }
-    private void reloadShooterVoltage(){
-        double power = (voltage+0.9)/getBatteryVoltage();
-        lshooterMotor.setPower(power);
-        rshooterMotor.setPower(power);
-    }
-    public void setShooterVoltage(double voltage){
-        this.voltage = voltage;
-
-    }
-    public void increaseHoodPosition(){
-        setHoodPosition(hoodServo.getPosition()+0.1);
-
-    }
-    public void decreaseHoodPosition(){
-        setHoodPosition(hoodServo.getPosition()-0.1);
-
-    }
-    public void setTargetVelocity() {
-        this.targetVelocity = ShooterConstants.TARGET_VELOCITY;
+    /** Define a velocidade alvo do shooter em RPM */
+    public void setTargetVelocity(double rpm) {
+        targetRPM = Math.max(0, rpm);
+        integralSum = 0; // evita acúmulo quando muda o setpoint
     }
 
+    /** Para completamente o shooter */
     public void stop() {
-        targetVelocity = 0;
-        rshooterMotor.setPower(0);
-        lshooterMotor.setPower(0);
+        targetRPM = 0;
+        rShooterMotor.setPower(0);
+        lShooterMotor.setPower(0);
     }
 
-    public boolean atTargetVelocity(double tolerance) {
-        return Math.abs(getCurrentVelocity() - targetVelocity) < tolerance;
+    /** Aumenta o ângulo do hood */
+    public void increaseHood() {
+        hoodPosition = Math.min(1.0, hoodPosition + HOOD_INCREMENT);
+        hoodServo.setPosition(hoodPosition);
     }
 
-    public double getCurrentVelocity() {
-        return (ticksPerSecondToRPM(rshooterMotor.getVelocity()+lshooterMotor.getVelocity()));
+    /** Diminui o ângulo do hood */
+    public void decreaseHood() {
+        hoodPosition = Math.max(0.0, hoodPosition - HOOD_INCREMENT);
+        hoodServo.setPosition(hoodPosition);
+    }
+
+    /** Obtém o RPM médio atual dos motores do shooter */
+    private double getCurrentRPM() {
+        double ticksPerSecond = (rShooterMotor.getVelocity() + lShooterMotor.getVelocity()) / 2.0;
+        return (ticksPerSecond / ShooterConstants.TICKS_PER_REV) * 60.0;
+    }
+    //private double RPMToTicks(double )
+
+    /** Calcula o PIDF e retorna o valor de potência ajustado */
+    private double pidfCalculate(double currentRPM) {
+        double error = targetRPM - currentRPM;
+        double deltaTime = (System.nanoTime() - lastTime) / 1e9;
+        lastTime = System.nanoTime();
+
+        if (deltaTime <= 0) deltaTime = 1e-3;
+
+        integralSum += error * deltaTime;
+        double derivative = (error - lastError) / deltaTime;
+        lastError = error;
+
+        double pTerm = ShooterConstants.kP * error;
+        double iTerm = ShooterConstants.kI * integralSum;
+        double dTerm = ShooterConstants.kD * derivative;
+
+        // Feedforward ajustado pela voltagem
+        double voltageComp = 12.0 / voltageSensor.getVoltage();
+        double fTerm = ShooterConstants.kF * targetRPM * voltageComp;
+
+        double output = pTerm + iTerm + dTerm + fTerm;
+        return Math.max(0, output);
     }
 
     @Override
     public void periodic() {
-        pidfController.setPIDF(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD, ShooterConstants.kF);
-        double power = pidfController.calculate(getCurrentVelocity(), targetVelocity);
+        double currentRPM = getCurrentRPM();
+        double power = 0;
 
-        if (targetVelocity != 0) {
-            lshooterMotor.setPower(power);
-            rshooterMotor.setPower(power);
+        if (targetRPM > 0) {
+            power = pidfCalculate(currentRPM);
+            rShooterMotor.setPower(power);
+            lShooterMotor.setPower(power);
         } else {
-            lshooterMotor.setPower(0);
-            rshooterMotor.setPower(0);
+            rShooterMotor.setPower(0);
+            lShooterMotor.setPower(0);
         }
-        telemetry.addData("Shooter L Velocity", ticksPerSecondToRPM(lshooterMotor.getVelocity()));
-        telemetry.addData("Shooter L Current",lshooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
-        telemetry.addData("Shooter R Velocity", ticksPerSecondToRPM(rshooterMotor.getVelocity()));
-        telemetry.addData("Shooter R Current",rshooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
-        telemetry.addData("Target Velocity", targetVelocity);
-        telemetry.addData("Power",power);
-        telemetry.addData("Hood Position", hoodServo.getPosition());
-        telemetry.addData("Battery Voltage", getBatteryVoltage());
-    }
 
-    // --- FÁBRICAS DE COMANDOS ---
-    public Command spinUpCommand() {
-        return new ShootCommand(this, ShootCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY);
-    }
-    double radiansPerSecondToRPM(double rps){
-        return rps * 60/(2*Math.PI);
-    }
-    double ticksPerSecondToRPM(double tps){
-        return (tps/28)*60;
-    }
-    public Command stopCommand() {
-        return new ShootCommand(this, ShootCommand.Action.STOP);
-    }
-
-    public void spin() {
-        rshooterMotor.setPower(0.75);
-        lshooterMotor.setPower(0.75);
+        telemetry.addData("Shooter Target RPM", targetRPM);
+        telemetry.addData("Shooter Current RPM", currentRPM);
+        telemetry.addData("Shooter Power", power);
+        telemetry.addData("Shooter Error", targetRPM - currentRPM);
+        telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
+        telemetry.addData("L Motor Current", lShooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetry.addData("R Motor Current", rShooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetry.addData("Hood Position", hoodPosition);
     }
 }
