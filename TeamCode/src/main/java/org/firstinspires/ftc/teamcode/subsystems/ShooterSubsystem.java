@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.bylazar.telemetry.TelemetryManager;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -23,9 +22,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private double integralSum = 0.0;
     private long lastTime = System.nanoTime();
 
-    // Valores de posição do hood
-    private double hoodPosition = 0.5; // posição inicial (0.0 - 1.0)
-    private static final double HOOD_INCREMENT = 0.02; // passo de ajuste
+    private double hoodPosition = 0.5;
+    private static final double HOOD_INCREMENT = 0.02;
 
     public ShooterSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         this.telemetry = telemetry;
@@ -33,50 +31,66 @@ public class ShooterSubsystem extends SubsystemBase {
         lShooterMotor = hardwareMap.get(DcMotorEx.class, ShooterConstants.LSHOOTER_MOTOR_NAME);
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         hoodServo = hardwareMap.get(Servo.class, ShooterConstants.HOOD_SERVO_NAME);
-        rShooterMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lShooterMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
         rShooterMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         lShooterMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // Inicializa o hood na posição padrão
         hoodServo.setPosition(hoodPosition);
     }
 
-    /** Define a velocidade alvo do shooter em RPM */
     public void setTargetVelocity(double rpm) {
         targetRPM = Math.max(0, rpm);
-        integralSum = 0; // evita acúmulo quando muda o setpoint
+        integralSum = 0;
     }
 
-    /** Para completamente o shooter */
     public void stop() {
         targetRPM = 0;
-        rShooterMotor.setPower(0);
-        lShooterMotor.setPower(0);
     }
 
-    /** Aumenta o ângulo do hood */
     public void increaseHood() {
-        hoodPosition = Math.min(1.0, hoodPosition + HOOD_INCREMENT);
+        hoodPosition = Math.min(ShooterConstants.MAXIMUM_HOOD, hoodPosition + HOOD_INCREMENT);
         hoodServo.setPosition(hoodPosition);
     }
 
-    /** Diminui o ângulo do hood */
     public void decreaseHood() {
-        hoodPosition = Math.max(0.0, hoodPosition - HOOD_INCREMENT);
+        hoodPosition = Math.max(ShooterConstants.MINIMUM_HOOD, hoodPosition - HOOD_INCREMENT);
         hoodServo.setPosition(hoodPosition);
     }
 
-    /** Obtém o RPM médio atual dos motores do shooter */
+    /**
+     * ADICIONADO: Define a posição do hood para um valor absoluto.
+     * Essencial para a mira automática.
+     * @param position A posição do servo (0.0 a 1.0), que será limitada pelos valores MIN/MAX.
+     */
+    public void setHoodPosition(double position) {
+        hoodPosition = Math.max(ShooterConstants.MINIMUM_HOOD, Math.min(ShooterConstants.MAXIMUM_HOOD, position));
+        hoodServo.setPosition(hoodPosition);
+    }
+
+    /**
+     * ADICIONADO: Expõe o RPM alvo atual.
+     * Essencial para o OpMode de afinação e para a telemetria.
+     * @return O RPM alvo atual.
+     */
+    public double getTargetRPM() {
+        return targetRPM;
+    }
+
+    /**
+     * ADICIONADO: Verifica se o shooter atingiu a velocidade alvo.
+     * Essencial para os comandos de autônomo saberem quando podem lançar.
+     * @return true se a velocidade atual estiver dentro da tolerância definida.
+     */
+    public boolean atTargetVelocity() {
+        return Math.abs(getCurrentRPM() - targetRPM) < ShooterConstants.VELOCITY_TOLERANCE;
+    }
+
     private double getCurrentRPM() {
         double ticksPerSecond = (rShooterMotor.getVelocity() + lShooterMotor.getVelocity()) / 2.0;
         return (ticksPerSecond / ShooterConstants.TICKS_PER_REV) * 60.0;
     }
-    //private double RPMToTicks(double )
 
-    /** Calcula o PIDF e retorna o valor de potência ajustado */
     private double pidfCalculate(double currentRPM) {
         double error = targetRPM - currentRPM;
         double deltaTime = (System.nanoTime() - lastTime) / 1e9;
@@ -92,7 +106,6 @@ public class ShooterSubsystem extends SubsystemBase {
         double iTerm = ShooterConstants.kI * integralSum;
         double dTerm = ShooterConstants.kD * derivative;
 
-        // Feedforward ajustado pela voltagem
         double voltageComp = 12.0 / voltageSensor.getVoltage();
         double fTerm = ShooterConstants.kF * targetRPM * voltageComp;
 
@@ -124,3 +137,4 @@ public class ShooterSubsystem extends SubsystemBase {
         telemetry.addData("Hood Position", hoodPosition);
     }
 }
+

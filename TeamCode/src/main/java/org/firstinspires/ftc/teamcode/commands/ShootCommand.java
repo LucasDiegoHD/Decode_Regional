@@ -7,7 +7,7 @@ public class ShootCommand extends CommandBase {
 
     private final ShooterSubsystem shooter;
     private final Action action;
-    private final double targetVelocity; // Velocidade (RPM) que será usada
+    private final double targetVelocity;
 
     public enum Action {
         SPIN_UP,
@@ -22,7 +22,6 @@ public class ShootCommand extends CommandBase {
     }
 
     public ShootCommand(ShooterSubsystem shooter, Action action) {
-        // Construtor para comandos que não precisam de uma velocidade (ex: STOP)
         this(shooter, action, 0);
     }
 
@@ -41,9 +40,6 @@ public class ShootCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        // O comando de "SPIN_UP" deve rodar até ser interrompido (ex: pela próxima ação do jogador)
-        // Se você quiser esperar até o shooter atingir a velocidade, a lógica seria adicionada aqui.
-        // Por enquanto, ele roda indefinidamente até que um novo comando tome o shooter.
         return action == Action.STOP;
     }
 }
