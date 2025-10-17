@@ -49,8 +49,4 @@ public class TeleOpDriveCommand extends CommandBase {
         );
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
 }

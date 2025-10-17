@@ -1,49 +1,48 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.pedropathing.util.Timer;
+
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 
 public class ShootCommand extends CommandBase {
 
     private final ShooterSubsystem shooter;
-    private final Action action;
-    private final double targetVelocity; // Velocidade (RPM) que será usada
+    private final IntakeSubsystem intake;
+    private final Timer timer = new Timer();
 
-    public enum Action {
-        SPIN_UP,
-        STOP
-    }
-
-    public ShootCommand(ShooterSubsystem shooter, Action action, double targetVelocity) {
+    public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake) {
         this.shooter = shooter;
-        this.action = action;
-        this.targetVelocity = targetVelocity;
-        addRequirements(shooter);
-    }
-
-    public ShootCommand(ShooterSubsystem shooter, Action action) {
-        // Construtor para comandos que não precisam de uma velocidade (ex: STOP)
-        this(shooter, action, 0);
+        this.intake = intake;
+        timer.resetTimer();
+        addRequirements(shooter, intake);
     }
 
     @Override
     public void initialize() {
-        switch (action) {
-            case SPIN_UP:
-                // CORREÇÃO: Passa o targetVelocity (RPM) para o subsistema
-                shooter.setTargetVelocity(targetVelocity);
-                break;
-            case STOP:
-                shooter.stop();
-                break;
+        intake.run();
+        timer.resetTimer();
+    }
+    @Override
+    public void execute() {
+        if(timer.getElapsedTime()> ShooterConstants.INTAKE_TIMER_TO_SHOOT) {
+            intake.stop();
+            if (shooter.getShooterAtTarget()) {
+                intake.runTrigger();
+            } else {
+                intake.stopTrigger();
+                timer.resetTimer();
+            }
+        }
+        else{
+            intake.run();
         }
     }
-
     @Override
-    public boolean isFinished() {
-        // O comando de "SPIN_UP" deve rodar até ser interrompido (ex: pela próxima ação do jogador)
-        // Se você quiser esperar até o shooter atingir a velocidade, a lógica seria adicionada aqui.
-        // Por enquanto, ele roda indefinidamente até que um novo comando tome o shooter.
-        return action == Action.STOP;
+    public void end(boolean interrupted){
+        intake.stopTrigger();
+        intake.stop();
     }
 }

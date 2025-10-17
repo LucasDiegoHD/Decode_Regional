@@ -25,7 +25,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Valores de posição do hood
     private double hoodPosition = 0.5; // posição inicial (0.0 - 1.0)
-    private static final double HOOD_INCREMENT = 0.02; // passo de ajuste
 
     public ShooterSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         this.telemetry = telemetry;
@@ -63,13 +62,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Aumenta o ângulo do hood */
     public void increaseHood() {
-        hoodPosition = Math.min(1.0, hoodPosition + HOOD_INCREMENT);
+        hoodPosition = Math.min(1.0, hoodPosition + ShooterConstants.HOOD_INCREMENT);
         hoodServo.setPosition(hoodPosition);
     }
 
     /** Diminui o ângulo do hood */
     public void decreaseHood() {
-        hoodPosition = Math.max(0.0, hoodPosition - HOOD_INCREMENT);
+        hoodPosition = Math.max(0.0, hoodPosition - ShooterConstants.HOOD_INCREMENT);
         hoodServo.setPosition(hoodPosition);
     }
 
@@ -81,48 +80,16 @@ public class ShooterSubsystem extends SubsystemBase {
     private int RPMToTicks(double rpm ){
         return (int) ((rpm/60.0)*ShooterConstants.TICKS_PER_REV);
     }
-
-    /** Calcula o PIDF e retorna o valor de potência ajustado */
-    private double pidfCalculate(double currentRPM) {
-        double error = targetRPM - currentRPM;
-        double deltaTime = (System.nanoTime() - lastTime) / 1e9;
-        lastTime = System.nanoTime();
-
-        if (deltaTime <= 0) deltaTime = 1e-3;
-
-        integralSum += error * deltaTime;
-        double derivative = (error - lastError) / deltaTime;
-        lastError = error;
-
-        double pTerm = ShooterConstants.kP * error;
-        double iTerm = ShooterConstants.kI * integralSum;
-        double dTerm = ShooterConstants.kD * derivative;
-
-        // Feedforward ajustado pela voltagem
-        double voltageComp = 12.0 / voltageSensor.getVoltage();
-        double fTerm = ShooterConstants.kF * targetRPM * voltageComp;
-
-        double output = pTerm + iTerm + dTerm + fTerm;
-        return Math.max(0, output);
+    public boolean getShooterAtTarget(){
+        return Math.abs(getCurrentRPM() - targetRPM) < ShooterConstants.VELOCITY_TOLERANCE;
     }
+
 
     @Override
     public void periodic() {
-        /*double currentRPM = getCurrentRPM();
-        double power = 0;
-
-        if (targetRPM > 0) {
-            power = pidfCalculate(currentRPM);
-            rShooterMotor.setPower(power);
-            lShooterMotor.setPower(power);
-        } else {
-            rShooterMotor.setPower(0);
-            lShooterMotor.setPower(0);
-        }*/
-
+        telemetry.addData("Shooter at target", getShooterAtTarget());
         telemetry.addData("Shooter Target RPM", targetRPM);
         telemetry.addData("Shooter Current RPM", getCurrentRPM());
-        //telemetry.addData("Shooter Power", power);
         telemetry.addData("Shooter Error", targetRPM - getCurrentRPM());
         telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
         telemetry.addData("L Motor Current", lShooterMotor.getCurrent(CurrentUnit.MILLIAMPS));

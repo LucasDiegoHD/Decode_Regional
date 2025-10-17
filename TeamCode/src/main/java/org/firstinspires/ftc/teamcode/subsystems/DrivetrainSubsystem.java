@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.bylazar.field.FieldManager;
 import com.bylazar.field.PanelsField;
 import com.bylazar.field.Style;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
@@ -18,8 +19,10 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
 
 public class DrivetrainSubsystem extends SubsystemBase {
     private final Follower follower;
-    public DrivetrainSubsystem(HardwareMap hardwareMap) {
+    private final TelemetryManager telemetry;
+    public DrivetrainSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         follower = Constants.Drivetrain.createFollower(hardwareMap);
+        this.telemetry = telemetry;
         Drawing.init();
     }
 
@@ -32,6 +35,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void periodic() {
 
         follower.update();
+        telemetry.addData("Robot pose",follower.getPose());
         Drawing.drawRobot(follower.getPose());
         Drawing.sendPacket();
 
