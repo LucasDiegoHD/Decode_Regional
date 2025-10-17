@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.bylazar.configurables.annotations.IgnoreConfigurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 
@@ -26,7 +27,9 @@ public class teleop extends CommandOpMode {
         // Passa o hardwareMap, a telemetria e os gamepads para o RobotContainer
         RobotContainer robot = new RobotContainer(hardwareMap, telemetryM, driverGamepad, operatorGamepad);
 
+
     }
+
     @Override
     public void run(){
         CommandScheduler.getInstance().run();

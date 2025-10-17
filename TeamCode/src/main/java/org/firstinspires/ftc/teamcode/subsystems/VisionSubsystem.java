@@ -2,9 +2,13 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+
 import java.util.Optional;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -88,7 +92,18 @@ public class VisionSubsystem extends SubsystemBase {
         return Optional.of(Math.abs(distance));
     }
 
-
+    public Optional<Pose> getRobotPose(double yaw) {
+        limelight.updateRobotOrientation(Math.toDegrees(yaw));
+        latestResult = limelight.getLatestResult();
+        if(!hasTarget()){
+            return Optional.empty();
+        }
+        Pose3D robotPose = latestResult.getBotpose_MT2();
+        if(robotPose == null){
+            return Optional.empty();
+        }
+        return Optional.of(new Pose(robotPose.getPosition().x, robotPose.getPosition().y, Math.toRadians(robotPose.getOrientation().getYaw())));
+    }
     @Override
     public void periodic() {
         latestResult = limelight.getLatestResult();
