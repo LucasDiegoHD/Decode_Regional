@@ -14,7 +14,7 @@ public class ShooterConstants {
         public static double kI = 0.000;
         public static double kD = 0.00001;
         public static double kF = 0;
-        public static double TARGET_VELOCITY = 4300;
+        public static double TARGET_VELOCITY = 4420;
         public static double VELOCITY_TOLERANCE = 100;
         public static double MINIMUM_HOOD = 0.25;
         public static double MAXIMUM_HOOD = 1.0;
