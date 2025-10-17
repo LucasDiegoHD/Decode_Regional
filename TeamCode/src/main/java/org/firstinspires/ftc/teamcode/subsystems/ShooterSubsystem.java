@@ -48,6 +48,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setTargetVelocity(double rpm) {
         targetRPM = Math.max(0, rpm);
         integralSum = 0; // evita acúmulo quando muda o setpoint
+        lShooterMotor.setVelocity(RPMToTicks(rpm));
+        rShooterMotor.setVelocity(RPMToTicks(rpm));
     }
 
     /** Para completamente o shooter */
@@ -55,6 +57,8 @@ public class ShooterSubsystem extends SubsystemBase {
         targetRPM = 0;
         rShooterMotor.setPower(0);
         lShooterMotor.setPower(0);
+        lShooterMotor.setVelocity(0);
+        rShooterMotor.setVelocity(0);
     }
 
     /** Aumenta o ângulo do hood */
@@ -74,7 +78,9 @@ public class ShooterSubsystem extends SubsystemBase {
         double ticksPerSecond = (rShooterMotor.getVelocity() + lShooterMotor.getVelocity()) / 2.0;
         return (ticksPerSecond / ShooterConstants.TICKS_PER_REV) * 60.0;
     }
-    //private double RPMToTicks(double )
+    private int RPMToTicks(double rpm ){
+        return (int) ((rpm/60.0)*ShooterConstants.TICKS_PER_REV);
+    }
 
     /** Calcula o PIDF e retorna o valor de potência ajustado */
     private double pidfCalculate(double currentRPM) {
@@ -102,7 +108,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        double currentRPM = getCurrentRPM();
+        /*double currentRPM = getCurrentRPM();
         double power = 0;
 
         if (targetRPM > 0) {
@@ -112,12 +118,12 @@ public class ShooterSubsystem extends SubsystemBase {
         } else {
             rShooterMotor.setPower(0);
             lShooterMotor.setPower(0);
-        }
+        }*/
 
         telemetry.addData("Shooter Target RPM", targetRPM);
-        telemetry.addData("Shooter Current RPM", currentRPM);
-        telemetry.addData("Shooter Power", power);
-        telemetry.addData("Shooter Error", targetRPM - currentRPM);
+        telemetry.addData("Shooter Current RPM", getCurrentRPM());
+        //telemetry.addData("Shooter Power", power);
+        telemetry.addData("Shooter Error", targetRPM - getCurrentRPM());
         telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
         telemetry.addData("L Motor Current", lShooterMotor.getCurrent(CurrentUnit.MILLIAMPS));
         telemetry.addData("R Motor Current", rShooterMotor.getCurrent(CurrentUnit.MILLIAMPS));

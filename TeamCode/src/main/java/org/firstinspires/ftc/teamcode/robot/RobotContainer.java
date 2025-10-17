@@ -94,29 +94,29 @@ public class RobotContainer {
 
     private void configureTeleOpBindings(GamepadEx operator, TelemetryManager telemetry) {
 
-        new GamepadButton(operator, GamepadKeys.Button.B)
-                .whenPressed(new ShootCommand(shooter, ShootCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY));
 
 
         new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(new InstantCommand(shooter::decreaseHood, shooter));
-
         new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT)
                 .whenPressed(new InstantCommand(shooter::increaseHood, shooter));
+        new GamepadButton(operator, GamepadKeys.Button.DPAD_UP)
+                .whenPressed(new InstantCommand(intake::runTrigger, intake))
+                .whenReleased(new InstantCommand(intake::stopTrigger, intake));
 
         new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(shooter::stop, shooter));
+
         new GamepadButton(operator, GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(intake::run, intake))
                 .whenReleased(new InstantCommand(intake::stop, intake));
         new GamepadButton(operator, GamepadKeys.Button.A)
                 .whenPressed(new InstantCommand(intake::reverse, intake))
                 .whenReleased(new InstantCommand(intake::stop, intake));
-
-        new GamepadButton(operator, GamepadKeys.Button.DPAD_UP)
-                .whenPressed(new InstantCommand(intake::runTrigger, intake))
-                .whenReleased(new InstantCommand(intake::stopTrigger, intake));
-
+        new GamepadButton(operator, GamepadKeys.Button.B)
+                .whenPressed(new ShootCommand(shooter, ShootCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY));
+        new GamepadButton(operator,GamepadKeys.Button.X)
+                .whenPressed(new InstantCommand(()->shooter.setTargetVelocity(6000),shooter));
     }
 
 }
