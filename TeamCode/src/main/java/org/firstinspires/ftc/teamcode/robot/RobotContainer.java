@@ -49,7 +49,7 @@ public class RobotContainer {
         );
 
         imu.initialize(myIMUparameters);
-        drivetrain.getFollower().setPose(vision.getRobotPose(0).orElse(new Pose()));
+        drivetrain.getFollower().setPose(vision.getRobotPose(Math.PI).orElse(new Pose()));
         if (driver != null) {
             drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver, imu));
 

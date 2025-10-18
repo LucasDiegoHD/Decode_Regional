@@ -24,6 +24,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         follower = Constants.Drivetrain.createFollower(hardwareMap);
         this.telemetry = telemetry;
         Drawing.init();
+        Drawing.drawRobot(follower.getPose());
+        Drawing.sendPacket();
     }
 
 
@@ -54,7 +56,7 @@ class Drawing {
     private static final FieldManager panelsField = PanelsField.INSTANCE.getField();
 
     private static final Style robotLook = new Style(
-            "", "#3F51B5", 0.0
+            "#008000", "#3F51B5", 0.0
     );
     private static final Style historyLook = new Style(
             "", "#4CAF50", 0.0

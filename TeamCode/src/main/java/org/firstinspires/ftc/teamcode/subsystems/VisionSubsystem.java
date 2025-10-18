@@ -17,6 +17,8 @@ public class VisionSubsystem extends SubsystemBase {
     private LLResult latestResult;
     private final TelemetryManager telemetry;
 
+    private static final double INCHES_IN_METER = 39.3701;
+
     public VisionSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         this.telemetry = telemetry;
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -102,7 +104,7 @@ public class VisionSubsystem extends SubsystemBase {
         if(robotPose == null){
             return Optional.empty();
         }
-        return Optional.of(new Pose(robotPose.getPosition().x, robotPose.getPosition().y, Math.toRadians(robotPose.getOrientation().getYaw())));
+        return Optional.of(new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y* INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw())));
     }
     @Override
     public void periodic() {
