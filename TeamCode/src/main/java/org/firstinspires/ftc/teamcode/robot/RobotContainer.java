@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.commands.SpinShooterCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.UpdateLimelightYawCommand;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IndexerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
@@ -27,11 +28,12 @@ public class RobotContainer {
     private final IntakeSubsystem intake;
     private final ShooterSubsystem shooter;
     private final VisionSubsystem vision;
+    private final IndexerSubsystem indexer;
+
     private final IMU imu;
 
 
-    Pose startPose = new Pose(0, 0, Math.toRadians(-60));
-    Pose shootingPose = new Pose(12, 60, Math.toRadians(90));
+    Pose startPose = new Pose(0, 0, Math.toRadians(0));
     Pose parkPose = new Pose(10, 120, Math.toRadians(0));
 
     public RobotContainer(HardwareMap hardwareMap, TelemetryManager telemetry, GamepadEx driver, GamepadEx operator) {
@@ -39,6 +41,7 @@ public class RobotContainer {
         intake = new IntakeSubsystem(hardwareMap);
         shooter = new ShooterSubsystem(hardwareMap, telemetry);
         vision = new VisionSubsystem(hardwareMap, telemetry);
+        indexer = new IndexerSubsystem(hardwareMap, telemetry);
 
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -50,7 +53,7 @@ public class RobotContainer {
         );
 
         imu.initialize(myIMUparameters);
-        drivetrain.getFollower().setPose(vision.getRobotPose(Math.PI).orElse(new Pose(60,14,Math.PI)));
+        drivetrain.getFollower().setPose(vision.getRobotPose(Math.PI).orElse(new Pose(0,0,Math.PI)));
         vision.setDefaultCommand(new UpdateLimelightYawCommand(drivetrain,vision));
         if (driver != null) {
             drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver, imu));
@@ -68,12 +71,12 @@ public class RobotContainer {
 
     private void configureTeleOpBindings(GamepadEx operator, TelemetryManager telemetry) {
 
-
-
         new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(new InstantCommand(shooter::decreaseHood, shooter));
+
         new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT)
                 .whenPressed(new InstantCommand(shooter::increaseHood, shooter));
+
         new GamepadButton(operator, GamepadKeys.Button.DPAD_UP)
                 .whileHeld(new ShootCommand(shooter, intake));
 
@@ -84,11 +87,14 @@ public class RobotContainer {
         new GamepadButton(operator, GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(intake::run, intake))
                 .whenReleased(new InstantCommand(intake::stop, intake));
+
         new GamepadButton(operator, GamepadKeys.Button.A)
                 .whenPressed(new InstantCommand(intake::reverse, intake))
                 .whenReleased(new InstantCommand(intake::stop, intake));
+
         new GamepadButton(operator, GamepadKeys.Button.B)
                 .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.SHORT_SHOOT));
+
         new GamepadButton(operator,GamepadKeys.Button.X)
                 .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.LONG_SHOOT));
     }
