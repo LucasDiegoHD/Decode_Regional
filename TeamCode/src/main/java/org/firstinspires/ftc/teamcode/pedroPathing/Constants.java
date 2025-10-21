@@ -32,8 +32,8 @@ public class Constants {
         public static class PedroPathing {
             public static FollowerConstants FOLLOWER_CONSTANTS = new FollowerConstants()
                     .mass(13)
-                    .forwardZeroPowerAcceleration(-25.138658560079815)
-                    .lateralZeroPowerAcceleration(-78.96531426769552)
+                    .forwardZeroPowerAcceleration(-42.3925338692562)
+                    .lateralZeroPowerAcceleration(-77.71046201171953)
                     .translationalPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0.05, 0))
                     .headingPIDFCoefficients(new PIDFCoefficients(3, 0.1, 0.2, 0))
                     .drivePIDFCoefficients(
@@ -45,18 +45,18 @@ public class Constants {
                     .leftRearMotorName(Hardware.LEFT_REAR_MOTOR)
                     .rightFrontMotorName(Hardware.RIGHT_FRONT_MOTOR)
                     .rightRearMotorName(Hardware.RIGHT_REAR_MOTOR)
-                    .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-                    .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-                    .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-                    .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-                    .xVelocity(82.00584290004647)
-                    .yVelocity(65.006779349307)
+                    .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+                    .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+                    .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+                    .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+                    .xVelocity(65.7032605268824)
+                    .yVelocity(87.5552968037894)
                     .useBrakeModeInTeleOp(true);
 
             public static PinpointConstants LOCALIZER_CONSTANTS = new PinpointConstants()
-                    .forwardPodY(0)
-                    .strafePodX(-5.5)
-                    .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+                    .forwardPodY(-5.5)
+                    .strafePodX(0)
+                    .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
                     .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
                     .distanceUnit(DistanceUnit.INCH)
                     .hardwareMapName(Hardware.PINPOINT_LOCALIZER)
@@ -85,8 +85,6 @@ public class Constants {
         public static Pose SCORING_POSITION = new Pose(48, 72, Math.toRadians(90));
 
         public static boolean isInLaunchTriangle(Pose currentPose) {
-            // Implementação de verificação de área de arremesso, se necessário.
-            // Por enquanto, retorna true para fins de demonstração.
             return true;
         }
     }

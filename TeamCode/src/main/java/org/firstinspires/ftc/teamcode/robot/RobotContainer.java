@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.teamcode.commands.AlignToAprilTagCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.SpinShooterCommand;
+import org.firstinspires.ftc.teamcode.commands.TeleOpDriveAimingCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.UpdateLimelightYawCommand;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
@@ -60,6 +61,9 @@ public class RobotContainer {
 
             new GamepadButton(driver, GamepadKeys.Button.Y)
                     .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, shooter, telemetry));
+
+            new GamepadButton(driver, GamepadKeys.Button.X)
+                    .whileHeld(new TeleOpDriveAimingCommand(drivetrain,driver, imu, 1.5, 1.5));
 
 
         }
