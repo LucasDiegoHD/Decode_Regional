@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -17,6 +21,15 @@ import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
 public class RobotContainer {
+
+    public enum AutonomousRoutine {
+        ALIGN_AND_SHOOT_THREE, // Our new master routine
+        SHOOT_THREE_STATIONARY,
+        DO_NOTHING
+    }
+    // **SELECT YOUR AUTONOMOUS ROUTINE HERE**
+    private final AutonomousRoutine selectedAuto = AutonomousRoutine.ALIGN_AND_SHOOT_THREE;
+
 
     private final DrivetrainSubsystem drivetrain;
     private final IntakeSubsystem intake;
@@ -52,7 +65,6 @@ public class RobotContainer {
             drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver, imu));
         }
 
-        // Configure all button bindings
         configureButtonBindings(operator, driver, telemetry);
     }
 
@@ -61,13 +73,14 @@ public class RobotContainer {
             new GamepadButton(driver, GamepadKeys.Button.Y)
                     .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, shooter, telemetry));
         }
-
         if (operator != null) {
-            // Your original button logic remains unchanged
+
             new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT)
                     .whenPressed(new InstantCommand(shooter::decreaseHood, shooter));
+
             new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT)
                     .whenPressed(new InstantCommand(shooter::increaseHood, shooter));
+
             new GamepadButton(operator, GamepadKeys.Button.DPAD_UP)
                     .whileHeld(new ShootCommand(shooter, intake));
 
@@ -77,14 +90,78 @@ public class RobotContainer {
             new GamepadButton(operator, GamepadKeys.Button.Y)
                     .whenPressed(new InstantCommand(intake::run, intake))
                     .whenReleased(new InstantCommand(intake::stop, intake));
+
             new GamepadButton(operator, GamepadKeys.Button.A)
                     .whenPressed(new InstantCommand(intake::reverse, intake))
                     .whenReleased(new InstantCommand(intake::stop, intake));
+
             new GamepadButton(operator, GamepadKeys.Button.B)
                     .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY_SHORT));
+
             new GamepadButton(operator, GamepadKeys.Button.X)
                     .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY_LONG));
         }
+    }
+    public Command getAutonomousCommand(TelemetryManager telemetry) {
+        indexer.setPieceCount(3);
+
+        switch (selectedAuto) {
+            case ALIGN_AND_SHOOT_THREE:
+                return createAlignAndShootThreeAuto(telemetry);
+            case SHOOT_THREE_STATIONARY:
+                return createShootThreeStationaryAuto();
+            case DO_NOTHING:
+            default:
+                return new InstantCommand();
+        }
+    }
+
+    /**
+     * Creates the master autonomous routine that aligns, revs up based on distance,
+     * waits for confirmation, and fires three pieces.
+     */
+    private Command createAlignAndShootThreeAuto(TelemetryManager telemetry) {
+        return new SequentialCommandGroup(
+                // Step 1: Align to the target. This command also automatically sets the
+                // correct shooter speed and hood angle based on distance.
+                new AlignToAprilTagCommand(drivetrain, vision, shooter, telemetry),
+
+                // Step 2: Wait until the shooter confirms it's at the target speed.
+                new WaitUntilCommand(shooter::getShooterAtTarget).withTimeout(4000),
+
+                // Step 3-5: Fire all three pieces with recovery time in between.
+                fireSequence(),
+                fireSequence(),
+                fireSequence(),
+
+                // Step 6: Clean up.
+                new InstantCommand(shooter::stop, shooter)
+        );
+    }
+
+    private Command createShootThreeStationaryAuto() {
+        return new SequentialCommandGroup(
+                new SpinShooterCommand(shooter, SpinShooterCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY_LONG),
+                new WaitUntilCommand(shooter::getShooterAtTarget).withTimeout(4000),
+                fireSequence(),
+                fireSequence(),
+                fireSequence(),
+                new InstantCommand(shooter::stop, shooter)
+        );
+    }
+
+    /**
+     * Helper method to create a single firing sequence.
+     * This avoids code duplication.
+     */
+    private Command fireSequence() {
+        return new SequentialCommandGroup(
+                new WaitUntilCommand(shooter::getShooterAtTarget).withTimeout(1000),
+                new InstantCommand(intake::runTrigger, intake),
+                new WaitCommand(400),
+                new InstantCommand(intake::stopTrigger, intake),
+                new WaitCommand(600)
+        );
     }
 }
 

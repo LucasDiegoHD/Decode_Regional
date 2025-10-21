@@ -53,7 +53,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
         });
         // --- FIM DA NOVA LÓGICA ---
 
-        // 5. A sua lógica original de telemetria e desenho permanece intacta.
         telemetry.addData("Robot pose", follower.getPose());
         Drawing.drawRobot(follower.getPose());
         Drawing.sendPacket();
