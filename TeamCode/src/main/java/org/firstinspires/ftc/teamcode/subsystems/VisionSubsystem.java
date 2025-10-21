@@ -57,6 +57,7 @@ public class VisionSubsystem extends SubsystemBase {
      * @return um Optional<Double> contendo a distância em polegadas.
      */
     public Optional<Double> getHorizontalDistanceToTarget() {
+        //latestResult.getFiducialResults().get(0).getTargetPoseCameraSpace().getPosition().z
         if (!hasTarget()) {
             return Optional.empty();
         }
@@ -82,18 +83,16 @@ public class VisionSubsystem extends SubsystemBase {
             return Optional.empty();
         }
 
-        double ty = latestResult.getTy();
-        double totalAngleRadians = Math.toRadians(VisionConstants.CAMERA_PITCH_DEGREES + ty);
-        
-        if (Math.sin(totalAngleRadians) == 0) {
-            return Optional.empty();
+        if(latestResult.getFiducialResults().get(0)!=null){
+            return Optional.of(Math.abs(latestResult.getFiducialResults().get(0).getTargetPoseCameraSpace().getPosition().z));
         }
 
-        double distance = (VisionConstants.TARGET_HEIGHT_METERS - VisionConstants.CAMERA_HEIGHT_METERS) / Math.sin(totalAngleRadians);
+        return Optional.empty();
 
-        return Optional.of(Math.abs(distance));
     }
-
+    public void updateLimelightYaw(double yaw){
+        limelight.updateRobotOrientation(Math.toDegrees(yaw));
+    }
     public Optional<Pose> getRobotPose(double yaw) {
         limelight.updateRobotOrientation(Math.toDegrees(yaw));
         latestResult = limelight.getLatestResult();
@@ -115,7 +114,8 @@ public class VisionSubsystem extends SubsystemBase {
             telemetry.addData("LL tx", latestResult.getTx());
             telemetry.addData("LL ty", latestResult.getTy());
             telemetry.addData("LL ta", latestResult.getTa());
-
+            telemetry.addData("LL Pose MT2",latestResult.getBotpose_MT2());
+            telemetry.addData("LL Pose MT1",latestResult.getBotpose());
             getHorizontalDistanceToTarget().ifPresent(distance -> {
                 telemetry.addData("Distância Horizontal (M)", distance);
             });

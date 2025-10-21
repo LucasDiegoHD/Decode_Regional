@@ -38,8 +38,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         follower.update();
         telemetry.addData("Robot pose",follower.getPose());
-        Drawing.drawRobot(follower.getPose());
-        Drawing.sendPacket();
+        //Drawing.drawRobot(follower.getPose());
+        //Drawing.sendPacket();
+        Drawing.drawDebug(follower);
 
 
     }

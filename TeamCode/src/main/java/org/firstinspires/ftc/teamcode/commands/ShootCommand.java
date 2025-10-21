@@ -12,7 +12,11 @@ public class ShootCommand extends CommandBase {
     private final ShooterSubsystem shooter;
     private final IntakeSubsystem intake;
     private final Timer timer = new Timer();
-
+    private enum SHOOT_STATES{
+      Conveyor, Acceleration, Triggering
+    };
+    SHOOT_STATES state;
+    private boolean shooting = false;
     public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake) {
         this.shooter = shooter;
         this.intake = intake;
@@ -24,21 +28,35 @@ public class ShootCommand extends CommandBase {
     public void initialize() {
         intake.run();
         timer.resetTimer();
+        state = SHOOT_STATES.Conveyor;
     }
     @Override
     public void execute() {
-        if(timer.getElapsedTime()> ShooterConstants.INTAKE_TIMER_TO_SHOOT) {
-            intake.stop();
-            if (shooter.getShooterAtTarget()) {
-                intake.runTrigger();
-            } else {
-                intake.stopTrigger();
-                timer.resetTimer();
-            }
+        switch (state) {
+            case Conveyor:
+                if(timer.getElapsedTime()> ShooterConstants.INTAKE_TIMER_TO_SHOOT){
+                    state = SHOOT_STATES.Acceleration;
+                    timer.resetTimer();
+                    intake.stop();
+                }
+                break;
+            case Acceleration:
+                if (shooter.getShooterAtTarget()) {
+                    state = SHOOT_STATES.Triggering;
+                    timer.resetTimer();
+                    intake.runTrigger();
+                }
+                break;
+            case Triggering:
+                if (!shooter.getShooterAtTarget()) {
+                    state = SHOOT_STATES.Conveyor;
+                    timer.resetTimer();
+                    intake.stopTrigger();
+                    intake.run();
+                }
+                break;
         }
-        else{
-            intake.run();
-        }
+
     }
     @Override
     public void end(boolean interrupted){

@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.commands.AlignToAprilTagCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.SpinShooterCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
+import org.firstinspires.ftc.teamcode.commands.UpdateLimelightYawCommand;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
@@ -49,7 +50,8 @@ public class RobotContainer {
         );
 
         imu.initialize(myIMUparameters);
-        drivetrain.getFollower().setPose(vision.getRobotPose(Math.PI).orElse(new Pose()));
+        drivetrain.getFollower().setPose(vision.getRobotPose(Math.PI).orElse(new Pose(60,14,Math.PI)));
+        vision.setDefaultCommand(new UpdateLimelightYawCommand(drivetrain,vision));
         if (driver != null) {
             drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver, imu));
 
@@ -86,9 +88,9 @@ public class RobotContainer {
                 .whenPressed(new InstantCommand(intake::reverse, intake))
                 .whenReleased(new InstantCommand(intake::stop, intake));
         new GamepadButton(operator, GamepadKeys.Button.B)
-                .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY_SHORT));
+                .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.SHORT_SHOOT));
         new GamepadButton(operator,GamepadKeys.Button.X)
-                .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY_LONG));
+                .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.LONG_SHOOT));
     }
 
 }

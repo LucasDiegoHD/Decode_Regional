@@ -11,7 +11,11 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class ShooterSubsystem extends SubsystemBase {
+    /*
 
+        formula para calcular o RPM pela distancia
+        RPM = 520.71 * distancia + 3815.97
+     */
     private final DcMotorEx rShooterMotor;
     private final DcMotorEx lShooterMotor;
     private final VoltageSensor voltageSensor;
@@ -19,9 +23,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private final Servo hoodServo;
 
     private double targetRPM = 0.0;
-    private double lastError = 0.0;
-    private double integralSum = 0.0;
-    private long lastTime = System.nanoTime();
 
     // Valores de posição do hood
     private double hoodPosition = 0.5; // posição inicial (0.0 - 1.0)
@@ -40,13 +41,12 @@ public class ShooterSubsystem extends SubsystemBase {
         rShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Inicializa o hood na posição padrão
-        hoodServo.setPosition(hoodPosition);
+        hoodServo.setPosition(ShooterConstants.MAXIMUM_HOOD);
     }
 
     /** Define a velocidade alvo do shooter em RPM */
     public void setTargetVelocity(double rpm) {
         targetRPM = Math.max(0, rpm);
-        integralSum = 0; // evita acúmulo quando muda o setpoint
         lShooterMotor.setVelocity(RPMToTicks(rpm));
         rShooterMotor.setVelocity(RPMToTicks(rpm));
     }
@@ -54,21 +54,20 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Para completamente o shooter */
     public void stop() {
         targetRPM = 0;
-        rShooterMotor.setPower(0);
-        lShooterMotor.setPower(0);
+
         lShooterMotor.setVelocity(0);
         rShooterMotor.setVelocity(0);
     }
 
     /** Aumenta o ângulo do hood */
     public void increaseHood() {
-        hoodPosition = Math.min(1.0, hoodPosition + ShooterConstants.HOOD_INCREMENT);
+        hoodPosition = Math.min(ShooterConstants.MAXIMUM_HOOD, hoodPosition + ShooterConstants.HOOD_INCREMENT);
         hoodServo.setPosition(hoodPosition);
     }
 
     /** Diminui o ângulo do hood */
     public void decreaseHood() {
-        hoodPosition = Math.max(0.0, hoodPosition - ShooterConstants.HOOD_INCREMENT);
+        hoodPosition = Math.max(ShooterConstants.MINIMUM_HOOD, hoodPosition - ShooterConstants.HOOD_INCREMENT);
         hoodServo.setPosition(hoodPosition);
     }
 

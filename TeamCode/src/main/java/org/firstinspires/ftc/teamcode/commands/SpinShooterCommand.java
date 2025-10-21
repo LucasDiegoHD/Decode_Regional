@@ -1,37 +1,36 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+
+import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 
 public class SpinShooterCommand extends CommandBase {
 
     private final ShooterSubsystem shooter;
     private final Action action;
-    private final double targetVelocity; // Velocidade (RPM) que será usada
-
     public enum Action {
-        SPIN_UP,
+        LONG_SHOOT,
+        SHORT_SHOOT,
         STOP
     }
 
-    public SpinShooterCommand(ShooterSubsystem shooter, Action action, double targetVelocity) {
+    public SpinShooterCommand(ShooterSubsystem shooter, Action action) {
         this.shooter = shooter;
         this.action = action;
-        this.targetVelocity = targetVelocity;
-        addRequirements(shooter);
-    }
 
-    public SpinShooterCommand(ShooterSubsystem shooter, Action action) {
-        // Construtor para comandos que não precisam de uma velocidade (ex: STOP)
-        this(shooter, action, 0);
+        addRequirements(shooter);
     }
 
     @Override
     public void initialize() {
         switch (action) {
-            case SPIN_UP:
+            case LONG_SHOOT:
                 // CORREÇÃO: Passa o targetVelocity (RPM) para o subsistema
-                shooter.setTargetVelocity(targetVelocity);
+                shooter.setTargetVelocity(ShooterConstants.TARGET_VELOCITY_LONG);
+                break;
+            case SHORT_SHOOT:
+                shooter.setTargetVelocity(ShooterConstants.TARGET_VELOCITY_SHORT);
                 break;
             case STOP:
                 shooter.stop();
