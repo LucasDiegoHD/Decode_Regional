@@ -14,11 +14,7 @@ import org.firstinspires.ftc.teamcode.commands.AlignToAprilTagCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.SpinShooterCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
-import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.*;
 
 public class RobotContainer {
 
@@ -26,69 +22,69 @@ public class RobotContainer {
     private final IntakeSubsystem intake;
     private final ShooterSubsystem shooter;
     private final VisionSubsystem vision;
+    private final IndexerSubsystem indexer;
     private final IMU imu;
-
 
     Pose startPose = new Pose(0, 0, Math.toRadians(-60));
     Pose shootingPose = new Pose(12, 60, Math.toRadians(90));
     Pose parkPose = new Pose(10, 120, Math.toRadians(0));
 
     public RobotContainer(HardwareMap hardwareMap, TelemetryManager telemetry, GamepadEx driver, GamepadEx operator) {
-        drivetrain = new DrivetrainSubsystem(hardwareMap, telemetry);
+        // Initialize independent subsystems first
         intake = new IntakeSubsystem(hardwareMap);
         shooter = new ShooterSubsystem(hardwareMap, telemetry);
         vision = new VisionSubsystem(hardwareMap, telemetry);
+        indexer = new IndexerSubsystem(hardwareMap, telemetry);
 
+        // Initialize the IMU
         imu = hardwareMap.get(IMU.class, "imu");
-
         IMU.Parameters myIMUparameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.UP,
                         RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
                 )
         );
-
         imu.initialize(myIMUparameters);
-        drivetrain.getFollower().setPose(vision.getRobotPose(0).orElse(new Pose()));
+
+        drivetrain = new DrivetrainSubsystem(hardwareMap, telemetry, vision, imu);
+
         if (driver != null) {
             drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver, imu));
+        }
 
+        // Configure all button bindings
+        configureButtonBindings(operator, driver, telemetry);
+    }
+
+    private void configureButtonBindings(GamepadEx operator, GamepadEx driver, TelemetryManager telemetry) {
+        if (driver != null) {
             new GamepadButton(driver, GamepadKeys.Button.Y)
                     .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, shooter, telemetry));
-
-
         }
+
         if (operator != null) {
-            configureTeleOpBindings(operator, telemetry);
+            // Your original button logic remains unchanged
+            new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT)
+                    .whenPressed(new InstantCommand(shooter::decreaseHood, shooter));
+            new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT)
+                    .whenPressed(new InstantCommand(shooter::increaseHood, shooter));
+            new GamepadButton(operator, GamepadKeys.Button.DPAD_UP)
+                    .whileHeld(new ShootCommand(shooter, intake));
 
+            new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER)
+                    .whenPressed(new InstantCommand(shooter::stop, shooter));
+
+            new GamepadButton(operator, GamepadKeys.Button.Y)
+                    .whenPressed(new InstantCommand(intake::run, intake))
+                    .whenReleased(new InstantCommand(intake::stop, intake));
+            new GamepadButton(operator, GamepadKeys.Button.A)
+                    .whenPressed(new InstantCommand(intake::reverse, intake))
+                    .whenReleased(new InstantCommand(intake::stop, intake));
+            new GamepadButton(operator, GamepadKeys.Button.B)
+                    .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY_SHORT));
+            new GamepadButton(operator, GamepadKeys.Button.X)
+                    .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY_LONG));
         }
     }
-
-    private void configureTeleOpBindings(GamepadEx operator, TelemetryManager telemetry) {
-
-
-
-        new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(new InstantCommand(shooter::decreaseHood, shooter));
-        new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(new InstantCommand(shooter::increaseHood, shooter));
-        new GamepadButton(operator, GamepadKeys.Button.DPAD_UP)
-                .whileHeld(new ShootCommand(shooter, intake));
-
-
-        new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(shooter::stop, shooter));
-
-        new GamepadButton(operator, GamepadKeys.Button.Y)
-                .whenPressed(new InstantCommand(intake::run, intake))
-                .whenReleased(new InstantCommand(intake::stop, intake));
-        new GamepadButton(operator, GamepadKeys.Button.A)
-                .whenPressed(new InstantCommand(intake::reverse, intake))
-                .whenReleased(new InstantCommand(intake::stop, intake));
-        new GamepadButton(operator, GamepadKeys.Button.B)
-                .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY_SHORT));
-        new GamepadButton(operator,GamepadKeys.Button.X)
-                .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.SPIN_UP, ShooterConstants.TARGET_VELOCITY_LONG));
-    }
-
 }
+

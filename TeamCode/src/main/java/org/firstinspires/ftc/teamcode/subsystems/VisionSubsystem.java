@@ -82,7 +82,7 @@ public class VisionSubsystem extends SubsystemBase {
 
         double ty = latestResult.getTy();
         double totalAngleRadians = Math.toRadians(VisionConstants.CAMERA_PITCH_DEGREES + ty);
-        
+
         if (Math.sin(totalAngleRadians) == 0) {
             return Optional.empty();
         }
@@ -108,22 +108,32 @@ public class VisionSubsystem extends SubsystemBase {
     public void periodic() {
         latestResult = limelight.getLatestResult();
 
-        if (latestResult != null) {
-            telemetry.addData("LL Valid", latestResult.isValid());
+        if (latestResult != null && latestResult.isValid()) {
+            telemetry.addData("LL Valid", true);
             telemetry.addData("LL tx", latestResult.getTx());
             telemetry.addData("LL ty", latestResult.getTy());
             telemetry.addData("LL ta", latestResult.getTa());
 
             getHorizontalDistanceToTarget().ifPresent(distance -> {
-                telemetry.addData("Distância Horizontal (M)", distance);
+                telemetry.addData("Distancia Horizontal (M)", distance);
             });
             getDirectDistanceToTarget().ifPresent(distance -> {
-                telemetry.addData("Distância Direta (Hipotenusa)", distance);
+                telemetry.addData("Distancia Direta (Hipotenusa)", distance);
             });
 
+            // THIS SECTION IS NEW: Adds the raw botpose data to the telemetry.
+            Pose3D botpose = latestResult.getBotpose_MT2();
+            if (botpose != null) {
+                telemetry.addData("Botpose X (raw, meters)", botpose.getPosition().x);
+                telemetry.addData("Botpose Y (raw, meters)", botpose.getPosition().y);
+                telemetry.addData("Botpose Z (raw, meters)", botpose.getPosition().z);
+            }
+
         } else {
+            telemetry.addData("LL Valid", false);
             telemetry.addLine("LL sem resultado");
         }
     }
 }
+
 
