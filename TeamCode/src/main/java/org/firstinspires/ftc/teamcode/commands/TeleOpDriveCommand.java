@@ -35,8 +35,8 @@ public class TeleOpDriveCommand extends CommandBase {
             imu.resetYaw();
         }
         double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        double y = -driverGamepad.getLeftY(); // frente/trás
-        double x =  driverGamepad.getLeftX(); // lateral
+        double y = driverGamepad.getLeftY(); // frente/trás
+        double x =  -driverGamepad.getLeftX(); // lateral
 
         double xField = x * Math.cos(heading) - y * Math.sin(heading);
         double yField = x * Math.sin(heading) + y * Math.cos(heading);
@@ -44,7 +44,7 @@ public class TeleOpDriveCommand extends CommandBase {
         drivetrain.getFollower().setTeleOpDrive(
                 yField,
                 xField,
-                -driverGamepad.getRightX(),
+                driverGamepad.getRightX(),
                 true
         );
     }

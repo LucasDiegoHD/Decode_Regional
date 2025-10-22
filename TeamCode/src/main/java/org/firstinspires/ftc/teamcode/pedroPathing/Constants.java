@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Constants {
     private Constants() {} // Impede a instanciação
     public static int teste = 0;
-
+    @Configurable
     public static class Drivetrain {
         public static class Hardware {
             public static String LEFT_FRONT_MOTOR = "leftFront";
@@ -28,14 +28,14 @@ public class Constants {
             public static String RIGHT_REAR_MOTOR = "rightRear";
             public static String PINPOINT_LOCALIZER = "pinpoint";
         }
-
+        @Configurable
         public static class PedroPathing {
             public static FollowerConstants FOLLOWER_CONSTANTS = new FollowerConstants()
                     .mass(13)
                     .forwardZeroPowerAcceleration(-42.3925338692562)
                     .lateralZeroPowerAcceleration(-77.71046201171953)
                     .translationalPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0.05, 0))
-                    .headingPIDFCoefficients(new PIDFCoefficients(3, 0.1, 0.2, 0))
+                    .headingPIDFCoefficients(new PIDFCoefficients(1, 0.001, 0.2, 0))
                     .drivePIDFCoefficients(
                             new FilteredPIDFCoefficients(0.025, 0, 0.0002, 1, 0)
                     );
@@ -54,8 +54,8 @@ public class Constants {
                     .useBrakeModeInTeleOp(true);
 
             public static PinpointConstants LOCALIZER_CONSTANTS = new PinpointConstants()
-                    .forwardPodY(-5.5)
-                    .strafePodX(0)
+                    .forwardPodY(0)
+                    .strafePodX(-6.)
                     .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
                     .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
                     .distanceUnit(DistanceUnit.INCH)
@@ -68,6 +68,9 @@ public class Constants {
                     0.995, 500, 2.5, 1
             );
         }
+        public static PedroPathing pedroPathing = new PedroPathing();
+
+
 
         public static Follower createFollower(HardwareMap hardwareMap) {
             return new FollowerBuilder(PedroPathing.FOLLOWER_CONSTANTS, hardwareMap)
