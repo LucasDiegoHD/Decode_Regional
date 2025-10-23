@@ -44,7 +44,7 @@ public class TeleOpDriveCommand extends CommandBase {
         drivetrain.getFollower().setTeleOpDrive(
                 yField,
                 xField,
-                driverGamepad.getRightX(),
+                -driverGamepad.getRightX(),
                 true
         );
     }
