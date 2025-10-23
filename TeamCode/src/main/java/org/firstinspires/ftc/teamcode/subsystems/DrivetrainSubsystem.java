@@ -21,7 +21,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final Follower follower;
     private final TelemetryManager telemetry;
     public DrivetrainSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
-        follower = Constants.Drivetrain.createFollower(hardwareMap);
+        follower = Constants.createFollower(hardwareMap);
         this.telemetry = telemetry;
         Drawing.init();
         Drawing.drawRobot(follower.getPose());
