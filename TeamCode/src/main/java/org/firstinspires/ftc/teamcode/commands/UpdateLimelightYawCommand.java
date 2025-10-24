@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -24,7 +25,11 @@ public class UpdateLimelightYawCommand extends CommandBase {
 
     @Override
     public void execute() {
-       vision.updateLimelightYaw(drivetrain.getFollower().getHeading());
+        double yaw = drivetrain.getFollower().getHeading();
+       vision.updateLimelightYaw(yaw);
+       //Pose p = drivetrain.getFollower().getPose();
+       //drivetrain.getFollower().setPose(vision.getRobotPose(yaw).orElse(p));
+
     }
 
 }

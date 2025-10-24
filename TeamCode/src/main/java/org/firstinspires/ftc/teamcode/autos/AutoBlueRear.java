@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.autos;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
@@ -13,6 +16,14 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 @Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
 @Configurable // Panels
 
@@ -20,7 +31,7 @@ public class AutoBlueRear  extends OpMode {
 
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
-    private int pathState; // Current autonomous path state (state machine)
+    private int pathState = 0; // Current autonomous path state (state machine)
     private Paths paths; // Paths defined in the Paths class
 
     @Override
@@ -51,6 +62,7 @@ public class AutoBlueRear  extends OpMode {
 
     public static class Paths {
 
+        public PathChain GoToShoot1;
         public PathChain GoToLine1;
         public PathChain CatchLine1;
         public PathChain GoToShoot2;
@@ -60,16 +72,24 @@ public class AutoBlueRear  extends OpMode {
         public PathChain GoToLine3;
         public PathChain CatchLine3;
         public PathChain GoToShoot4;
-
+        public List<PathChain> paths = new ArrayList<>();
         public Paths(Follower follower) {
+            GoToShoot1 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(65.789, 6.824), new Pose(58.615, 7.874))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(100))
+                    .build();
+            paths.add(GoToShoot1);
             GoToLine1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(56.000, 8.000), new Pose(55.640, 35.869))
+                            new BezierLine(new Pose(58.615, 7.874), new Pose(55.640, 35.869))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                    .setLinearHeadingInterpolation(Math.toRadians(100), Math.toRadians(0))
                     .build();
-
+            paths.add(GoToLine1);
             CatchLine1 = follower
                     .pathBuilder()
                     .addPath(
@@ -77,23 +97,23 @@ public class AutoBlueRear  extends OpMode {
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
-
+            paths.add(CatchLine1);
             GoToShoot2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(7.524, 34.994), new Pose(60.190, 6.474))
+                            new BezierLine(new Pose(7.524, 34.994), new Pose(62.989, 6.299))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(100))
                     .build();
-
+            paths.add(GoToShoot2);
             GoToLine2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(60.190, 6.474), new Pose(45.667, 60.365))
+                            new BezierLine(new Pose(62.989, 6.299), new Pose(45.667, 60.365))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(100), Math.toRadians(0))
                     .build();
-
+            paths.add(GoToLine2);
             CatchLine2 = follower
                     .pathBuilder()
                     .addPath(
@@ -101,23 +121,23 @@ public class AutoBlueRear  extends OpMode {
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
-
+            paths.add(CatchLine2);
             GoToShoot3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(5.774, 57.565), new Pose(60.714, 5.599))
+                            new BezierLine(new Pose(5.774, 57.565), new Pose(57.740, 4.374))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(100))
                     .build();
-
+            paths.add(GoToShoot3);
             GoToLine3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(60.714, 5.599), new Pose(40.068, 84.335))
+                            new BezierLine(new Pose(57.740, 4.374), new Pose(40.068, 84.335))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(100), Math.toRadians(0))
                     .build();
-
+            paths.add(GoToLine3);
             CatchLine3 = follower
                     .pathBuilder()
                     .addPath(
@@ -125,7 +145,7 @@ public class AutoBlueRear  extends OpMode {
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
-
+            paths.add(CatchLine3);
             GoToShoot4 = follower
                     .pathBuilder()
                     .addPath(
@@ -133,13 +153,14 @@ public class AutoBlueRear  extends OpMode {
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(125))
                     .build();
+            paths.add(GoToShoot4);
         }
     }
 
     public int autonomousPathUpdate() {
-        // Add your state machine Here
-        // Access paths with paths.pathName
-        // Refer to the Pedro Pathing Docs (Auto Example) for an example state machine
+        if(!follower.isBusy()){
+            follower.followPath(paths.paths.get(pathState++));
+        }
         return pathState;
     }
 }

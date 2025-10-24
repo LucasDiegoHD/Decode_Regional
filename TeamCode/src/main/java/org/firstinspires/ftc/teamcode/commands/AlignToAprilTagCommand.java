@@ -23,16 +23,15 @@ public class AlignToAprilTagCommand extends CommandBase {
     private final PIDFController turnController;
     private int IsAprilTagNotSeemCounter = 0;
     private static final int ApriltagNotSeemMaximumCounter = 20;
-    private final IMU imu;
+
     private final GamepadEx driverGamepad;
 
 
-    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, ShooterSubsystem shooter, TelemetryManager telemetry, IMU imu, GamepadEx driverGamepad) {
+    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, ShooterSubsystem shooter, TelemetryManager telemetry,  GamepadEx driverGamepad) {
         this.follower = drivetrain.getFollower();
         this.vision = vision;
         this.shooter = shooter;
         this.telemetry = telemetry;
-        this.imu = imu;
         this.driverGamepad = driverGamepad;
         this.turnController = new  PIDFController(VisionConstants.TURN_KP, VisionConstants.TURN_KI, VisionConstants.TURN_KD, VisionConstants.TURN_KF);
         addRequirements(drivetrain, vision, shooter);
@@ -63,7 +62,7 @@ public class AlignToAprilTagCommand extends CommandBase {
         else{
             IsAprilTagNotSeemCounter = 0;
         }
-        double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double heading = follower.getHeading();
         double y = driverGamepad.getLeftY(); // frente/trás
         double x =  -driverGamepad.getLeftX(); // lateral
 

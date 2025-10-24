@@ -22,7 +22,6 @@ public class TeleOpDriveAimingCommand extends CommandBase {
 
     private final DrivetrainSubsystem drivetrain;
     private final GamepadEx driverGamepad;
-    private final IMU imu;
     private final PIDController angleController;
 
     public final double targetX;
@@ -37,18 +36,15 @@ public class TeleOpDriveAimingCommand extends CommandBase {
      *
      * @param drivetrain    The drivetrain subsystem used to control the robot's movement.
      * @param driverGamepad The driver's gamepad for manual input.
-     * @param imu           The IMU sensor providing the robot's heading.
      * @param targetX       The X-coordinate of the target point to aim toward.
      * @param targetY       The Y-coordinate of the target point to aim toward.
      */
     public TeleOpDriveAimingCommand(DrivetrainSubsystem drivetrain,
                                     GamepadEx driverGamepad,
-                                    IMU imu,
                                     double targetX,
                                     double targetY) {
         this.drivetrain = drivetrain;
         this.driverGamepad = driverGamepad;
-        this.imu = imu;
         this.targetX = targetX;
         this.targetY = targetY;
         this.angleController = new PIDController(ANGLE_KP, ANGLE_KI, ANGLE_KD);
@@ -69,13 +65,11 @@ public class TeleOpDriveAimingCommand extends CommandBase {
      */
     @Override
     public void execute() {
-        if (driverGamepad.getButton(GamepadKeys.Button.DPAD_UP)) {
-            imu.resetYaw();
-        }
+
 
         double forwardInput = -driverGamepad.getLeftY();
         double strafeInput = driverGamepad.getLeftX();
-        double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double heading = drivetrain.getFollower().getHeading();
 
         // Convert driver inputs to field-centric coordinates
         double xField = strafeInput * Math.cos(heading) - forwardInput * Math.sin(heading);

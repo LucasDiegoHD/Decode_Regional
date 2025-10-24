@@ -31,7 +31,7 @@ public class RobotContainer {
     private final VisionSubsystem vision;
     private final IndexerSubsystem indexer;
 
-    private final IMU imu;
+
 
 
     Pose startPose = new Pose(0, 0, Math.toRadians(0));
@@ -44,26 +44,17 @@ public class RobotContainer {
         vision = new VisionSubsystem(hardwareMap, telemetry);
         indexer = new IndexerSubsystem(hardwareMap, telemetry);
 
-        imu = hardwareMap.get(IMU.class, "imu");
 
-        IMU.Parameters myIMUparameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-                )
-        );
-
-        imu.initialize(myIMUparameters);
-        drivetrain.getFollower().setPose(vision.getRobotPose(Math.PI).orElse(new Pose(0,0,Math.PI)));
+        drivetrain.getFollower().setPose(vision.getRobotPose(Math.PI).orElse(new Pose(60,-11,Math.PI)));
         vision.setDefaultCommand(new UpdateLimelightYawCommand(drivetrain,vision));
         if (driver != null) {
-            drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver, imu));
+            drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver));
 
             new GamepadButton(driver, GamepadKeys.Button.Y)
-                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, shooter, telemetry,imu,driver));
+                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, shooter, telemetry,driver));
 
             new GamepadButton(driver, GamepadKeys.Button.X)
-                    .whileHeld(new TeleOpDriveAimingCommand(drivetrain,driver, imu, 1.5, 1.5));
+                    .whileHeld(new TeleOpDriveAimingCommand(drivetrain,driver, 1.8796, -1.8796));
 
 
         }
