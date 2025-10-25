@@ -8,11 +8,10 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.autos.commands.AutonomousCommands;
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 
-@Autonomous(name = "Auto: Atirar 3")
-public class AutoSimples extends CommandOpMode {
+@Autonomous(name = "Auto: Azul Triangulo pequeno")
+public class AutoBlueRear extends CommandOpMode {
 
     private RobotContainer robot;
     private Command autonomousCommand;
