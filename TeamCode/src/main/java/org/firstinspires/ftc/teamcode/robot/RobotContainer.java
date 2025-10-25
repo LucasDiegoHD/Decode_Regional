@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.autos.commands.AutonomousCommands;
 import org.firstinspires.ftc.teamcode.autos.paths.BlueRearPoses;
+import org.firstinspires.ftc.teamcode.autos.paths.RedRearPoses;
 import org.firstinspires.ftc.teamcode.commands.AlignToAprilTagCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.SpinShooterCommand;
@@ -69,6 +70,10 @@ public class RobotContainer {
 
     public Command getAutonomousBlueRearCommand() {
         return new AutonomousCommands(drivetrain, shooter, intake, BlueRearPoses.asList(), true);
+    }
+
+    public Command getAutonomousRedRearCommand() {
+        return new AutonomousCommands(drivetrain, shooter, intake, RedRearPoses.asList(), true);
     }
     private void configureTeleOpBindings(GamepadEx operator, TelemetryManager telemetry) {
 
