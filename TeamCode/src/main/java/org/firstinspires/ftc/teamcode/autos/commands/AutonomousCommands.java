@@ -64,26 +64,26 @@ public class AutonomousCommands extends SequentialCommandGroup {
                 new InstantCommand(() -> drivetrain.getFollower().setPose(poses.get(PosesNames.StartPose.ordinal()))),
                 new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.LONG_SHOOT : SpinShooterCommand.Action.SHORT_SHOOT),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot1.ordinal())),
-                new ShootCommand(shooter, intake, 3),
+                new ShootCommand(shooter, intake, 3).withTimeout(5000),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine1.ordinal())),
                 new WaitCommand(500),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine1.ordinal())),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot2.ordinal())),
                 new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.LONG_SHOOT : SpinShooterCommand.Action.SHORT_SHOOT),
-                new ShootCommand(shooter, intake, 3),
+                new ShootCommand(shooter, intake, 3).withTimeout(5000),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine2.ordinal())),
                 new WaitCommand(500),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine2.ordinal())),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot3.ordinal())),
                 new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.LONG_SHOOT : SpinShooterCommand.Action.SHORT_SHOOT),
-                new ShootCommand(shooter, intake, 3),
+                new ShootCommand(shooter, intake, 3).withTimeout(5000),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine3.ordinal())),
                 new WaitCommand(500),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine3.ordinal())),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot4.ordinal())),
                 new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.SHORT_SHOOT : SpinShooterCommand.Action.LONG_SHOOT),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot1.ordinal())),
-                new ShootCommand(shooter, intake, 3)
+                new ShootCommand(shooter, intake, 3).withTimeout(5000)
         );
         addRequirements(drivetrain, shooter, intake);
     }
