@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -10,6 +11,8 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.teamcode.autos.commands.AutonomousCommands;
+import org.firstinspires.ftc.teamcode.autos.paths.BlueRearPoses;
 import org.firstinspires.ftc.teamcode.commands.AlignToAprilTagCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.SpinShooterCommand;
@@ -64,6 +67,9 @@ public class RobotContainer {
         }
     }
 
+    public Command getAutonomousBlueRearCommand() {
+        return new AutonomousCommands(drivetrain, shooter, intake, BlueRearPoses.asList(), true);
+    }
     private void configureTeleOpBindings(GamepadEx operator, TelemetryManager telemetry) {
 
         new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT)

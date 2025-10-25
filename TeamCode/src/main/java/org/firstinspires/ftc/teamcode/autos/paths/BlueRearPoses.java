@@ -5,19 +5,7 @@ import com.pedropathing.geometry.Pose;
 import java.util.List;
 
 public class BlueRearPoses {
-    public enum PosesNames {
-        StartPose,
-        GoToShoot1,
-        GoToLine1,
-        CatchLine1,
-        GoToShoot2,
-        GoToLine2,
-        CatchLine2,
-        GoToShoot3,
-        GoToLine3,
-        CatchLine3,
-        GoToShoot4
-    }
+
 
     public static final Pose[] POSES = {
             new Pose(65.789, 6.824, Math.toRadians(90)),
@@ -37,6 +25,9 @@ public class BlueRearPoses {
             new Pose(55.115, 96.233, Math.toRadians(125))
     };
 
+    public static Pose getPose(PosesNames name) {
+        return POSES[name.ordinal()];
+    }
     public static List<Pose> asList() {
         return List.of(POSES);
     }
