@@ -14,14 +14,20 @@ public class ShootCommand extends CommandBase {
     private final Timer timer = new Timer();
     private enum SHOOT_STATES{
       Conveyor, Acceleration, Triggering
-    };
+    }
+
     SHOOT_STATES state;
-    private boolean shooting = false;
-    public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake) {
+    private int shooterCounter;
+
+    public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake, int shoots) {
+        this.shooterCounter = shoots;
         this.shooter = shooter;
         this.intake = intake;
         timer.resetTimer();
         addRequirements(shooter, intake);
+    }
+    public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake) {
+        this(shooter, intake, 10);
     }
 
     @Override
@@ -53,10 +59,18 @@ public class ShootCommand extends CommandBase {
                     timer.resetTimer();
                     intake.stopTrigger();
                     intake.run();
+                    if (shooterCounter > 0) {
+                        shooterCounter--;
+                    }
                 }
                 break;
         }
 
+    }
+
+    @Override
+    public boolean isFinished() {
+        return shooterCounter == 0;
     }
     @Override
     public void end(boolean interrupted){

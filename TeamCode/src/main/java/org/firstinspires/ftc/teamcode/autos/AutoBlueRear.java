@@ -4,27 +4,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.geometry.CoordinateSystem;
-import com.pedropathing.geometry.PedroCoordinates;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 @Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
 @Configurable // Panels
@@ -75,7 +66,8 @@ public class AutoBlueRear  extends OpMode {
         public PathChain CatchLine3;
         public PathChain GoToShoot4;
         public List<PathChain> paths = new ArrayList<>();
-        public Paths(Follower follower) {
+
+        public Paths(@NonNull Follower follower) {
             GoToShoot1 = follower
                     .pathBuilder()
                     .addPath(
