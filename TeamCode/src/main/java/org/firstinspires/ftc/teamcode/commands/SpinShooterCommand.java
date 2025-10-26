@@ -37,12 +37,8 @@ public class SpinShooterCommand extends CommandBase {
                 break;
         }
     }
-
     @Override
     public boolean isFinished() {
-        // O comando de "SPIN_UP" deve rodar até ser interrompido (ex: pela próxima ação do jogador)
-        // Se você quiser esperar até o shooter atingir a velocidade, a lógica seria adicionada aqui.
-        // Por enquanto, ele roda indefinidamente até que um novo comando tome o shooter.
-        return action == Action.STOP;
+        return true;
     }
 }

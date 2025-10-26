@@ -76,5 +76,6 @@ public class ShootCommand extends CommandBase {
     public void end(boolean interrupted){
         intake.stopTrigger();
         intake.stop();
+
     }
 }
