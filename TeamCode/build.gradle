@@ -43,10 +43,6 @@ dependencies {
     // Dependência base do SDK FTC
     implementation project(':FtcRobotController')
 
-    // FTC Dashboard (para visualização e telemetria)
-    implementation('com.acmerobotics.dashboard:dashboard:0.5.0') {
-        exclude group: 'org.firstinspires.ftc'
-    }
 
     // KoalaLog (para logs compatíveis com AdvantageScope)
     // ⚠️ Substitua <version> pela versão atual listada no GitHub (ex: 1.0.1)

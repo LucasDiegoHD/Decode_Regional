@@ -24,7 +24,7 @@ public class AutoShootCommand extends SequentialCommandGroup {
                 new AlignToAprilTagCommand(drivetrain, vision, shooter, telemetry, operator),
 
                 // Step 2: Wait until the shooter is at the target speed (with a 2-second safety timeout).
-                new WaitUntilCommand(shooter::atTargetVelocity).withTimeout(2000),
+                new WaitUntilCommand(shooter::getShooterAtTarget).withTimeout(2000),
 
                 // Step 3: Feed the game piece through the trigger.
                 new InstantCommand(intake::runTrigger, intake),

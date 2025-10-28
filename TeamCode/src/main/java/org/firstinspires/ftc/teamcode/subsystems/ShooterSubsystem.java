@@ -10,6 +10,10 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
+import Ori.Coval.Logging.AutoLog;
+
+@AutoLog
+
 public class ShooterSubsystem extends SubsystemBase {
     /*
 
@@ -82,12 +86,12 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * Obtém o RPM médio atual dos motores do shooter
      */
-    private double getCurrentRPM() {
+    protected double getCurrentRPM() {
         double ticksPerSecond = (rShooterMotor.getVelocity() + lShooterMotor.getVelocity()) / 2.0;
         return (ticksPerSecond / ShooterConstants.TICKS_PER_REV) * 60.0;
     }
 
-    private int RPMToTicks(double rpm) {
+    protected int RPMToTicks(double rpm) {
         return (int) ((rpm / 60.0) * ShooterConstants.TICKS_PER_REV);
     }
 

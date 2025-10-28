@@ -12,6 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.Optional;
 
+import Ori.Coval.Logging.AutoLog;
+
+@AutoLog
 public class VisionSubsystem extends SubsystemBase {
 
     private final Limelight3A limelight;

@@ -7,9 +7,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.autos.commands.AutonomousCommands;
 import org.firstinspires.ftc.teamcode.autos.paths.BlueRearPoses;
@@ -21,11 +19,17 @@ import org.firstinspires.ftc.teamcode.commands.TeleOpDriveAimingCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.UpdateLimelightYawCommand;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystemAutoLogged;
 import org.firstinspires.ftc.teamcode.subsystems.IndexerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IndexerSubsystemAutoLogged;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystemAutoLogged;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemAutoLogged;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystemAutoLogged;
+
+import Ori.Coval.Logging.Logger.KoalaLog;
 
 public class RobotContainer {
 
@@ -42,13 +46,13 @@ public class RobotContainer {
     Pose parkPose = new Pose(10, 120, Math.toRadians(0));
 
     public RobotContainer(HardwareMap hardwareMap, TelemetryManager telemetry, GamepadEx driver, GamepadEx operator) {
-        drivetrain = new DrivetrainSubsystem(hardwareMap, telemetry);
-        intake = new IntakeSubsystem(hardwareMap);
-        shooter = new ShooterSubsystem(hardwareMap, telemetry);
-        vision = new VisionSubsystem(hardwareMap, telemetry);
-        indexer = new IndexerSubsystem(hardwareMap, telemetry);
+        drivetrain = new DrivetrainSubsystemAutoLogged(hardwareMap, telemetry);
+        intake = new IntakeSubsystemAutoLogged(hardwareMap);
+        shooter = new ShooterSubsystemAutoLogged(hardwareMap, telemetry);
+        vision = new VisionSubsystemAutoLogged(hardwareMap, telemetry);
+        indexer = new IndexerSubsystemAutoLogged(hardwareMap, telemetry);
 
-
+        KoalaLog.setup(hardwareMap);
         drivetrain.getFollower().setPose(vision.getRobotPose(Math.PI).orElse(new Pose(60,-11,Math.PI)));
         vision.setDefaultCommand(new UpdateLimelightYawCommand(drivetrain,vision));
         if (driver != null) {

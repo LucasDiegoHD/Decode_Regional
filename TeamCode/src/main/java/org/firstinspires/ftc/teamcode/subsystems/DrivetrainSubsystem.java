@@ -13,10 +13,11 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
 
+import Ori.Coval.Logging.AutoLog;
+
+@AutoLog
 public class DrivetrainSubsystem extends SubsystemBase {
     private final Follower follower;
     private final TelemetryManager telemetry;

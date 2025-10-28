@@ -5,6 +5,9 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import Ori.Coval.Logging.AutoLog;
+
+@AutoLog
 public class IndexerSubsystem extends SubsystemBase {
 
     private final DigitalChannel entrySensor;

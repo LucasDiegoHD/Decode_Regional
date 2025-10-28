@@ -4,6 +4,9 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import Ori.Coval.Logging.AutoLog;
+
+@AutoLog
 public class IntakeSubsystem extends SubsystemBase {
     private final DcMotor intakeMotor;
     private final DcMotor triggerMotor;
