@@ -24,7 +24,7 @@ public class SetHoodPositionCommand extends CommandBase {
     @Override
     public void initialize() {
         // Define a posição do servo imediatamente.
-        shooter.setHoodPosition(targetPosition);
+        //shooter.setHoodPosition(targetPosition);
     }
 
     @Override

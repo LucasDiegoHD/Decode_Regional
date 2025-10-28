@@ -13,13 +13,11 @@ public class TeleOpDriveCommand extends CommandBase {
 
     private final DrivetrainSubsystem drivetrain;
     private final GamepadEx driverGamepad;
-    private final IMU imu;
 
 
-    public TeleOpDriveCommand(DrivetrainSubsystem drivetrain, GamepadEx driverGamepad, IMU imu) {
+    public TeleOpDriveCommand(DrivetrainSubsystem drivetrain, GamepadEx driverGamepad) {
         this.drivetrain = drivetrain;
         this.driverGamepad = driverGamepad;
-        this.imu = imu;
 
         addRequirements(drivetrain);
     }
@@ -31,12 +29,10 @@ public class TeleOpDriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if(driverGamepad.getButton(GamepadKeys.Button.DPAD_UP)) {
-            imu.resetYaw();
-        }
-        double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        double y = -driverGamepad.getLeftY(); // frente/trás
-        double x =  driverGamepad.getLeftX(); // lateral
+        Pose p = drivetrain.getFollower().getPose();
+        double heading = p.getHeading();
+        double y = driverGamepad.getLeftX(); // frente/trás
+        double x =  driverGamepad.getLeftY(); // lateral
 
         double xField = x * Math.cos(heading) - y * Math.sin(heading);
         double yField = x * Math.sin(heading) + y * Math.cos(heading);
@@ -47,10 +43,11 @@ public class TeleOpDriveCommand extends CommandBase {
                 -driverGamepad.getRightX(),
                 true
         );
+        if(driverGamepad.getButton(GamepadKeys.Button.START)){
+
+            drivetrain.getFollower().setPose(p.setHeading(Math.PI));
+        }
+
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
 }

@@ -1,56 +1,81 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import com.pedropathing.util.Timer;
+
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 
 public class ShootCommand extends CommandBase {
 
     private final ShooterSubsystem shooter;
-    private final Action action;
-    private final double targetVelocity;
-
-    public enum Action {
-        SPIN_UP,
-        STOP
+    private final IntakeSubsystem intake;
+    private final Timer timer = new Timer();
+    private enum SHOOT_STATES{
+      Conveyor, Acceleration, Triggering
     }
 
-    public ShootCommand(ShooterSubsystem shooter, Action action, double targetVelocity) {
+    SHOOT_STATES state;
+    private int shooterCounter;
+
+    public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake, int shoots) {
+        this.shooterCounter = shoots;
         this.shooter = shooter;
-        this.action = action;
-        this.targetVelocity = targetVelocity;
-        addRequirements(shooter);
+        this.intake = intake;
+        timer.resetTimer();
+        addRequirements(shooter, intake);
     }
-
-    public ShootCommand(ShooterSubsystem shooter, Action action) {
-        this(shooter, action, 0);
+    public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake) {
+        this(shooter, intake, 10);
     }
 
     @Override
     public void initialize() {
-        switch (action) {
-            case SPIN_UP:
-                shooter.setTargetVelocity(targetVelocity);
+        intake.run();
+        timer.resetTimer();
+        state = SHOOT_STATES.Conveyor;
+    }
+    @Override
+    public void execute() {
+        switch (state) {
+            case Conveyor:
+                if(timer.getElapsedTime()> ShooterConstants.INTAKE_TIMER_TO_SHOOT){
+                    state = SHOOT_STATES.Acceleration;
+                    timer.resetTimer();
+                    intake.stop();
+                }
                 break;
-            case STOP:
-                shooter.stop();
+            case Acceleration:
+                if (shooter.getShooterAtTarget()) {
+                    state = SHOOT_STATES.Triggering;
+                    timer.resetTimer();
+                    intake.runTrigger();
+                }
+                break;
+            case Triggering:
+                if (!shooter.getShooterAtTarget()) {
+                    state = SHOOT_STATES.Conveyor;
+                    timer.resetTimer();
+                    intake.stopTrigger();
+                    intake.run();
+                    if (shooterCounter > 0) {
+                        shooterCounter--;
+                    }
+                }
                 break;
         }
+
     }
 
     @Override
     public boolean isFinished() {
-        if (action == Action.STOP) {
-            return true;
-        }
-        return shooter.atTargetVelocity(ShooterConstants.VELOCITY_TOLERANCE);
+        return shooterCounter == 0;
     }
-
     @Override
-    public void end(boolean interrupted) {
-        if (interrupted && action == Action.SPIN_UP) {
-            shooter.stop();
-        }
+    public void end(boolean interrupted){
+        intake.stopTrigger();
+        intake.stop();
+
     }
 }

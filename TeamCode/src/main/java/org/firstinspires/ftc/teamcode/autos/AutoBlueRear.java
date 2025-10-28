@@ -7,10 +7,11 @@ import com.bylazar.configurables.annotations.IgnoreConfigurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 
-@Autonomous(name = "Auto: Atirar 3")
-public class AutoSimples extends CommandOpMode {
+@Autonomous(name = "Auto: Azul Triangulo pequeno")
+public class AutoBlueRear extends CommandOpMode {
 
     private RobotContainer robot;
     private Command autonomousCommand;
@@ -25,8 +26,7 @@ public class AutoSimples extends CommandOpMode {
         robot = new RobotContainer(hardwareMap, telemetryM, null, null);
 
         // Pega o NOVO comando que criamos para atirar 3
-        autonomousCommand = robot.getShootThreeAutoCommand();
-
+        autonomousCommand = robot.getAutonomousBlueRearCommand();
         // Agenda o comando para ser executado após o START
         schedule(autonomousCommand);
     }

@@ -31,6 +31,6 @@ public class GoToPoseCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return!drivetrain.getFollower().isBusy();
+        return !drivetrain.getFollower().isBusy();
     }
 }
