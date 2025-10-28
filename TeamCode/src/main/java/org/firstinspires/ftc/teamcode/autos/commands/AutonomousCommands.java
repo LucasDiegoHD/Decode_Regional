@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autos.commands;
 import androidx.annotation.NonNull;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.pedropathing.geometry.Pose;
@@ -65,22 +66,25 @@ public class AutonomousCommands extends SequentialCommandGroup {
                 new SpinShooterCommand(shooter, SpinShooterCommand.Action.STOP),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine1.ordinal())),
                 new WaitCommand(500),
+                new InstantCommand(intake::run),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine1.ordinal())),
-                new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot2.ordinal())),
+                new ParallelCommandGroup(new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot2.ordinal())), new InstantCommand(intake::stop)),
                 new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.LONG_SHOOT : SpinShooterCommand.Action.SHORT_SHOOT),
                 new ShootCommand(shooter, intake, 3).withTimeout(5000),
                 new SpinShooterCommand(shooter, SpinShooterCommand.Action.STOP),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine2.ordinal())),
                 new WaitCommand(500),
+                new InstantCommand(intake::run),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine2.ordinal())),
-                new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot3.ordinal())),
+                new ParallelCommandGroup(new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot3.ordinal())), new InstantCommand(intake::stop)),
                 new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.LONG_SHOOT : SpinShooterCommand.Action.SHORT_SHOOT),
                 new ShootCommand(shooter, intake, 3).withTimeout(5000),
                 new SpinShooterCommand(shooter, SpinShooterCommand.Action.STOP),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine3.ordinal())),
                 new WaitCommand(500),
+                new InstantCommand(intake::run),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine3.ordinal())),
-                new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot4.ordinal())),
+                new ParallelCommandGroup(new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot4.ordinal())), new InstantCommand(intake::stop)),
                 new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.SHORT_SHOOT : SpinShooterCommand.Action.LONG_SHOOT),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot1.ordinal())),
                 new ShootCommand(shooter, intake, 3).withTimeout(5000),
