@@ -42,6 +42,7 @@ public class IndexerSubsystem extends SubsystemBase {
         lastEntryState = entryTriggered;
         lastExitState = exitTriggered;
 
+        // THIS IS THE NEW LINE: Send the current piece count to telemetry.
         telemetry.addData("Pieces Count", getPieceCount());
     }
 
