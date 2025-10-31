@@ -15,9 +15,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-import Ori.Coval.Logging.AutoLog;
 
-@AutoLog
+//@AutoLog
 public class DrivetrainSubsystem extends SubsystemBase {
     private final Follower follower;
     private final TelemetryManager telemetry;

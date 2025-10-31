@@ -10,9 +10,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-import Ori.Coval.Logging.AutoLog;
 
-@AutoLog
+/// /@AutoLog
 
 public class ShooterSubsystem extends SubsystemBase {
     /*

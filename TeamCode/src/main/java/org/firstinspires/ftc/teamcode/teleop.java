@@ -10,8 +10,6 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 
-import Ori.Coval.Logging.AutoLogManager;
-
 @TeleOp
 public class teleop extends CommandOpMode {
 
@@ -35,6 +33,5 @@ public class teleop extends CommandOpMode {
     public void run(){
         CommandScheduler.getInstance().run();
         telemetryM.update();
-        AutoLogManager.periodic();
     }
 }

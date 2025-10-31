@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.util.Timer;
 
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
@@ -18,8 +20,10 @@ public class ShootCommand extends CommandBase {
 
     SHOOT_STATES state;
     private int shooterCounter;
-
+    private final TelemetryManager telemetryM;
     public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake, int shoots) {
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+
         this.shooterCounter = shoots;
         this.shooter = shooter;
         this.intake = intake;
@@ -35,6 +39,7 @@ public class ShootCommand extends CommandBase {
         intake.run();
         timer.resetTimer();
         state = SHOOT_STATES.Conveyor;
+        telemetryM.addData("Shoot State", state);
     }
     @Override
     public void execute() {
@@ -65,6 +70,7 @@ public class ShootCommand extends CommandBase {
                 }
                 break;
         }
+        telemetryM.addData("Shoot State", state);
 
     }
 
@@ -76,6 +82,7 @@ public class ShootCommand extends CommandBase {
     public void end(boolean interrupted){
         intake.stopTrigger();
         intake.stop();
+        telemetryM.addData("Shoot State", "Finish");
 
     }
 }

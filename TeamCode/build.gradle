@@ -46,6 +46,4 @@ dependencies {
 
     // KoalaLog (para logs compatíveis com AdvantageScope)
     // ⚠️ Substitua <version> pela versão atual listada no GitHub (ex: 1.0.1)
-    implementation 'com.github.ori-coval.Koala-Log:KoalaLogger:1.4.0'
-    annotationProcessor 'com.github.ori-coval.Koala-Log:KoalaLoggingProcessor:1.4.0'
 }
