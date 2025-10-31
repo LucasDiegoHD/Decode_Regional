@@ -31,7 +31,7 @@ public class ShootCommand extends CommandBase {
         addRequirements(shooter, intake);
     }
     public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake) {
-        this(shooter, intake, 10);
+        this(shooter, intake, 99);
     }
 
     @Override
