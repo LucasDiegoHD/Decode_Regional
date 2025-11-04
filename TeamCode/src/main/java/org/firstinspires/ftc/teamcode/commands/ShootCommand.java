@@ -5,6 +5,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.util.Timer;
 
+import org.firstinspires.ftc.teamcode.subsystems.IndexerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
@@ -44,21 +45,21 @@ public class ShootCommand extends CommandBase {
     private SHOOT_STATES state;
     private int shooterCounter;
     private final TelemetryManager telemetryM;
-
+    private final IndexerSubsystem indexer;
     /**
      * Constructs a new ShootCommand.
      * @param shooter The ShooterSubsystem to use.
      * @param intake The IntakeSubsystem to use.
      * @param shoots The number of pieces to shoot. Use a high number for continuous shooting.
      */
-    public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake, int shoots) {
+    public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake, IndexerSubsystem indexer, int shoots) {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-
+        this.indexer = indexer;
         this.shooterCounter = shoots;
         this.shooter = shooter;
         this.intake = intake;
         timer.resetTimer();
-        addRequirements(shooter, intake);
+        addRequirements(shooter, intake, indexer);
     }
 
     /**
@@ -66,8 +67,8 @@ public class ShootCommand extends CommandBase {
      * @param shooter The ShooterSubsystem to use.
      * @param intake The IntakeSubsystem to use.
      */
-    public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake) {
-        this(shooter, intake, 99); // A large number for effectively infinite shooting
+    public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake, IndexerSubsystem indexer) {
+        this(shooter, intake, indexer, 99); // A large number for effectively infinite shooting
     }
 
     /**
@@ -89,6 +90,7 @@ public class ShootCommand extends CommandBase {
         switch (state) {
             case Conveyor:
                 if(timer.getElapsedTime() > ShooterConstants.INTAKE_TIMER_TO_SHOOT){
+
                     state = SHOOT_STATES.Acceleration;
                     timer.resetTimer();
                     intake.stop();

@@ -12,7 +12,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.autos.commands.AutonomousCommands;
 import org.firstinspires.ftc.teamcode.autos.paths.BlueRearPoses;
 import org.firstinspires.ftc.teamcode.autos.paths.RedRearPoses;
+import org.firstinspires.ftc.teamcode.commands.AimByPoseCommand;
 import org.firstinspires.ftc.teamcode.commands.AlignToAprilTagCommand;
+import org.firstinspires.ftc.teamcode.commands.AutoShootCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.SpinShooterCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveAimingCommand;
@@ -35,7 +37,8 @@ public class RobotContainer {
     private final DrivetrainSubsystem drivetrain;
     private final IntakeSubsystem intake;
     private final ShooterSubsystem shooter;
-
+    private final VisionSubsystem vision;
+    private final IndexerSubsystem indexer;
     /**
      * The constructor for the RobotContainer. It is responsible for initializing all
      * subsystems, setting up default commands, and configuring gamepad button bindings.
@@ -49,8 +52,8 @@ public class RobotContainer {
         drivetrain = new DrivetrainSubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap);
         shooter = new ShooterSubsystem(hardwareMap, telemetry);
-        VisionSubsystem vision = new VisionSubsystem(hardwareMap, telemetry);
-        IndexerSubsystem indexer = new IndexerSubsystem(hardwareMap, telemetry);
+        vision = new VisionSubsystem(hardwareMap, telemetry);
+        indexer = new IndexerSubsystem(hardwareMap, telemetry);
 
         // Initialize robot's starting pose, attempting to use Vision first
         drivetrain.getFollower().setPose(vision.getRobotPose(Math.PI).orElse(new Pose(60,-11,Math.PI)));
@@ -65,7 +68,7 @@ public class RobotContainer {
                     .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, shooter, telemetry,driver));
 
             new GamepadButton(driver, GamepadKeys.Button.X)
-                    .whileHeld(new TeleOpDriveAimingCommand(drivetrain, driver, 144, 144));
+                    .whileHeld(new AimByPoseCommand(drivetrain, 144, 144));
         }
 
         if (operator != null) {
@@ -79,7 +82,7 @@ public class RobotContainer {
      * @return A {@link Command} object representing the complete autonomous sequence.
      */
     public Command getAutonomousBlueRearCommand() {
-        return new AutonomousCommands(drivetrain, shooter, intake, BlueRearPoses.asList(), true);
+        return new AutonomousCommands(drivetrain, shooter, intake, indexer, BlueRearPoses.asList(), true);
     }
 
     /**
@@ -88,7 +91,7 @@ public class RobotContainer {
      * @return A {@link Command} object representing the complete autonomous sequence.
      */
     public Command getAutonomousRedRearCommand() {
-        return new AutonomousCommands(drivetrain, shooter, intake, RedRearPoses.asList(), true);
+        return new AutonomousCommands(drivetrain, shooter, intake, indexer, RedRearPoses.asList(), true);
     }
 
     /**
@@ -99,7 +102,7 @@ public class RobotContainer {
      * @param telemetry The telemetry manager, passed to any commands that need it.
      */
     private void configureTeleOpBindings(GamepadEx operator, TelemetryManager telemetry) {
-        ShootCommand shoot = new ShootCommand(shooter, intake);
+        ShootCommand shoot = new ShootCommand(shooter, intake, indexer);
 
         // Hood controls
         new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT)
@@ -110,9 +113,7 @@ public class RobotContainer {
 
         // Continuous shooting
         new GamepadButton(operator, GamepadKeys.Button.DPAD_UP)
-                .whenPressed(new InstantCommand(shoot::schedule))
-                .whenReleased(new InstantCommand(shoot::cancel));
-
+                .whenActive(new AutoShootCommand(drivetrain, vision, shooter, intake, indexer));
         // Stop shooter
         new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(shooter::stop, shooter));

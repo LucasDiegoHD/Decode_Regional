@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -8,6 +9,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.bylazar.telemetry.TelemetryManager;
 
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IndexerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
@@ -28,19 +30,14 @@ public class AutoShootCommand extends SequentialCommandGroup {
      * @param telemetry  The telemetry manager for logging.
      * @param operator   The operator gamepad for manual override/control.
      */
-    public AutoShootCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, ShooterSubsystem shooter, IntakeSubsystem intake, TelemetryManager telemetry, GamepadEx operator) {
+    public AutoShootCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, ShooterSubsystem shooter, IntakeSubsystem intake, IndexerSubsystem indexer) {
         addCommands(
                 // Step 1: Aim the robot and spin up the shooter to the correct speed.
-                new AlignToAprilTagCommand(drivetrain, vision, shooter, telemetry, operator),
+                new AimByPoseCommand(drivetrain, 144, 144),
+                new AdjustHoodCommand(shooter, vision),
+                new AdjustShooterCommand(shooter, vision),
 
-                // Step 2: Wait until the shooter is at the target speed (with a 2-second safety timeout).
-                new WaitUntilCommand(shooter::getShooterAtTarget).withTimeout(2000),
-
-                // Step 3: Feed the game piece through the trigger.
-                new InstantCommand(intake::runTrigger, intake),
-                new WaitCommand(400), // Wait for the piece to pass through
-                new InstantCommand(intake::stopTrigger, intake)
-
+                new ShootCommand(shooter, intake, indexer)
                 // Note: The shooter is left running after the sequence.
                 // This allows for rapid subsequent shots. A separate button is used to stop it.
         );

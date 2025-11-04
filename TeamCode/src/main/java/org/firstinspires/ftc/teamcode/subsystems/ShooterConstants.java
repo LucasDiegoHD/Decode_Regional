@@ -47,6 +47,26 @@ public class ShooterConstants {
      * The time in milliseconds to wait after triggering before shooting.
      */
     public static double TRIGGER_TIMER_TO_SHOOT = 1000;
+    /**
+     * Equations for hood
+     * y= ângulo do hood
+     * x= distância dada pela limelight
+     * y= 0.2799x^3-1.7289x^2+3.7225x-2.1911
+     */
+    public static double HOOD_N0 = 2.1911;
+    public static double HOOD_N1 = 3.7225;
+    public static double HOOD_N2 = -1.7289;
+    public static double HOOD_N3 = 0.2799;
+    /**
+     * Equations for RPM
+     * <p>
+     * y= RPM
+     * x= distância dada pela limelight
+     * <p>
+     * y=842.9828x+2790.7711
+     */
+    public static double RPM_N0 = 2790.7711;
+    public static double RPM_N1 = 842.9828;
 
 
 }
