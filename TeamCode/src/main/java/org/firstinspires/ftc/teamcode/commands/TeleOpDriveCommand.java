@@ -9,12 +9,23 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
 
+/**
+ * A command for controlling the robot's drivetrain during the tele-operated period.
+ * It uses field-centric control, meaning the robot's movement is relative to the field,
+ * not the robot's orientation.
+ */
 public class TeleOpDriveCommand extends CommandBase {
 
     private final DrivetrainSubsystem drivetrain;
     private final GamepadEx driverGamepad;
 
 
+    /**
+     * Creates a new TeleOpDriveCommand.
+     *
+     * @param drivetrain    The DrivetrainSubsystem to control.
+     * @param driverGamepad The gamepad used for driving.
+     */
     public TeleOpDriveCommand(DrivetrainSubsystem drivetrain, GamepadEx driverGamepad) {
         this.drivetrain = drivetrain;
         this.driverGamepad = driverGamepad;
@@ -22,29 +33,40 @@ public class TeleOpDriveCommand extends CommandBase {
         addRequirements(drivetrain);
     }
 
+    /**
+     * Called when the command is initially scheduled. Prepares the follower for teleop mode.
+     */
     @Override
     public void initialize() {
         drivetrain.getFollower().startTeleopDrive();
     }
 
+    /**
+     * Called repeatedly while the command is scheduled. Reads joystick inputs,
+     * calculates field-centric drive vectors, and commands the drivetrain.
+     */
     @Override
     public void execute() {
         Pose p = drivetrain.getFollower().getPose();
         double heading = p.getHeading();
-        double y = driverGamepad.getLeftX(); // frente/trás
-        double x =  driverGamepad.getLeftY(); // lateral
+        // Read joystick values
+        double y = driverGamepad.getLeftX(); // Forward/backward
+        double x = driverGamepad.getLeftY(); // Strafe left/right
 
+        // Field-centric transformation
         double xField = x * Math.cos(heading) - y * Math.sin(heading);
         double yField = x * Math.sin(heading) + y * Math.cos(heading);
 
+        // Apply power to the drivetrain
         drivetrain.getFollower().setTeleOpDrive(
-                yField,
-                xField,
-                -driverGamepad.getRightX(),
-                true
+                yField, // Forward/backward power
+                xField, // Strafe power
+                -driverGamepad.getRightX(), // Turn power
+                true // Specify that the control is field-centric
         );
-        if(driverGamepad.getButton(GamepadKeys.Button.START)){
 
+        // Reset heading if the START button is pressed
+        if(driverGamepad.getButton(GamepadKeys.Button.START)){
             drivetrain.getFollower().setPose(p.setHeading(Math.PI));
         }
 

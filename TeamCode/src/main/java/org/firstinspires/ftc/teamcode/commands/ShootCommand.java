@@ -9,18 +9,48 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 
+/**
+ * The ShootCommand orchestrates the process of shooting game pieces.
+ * It manages a state machine to control the intake, shooter acceleration, and triggering.
+ */
 public class ShootCommand extends CommandBase {
 
     private final ShooterSubsystem shooter;
     private final IntakeSubsystem intake;
     private final Timer timer = new Timer();
+
+    /**
+     * Defines the states of the shooting process.
+     */
     private enum SHOOT_STATES{
-        Conveyor, Acceleration, Triggering, Shooting
+        /**
+         * The state where the conveyor is running to feed a piece.
+         */
+        Conveyor,
+        /**
+         * The state where the shooter motors are accelerating to the target speed.
+         */
+        Acceleration,
+        /**
+         * The state where the trigger is activated to push the piece into the shooter.
+         */
+        Triggering,
+        /**
+         * The state after a piece is shot, waiting for the shooter to regain speed.
+         */
+        Shooting
     }
 
-    SHOOT_STATES state;
+    private SHOOT_STATES state;
     private int shooterCounter;
     private final TelemetryManager telemetryM;
+
+    /**
+     * Constructs a new ShootCommand.
+     * @param shooter The ShooterSubsystem to use.
+     * @param intake The IntakeSubsystem to use.
+     * @param shoots The number of pieces to shoot. Use a high number for continuous shooting.
+     */
     public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake, int shoots) {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -30,10 +60,19 @@ public class ShootCommand extends CommandBase {
         timer.resetTimer();
         addRequirements(shooter, intake);
     }
+
+    /**
+     * Constructs a new ShootCommand for continuous shooting.
+     * @param shooter The ShooterSubsystem to use.
+     * @param intake The IntakeSubsystem to use.
+     */
     public ShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake) {
-        this(shooter, intake, 99);
+        this(shooter, intake, 99); // A large number for effectively infinite shooting
     }
 
+    /**
+     * Called when the command is initially scheduled. Sets the initial state.
+     */
     @Override
     public void initialize() {
         intake.run();
@@ -41,11 +80,15 @@ public class ShootCommand extends CommandBase {
         state = SHOOT_STATES.Conveyor;
         telemetryM.addData("Shoot State", state);
     }
+
+    /**
+     * Called repeatedly when this Command is scheduled to run. Executes the shooting state machine.
+     */
     @Override
     public void execute() {
         switch (state) {
             case Conveyor:
-                if(timer.getElapsedTime()> ShooterConstants.INTAKE_TIMER_TO_SHOOT){
+                if(timer.getElapsedTime() > ShooterConstants.INTAKE_TIMER_TO_SHOOT){
                     state = SHOOT_STATES.Acceleration;
                     timer.resetTimer();
                     intake.stop();
@@ -59,7 +102,7 @@ public class ShootCommand extends CommandBase {
                 }
                 break;
             case Triggering:
-                if (!shooter.getShooterAtTarget()) {
+                if (!shooter.getShooterAtTarget()) { // Detects the dip in speed when a piece is shot
                     timer.resetTimer();
                     state = SHOOT_STATES.Shooting;
                 }
@@ -80,10 +123,19 @@ public class ShootCommand extends CommandBase {
 
     }
 
+    /**
+     * Returns true when the command should end.
+     * @return True if the desired number of shots has been completed.
+     */
     @Override
     public boolean isFinished() {
         return shooterCounter == 0;
     }
+
+    /**
+     * Called once the command ends or is interrupted. Stops all motors.
+     * @param interrupted Whether the command was interrupted.
+     */
     @Override
     public void end(boolean interrupted){
         intake.stopTrigger();

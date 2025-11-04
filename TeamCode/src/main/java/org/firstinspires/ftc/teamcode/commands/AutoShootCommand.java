@@ -18,6 +18,16 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
  */
 public class AutoShootCommand extends SequentialCommandGroup {
 
+    /**
+     * Creates a new AutoShootCommand.
+     *
+     * @param drivetrain The drivetrain subsystem for alignment.
+     * @param vision     The vision subsystem for target detection.
+     * @param shooter    The shooter subsystem for launching the note.
+     * @param intake     The intake subsystem for feeding the note.
+     * @param telemetry  The telemetry manager for logging.
+     * @param operator   The operator gamepad for manual override/control.
+     */
     public AutoShootCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, ShooterSubsystem shooter, IntakeSubsystem intake, TelemetryManager telemetry, GamepadEx operator) {
         addCommands(
                 // Step 1: Aim the robot and spin up the shooter to the correct speed.
