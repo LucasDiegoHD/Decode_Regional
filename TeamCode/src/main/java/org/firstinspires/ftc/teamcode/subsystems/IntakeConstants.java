@@ -3,9 +3,20 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 
+/**
+ * Constants for the IntakeSubsystem.
+ */
 @Configurable
 public class IntakeConstants {
-    private IntakeConstants() {} // Impede a instanciação
+    /**
+     * Private constructor to prevent instantiation.
+     */
+    private IntakeConstants() {
+    }
+
+    /**
+     * The hardware map name for the intake motor.
+     */
     public static String INTAKE_MOTOR = "intakeMotor";
 
 }

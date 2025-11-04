@@ -2,17 +2,34 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.bylazar.configurables.annotations.Configurable;
 
+/**
+ * Constants for the VisionSubsystem.
+ */
 @Configurable
 public class VisionConstants {
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private VisionConstants() {}
 
+    /**
+     * The proportional gain for the turn controller.
+     */
     public static double TURN_KP = 0.01;
+    /** The integral gain for the turn controller. */
     public static double TURN_KI = 0.07;
+    /** The derivative gain for the turn controller. */
     public static double TURN_KD = 0.0035;
+    /** The feedforward gain for the turn controller. */
     public static double TURN_KF = 0.35;
+    /** The maximum target area to be considered valid. */
     public static double MAXIMUM_TA = 4.3;
+    /** The minimum target area to be considered valid. */
     public static double MINIMUM_TA = 0.32;
+    /** The height of the camera from the ground in meters. */
     public static double CAMERA_HEIGHT_METERS = 0.24554;
+    /** The height of the target from the ground in meters. */
     public static double TARGET_HEIGHT_METERS = 0.72;
+    /** The pitch of the camera in degrees. */
     public static double CAMERA_PITCH_DEGREES = 24.44;
 }

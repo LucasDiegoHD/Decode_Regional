@@ -10,6 +10,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
+/**
+ * The IndexerSubsystem is responsible for managing the game pieces within the robot's indexer.
+ * It uses a variety of sensors to detect the presence and count of game pieces.
+ */
 //@AutoLog
 public class IndexerSubsystem extends SubsystemBase {
 
@@ -23,6 +27,12 @@ public class IndexerSubsystem extends SubsystemBase {
     private final boolean lastEntryState = false;
     private final boolean lastExitState = false;
 
+    /**
+     * Constructs a new IndexerSubsystem.
+     *
+     * @param hardwareMap The hardware map to retrieve hardware devices from.
+     * @param telemetry   The telemetry manager for logging.
+     */
     public IndexerSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         this.telemetry = telemetry;
 
@@ -37,6 +47,9 @@ public class IndexerSubsystem extends SubsystemBase {
 
     }
 
+    /**
+     * This method is called periodically to update the subsystem's state and telemetry.
+     */
     @Override
     public void periodic() {
         telemetry.addData("Distance (cm)",
@@ -51,31 +64,53 @@ public class IndexerSubsystem extends SubsystemBase {
 
     }
 
+    /**
+     * Gets the state of the entry sensor.
+     * @return True if the sensor is triggered, false otherwise.
+     */
     public boolean getEntrySensor() {
         return sensorEntry.getState();
 
     }
 
+    /**
+     * Gets the state of the exit sensor.
+     * @return True if the sensor is triggered, false otherwise.
+     */
     public boolean getExitSensor() {
         return sensorDistance.getDistance(DistanceUnit.CM) < IndexerConstants.DISTANCE_OFFSET;
     }
 
 
-
+    /**
+     * Gets the current number of game pieces in the indexer.
+     * @return The number of game pieces.
+     */
     public int getPieceCount() {
         return pieceCount;
     }
 
+    /**
+     * Checks if the indexer has any game pieces.
+     * @return True if the indexer contains at least one piece, false otherwise.
+     */
     public boolean hasPieces() {
         return pieceCount > 0;
     }
 
+    /**
+     * Checks if the indexer is full.
+     * @return True if the indexer is at maximum capacity, false otherwise.
+     */
     public boolean isFull() {
         return pieceCount >= IndexerConstants.MAX_PIECE_CAPACITY;
     }
 
+    /**
+     * Sets the number of game pieces in the indexer.
+     * @param count The new piece count.
+     */
     public void setPieceCount(int count) {
         this.pieceCount = count;
     }
 }
-

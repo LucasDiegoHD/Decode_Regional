@@ -11,6 +11,10 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 
+/**
+ * The ShooterSubsystem is responsible for controlling the robot's shooting mechanism.
+ * This includes managing the speed of the shooter motors and the angle of the hood.
+ */
 /// /@AutoLog
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -27,9 +31,15 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double targetRPM = 0.0;
 
-    // Valores de posição do hood
-    private double hoodPosition = 0.5; // posição inicial (0.0 - 1.0)
+    // Hood position values
+    private double hoodPosition = 0.5; // initial position (0.0 - 1.0)
 
+    /**
+     * Constructs a new ShooterSubsystem.
+     *
+     * @param hardwareMap The hardware map to retrieve hardware devices from.
+     * @param telemetry   The telemetry manager for logging.
+     */
     public ShooterSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         this.telemetry = telemetry;
         rShooterMotor = hardwareMap.get(DcMotorEx.class, ShooterConstants.RSHOOTER_MOTOR_NAME);
@@ -43,12 +53,13 @@ public class ShooterSubsystem extends SubsystemBase {
         lShooterMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // Inicializa o hood na posição padrão
+        // Initialize hood to default position
         hoodServo.setPosition(ShooterConstants.MAXIMUM_HOOD);
     }
 
     /**
-     * Define a velocidade alvo do shooter em RPM
+     * Sets the target velocity of the shooter in RPM.
+     * @param rpm The target RPM.
      */
     public void setTargetVelocity(double rpm) {
         targetRPM = Math.max(0, rpm);
@@ -57,7 +68,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Para completamente o shooter
+     * Completely stops the shooter.
      */
     public void stop() {
         targetRPM = 0;
@@ -67,7 +78,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Aumenta o ângulo do hood
+     * Increases the angle of the hood.
      */
     public void increaseHood() {
         hoodPosition = Math.min(ShooterConstants.MAXIMUM_HOOD, hoodPosition + ShooterConstants.HOOD_INCREMENT);
@@ -75,7 +86,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Diminui o ângulo do hood
+     * Decreases the angle of the hood.
      */
     public void decreaseHood() {
         hoodPosition = Math.max(ShooterConstants.MINIMUM_HOOD, hoodPosition - ShooterConstants.HOOD_INCREMENT);
@@ -83,22 +94,35 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Obtém o RPM médio atual dos motores do shooter
+     * Gets the current average RPM of the shooter motors.
+     * @return The current RPM.
      */
     protected double getCurrentRPM() {
         double ticksPerSecond = (rShooterMotor.getVelocity() + lShooterMotor.getVelocity()) / 2.0;
         return (ticksPerSecond / ShooterConstants.TICKS_PER_REV) * 60.0;
     }
 
+    /**
+     * Converts RPM to ticks per second.
+     * @param rpm The RPM to convert.
+     * @return The equivalent ticks per second.
+     */
     protected int RPMToTicks(double rpm) {
         return (int) ((rpm / 60.0) * ShooterConstants.TICKS_PER_REV);
     }
 
+    /**
+     * Checks if the shooter is at its target velocity.
+     * @return True if the current RPM is within the tolerance of the target RPM, false otherwise.
+     */
     public boolean getShooterAtTarget() {
         return Math.abs(getCurrentRPM() - targetRPM) < ShooterConstants.VELOCITY_TOLERANCE;
     }
 
 
+    /**
+     * This method is called periodically to update the subsystem's state and telemetry.
+     */
     @Override
     public void periodic() {
         telemetry.addData("Shooter at target", getShooterAtTarget());

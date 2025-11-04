@@ -16,10 +16,21 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
+/**
+ * The DrivetrainSubsystem is responsible for the robot's movement and path following.
+ * It uses the Pedro Pathing library to control the robot's motion and provides telemetry and visualization.
+ */
 //@AutoLog
 public class DrivetrainSubsystem extends SubsystemBase {
     private final Follower follower;
     private final TelemetryManager telemetry;
+
+    /**
+     * Constructs a new DrivetrainSubsystem.
+     *
+     * @param hardwareMap The hardware map to retrieve hardware devices from.
+     * @param telemetry   The telemetry manager for logging.
+     */
     public DrivetrainSubsystem(HardwareMap hardwareMap, TelemetryManager telemetry) {
         follower = Constants.createFollower(hardwareMap);
         this.telemetry = telemetry;
@@ -29,10 +40,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
 
+    /**
+     * Gets the Follower instance used for path following.
+     * @return The Follower instance.
+     */
     public Follower getFollower() {
         return follower;
     }
 
+    /**
+     * This method is called periodically to update the subsystem's state, including the follower,
+     * telemetry, and dashboard visualizations.
+     */
     @Override
     public void periodic() {
 
@@ -47,13 +66,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
 }
 
 /**
- * This is the Drawing class. It handles the drawing of stuff on Panels Dashboard, like the robot.
+ * The Drawing class handles the visualization of the robot and its path on the Panels Dashboard.
  *
  * @author Lazar - 19234
  * @version 1.1, 5/19/2025
  */
 class Drawing {
-    public static final double ROBOT_RADIUS = 9; // woah
+    public static final double ROBOT_RADIUS = 9; // Robot radius in inches
     private static final FieldManager panelsField = PanelsField.INSTANCE.getField();
 
     private static final Style robotLook = new Style(
@@ -64,17 +83,16 @@ class Drawing {
     );
 
     /**
-     * This prepares Panels Field for using Pedro Offsets
+     * Initializes the Panels Field with default FTC offsets.
      */
     public static void init() {
         panelsField.setOffsets(PanelsField.INSTANCE.getPresets().getDEFAULT_FTC());
     }
 
     /**
-     * This draws everything that will be used in the Follower's telemetryDebug() method. This takes
-     * a Follower as an input, so an instance of the DashbaordDrawingHandler class is not needed.
+     * Draws debug information from the Follower, including the current path and pose history.
      *
-     * @param follower Pedro Follower instance.
+     * @param follower The Pedro Follower instance.
      */
     public static void drawDebug(Follower follower) {
         if (follower.getCurrentPath() != null) {
@@ -89,11 +107,11 @@ class Drawing {
     }
 
     /**
-     * This draws a robot at a specified Pose with a specified
-     * look. The heading is represented as a line.
+     * Draws a representation of the robot at a specified Pose with a given style.
+     * The robot's heading is indicated by a line.
      *
-     * @param pose  the Pose to draw the robot at
-     * @param style the parameters used to draw the robot with
+     * @param pose  The Pose to draw the robot at.
+     * @param style The style parameters for drawing.
      */
     public static void drawRobot(Pose pose, Style style) {
         if (pose == null || Double.isNaN(pose.getX()) || Double.isNaN(pose.getY()) || Double.isNaN(pose.getHeading())) {
@@ -115,19 +133,19 @@ class Drawing {
     }
 
     /**
-     * This draws a robot at a specified Pose. The heading is represented as a line.
+     * Draws a representation of the robot at a specified Pose using the default style.
      *
-     * @param pose the Pose to draw the robot at
+     * @param pose The Pose to draw the robot at.
      */
     public static void drawRobot(Pose pose) {
         drawRobot(pose, robotLook);
     }
 
     /**
-     * This draws a Path with a specified look.
+     * Draws a Path with a specified style.
      *
-     * @param path  the Path to draw
-     * @param style the parameters used to draw the Path with
+     * @param path  The Path to draw.
+     * @param style The style parameters for drawing.
      */
     public static void drawPath(Path path, Style style) {
         double[][] points = path.getPanelsDrawingPoints();
@@ -146,11 +164,10 @@ class Drawing {
     }
 
     /**
-     * This draws all the Paths in a PathChain with a
-     * specified look.
+     * Draws all Paths in a PathChain with a specified style.
      *
-     * @param pathChain the PathChain to draw
-     * @param style     the parameters used to draw the PathChain with
+     * @param pathChain The PathChain to draw.
+     * @param style     The style parameters for drawing.
      */
     public static void drawPath(PathChain pathChain, Style style) {
         for (int i = 0; i < pathChain.size(); i++) {
@@ -159,10 +176,10 @@ class Drawing {
     }
 
     /**
-     * This draws the pose history of the robot.
+     * Draws the robot's pose history with a specified style.
      *
-     * @param poseTracker the PoseHistory to get the pose history from
-     * @param style       the parameters used to draw the pose history with
+     * @param poseTracker The PoseHistory containing the robot's path.
+     * @param style       The style parameters for drawing.
      */
     public static void drawPoseHistory(PoseHistory poseTracker, Style style) {
         panelsField.setStyle(style);
@@ -176,16 +193,16 @@ class Drawing {
     }
 
     /**
-     * This draws the pose history of the robot.
+     * Draws the robot's pose history using the default style.
      *
-     * @param poseTracker the PoseHistory to get the pose history from
+     * @param poseTracker The PoseHistory containing the robot's path.
      */
     public static void drawPoseHistory(PoseHistory poseTracker) {
         drawPoseHistory(poseTracker, historyLook);
     }
 
     /**
-     * This tries to send the current packet to FTControl Panels.
+     * Sends the current drawing packet to the FTControl Panels dashboard.
      */
     public static void sendPacket() {
         panelsField.update();
