@@ -15,7 +15,7 @@ public class ShootCommand extends CommandBase {
     private final IntakeSubsystem intake;
     private final Timer timer = new Timer();
     private enum SHOOT_STATES{
-      Conveyor, Acceleration, Triggering
+        Conveyor, Acceleration, Triggering, Shooting
     }
 
     SHOOT_STATES state;
@@ -60,6 +60,12 @@ public class ShootCommand extends CommandBase {
                 break;
             case Triggering:
                 if (!shooter.getShooterAtTarget()) {
+                    timer.resetTimer();
+                    state = SHOOT_STATES.Shooting;
+                }
+                break;
+            case Shooting:
+                if (timer.getElapsedTime() > ShooterConstants.TRIGGER_TIMER_TO_SHOOT) {
                     state = SHOOT_STATES.Conveyor;
                     timer.resetTimer();
                     intake.stopTrigger();
@@ -68,7 +74,7 @@ public class ShootCommand extends CommandBase {
                         shooterCounter--;
                     }
                 }
-                break;
+
         }
         telemetryM.addData("Shoot State", state);
 

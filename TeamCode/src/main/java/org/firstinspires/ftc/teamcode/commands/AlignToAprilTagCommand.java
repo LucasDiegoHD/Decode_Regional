@@ -74,7 +74,7 @@ public class AlignToAprilTagCommand extends CommandBase {
         telemetry.debug("Turn Power: " + turnPower);
 
 
-        follower.setTeleOpDrive(yField, xField, -turnPower, true);
+        follower.setTeleOpDrive(yField, xField, turnPower, true);
         double hoodPosition = ShooterConstants.MINIMUM_HOOD +(ShooterConstants.MAXIMUM_HOOD-ShooterConstants.MINIMUM_HOOD) *
                 ((VisionConstants.MAXIMUM_TA-vision.getTargetTa().orElse(0.0))/(VisionConstants.MAXIMUM_TA-VisionConstants.MINIMUM_TA));
 

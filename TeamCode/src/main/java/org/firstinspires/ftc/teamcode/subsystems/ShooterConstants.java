@@ -20,6 +20,7 @@ public class ShooterConstants {
         public static double MAXIMUM_HOOD = 0.9;
         public static double HOOD_INCREMENT = 0.02;
         public static double INTAKE_TIMER_TO_SHOOT = 500;
+    public static double TRIGGER_TIMER_TO_SHOOT = 1000;
 
 
 }
