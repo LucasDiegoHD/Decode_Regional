@@ -47,3 +47,23 @@ dependencies {
     // KoalaLog (para logs compatíveis com AdvantageScope)
     // ⚠️ Substitua <version> pela versão atual listada no GitHub (ex: 1.0.1)
 }
+
+// ----------------------------------------------------------------------------
+// Tarefa Javadoc customizada
+// ----------------------------------------------------------------------------
+android.applicationVariants.all { variant ->
+    task "generate${variant.name.capitalize()}Javadoc"(type: Javadoc) {
+        group = "Documentation"
+        description "Generates Javadoc for the ${variant.name} build."
+
+        source = variant.javaCompile.source
+        destinationDir = file("../docs")
+        failOnError = false
+
+        classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
+
+        options.links("http://docs.oracle.com/javase/8/docs/api/")
+        options.links("https://javadoc.io/doc/org.firstinspires.ftc")
+        exclude '**/R.java', '**/BuildConfig.java'
+    }
+}

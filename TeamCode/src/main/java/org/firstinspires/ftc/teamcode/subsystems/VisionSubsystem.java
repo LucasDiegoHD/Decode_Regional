@@ -83,7 +83,7 @@ public class VisionSubsystem extends SubsystemBase {
     /**
      * Calculates the horizontal distance (on the ground) to the target.
      * This is ideal for most interpolations.
-     * @return An Optional<Double> containing the distance in meters.
+     * @return An {@code Optional<Double>} containing the distance in meters.
      */
     public Optional<Double> getHorizontalDistanceToTarget() {
         if (!hasTarget()) {
@@ -104,7 +104,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     /**
      * Calculates the direct distance (hypotenuse) from the camera to the target.
-     * @return An Optional<Double> containing the distance in meters.
+     * @return An {@code Optional<Double>} containing the distance in meters.
      */
     public Optional<Double> getDirectDistanceToTarget() {
         if (!hasTarget()) {
@@ -162,12 +162,8 @@ public class VisionSubsystem extends SubsystemBase {
             telemetry.addData("LL ta", latestResult.getTa());
             telemetry.addData("LL Pose MT2",latestResult.getBotpose_MT2());
             telemetry.addData("LL Pose MT1",latestResult.getBotpose());
-            getHorizontalDistanceToTarget().ifPresent(distance -> {
-                telemetry.addData("Distância Horizontal (M)", distance);
-            });
-            getDirectDistanceToTarget().ifPresent(distance -> {
-                telemetry.addData("Distância Direta (M)", distance);
-            });
+            getHorizontalDistanceToTarget().ifPresent(distance -> telemetry.addData("Distância Horizontal (M)", distance));
+            getDirectDistanceToTarget().ifPresent(distance -> telemetry.addData("Distância Direta (M)", distance));
 
         } else {
             telemetry.addLine("LL sem resultado");
