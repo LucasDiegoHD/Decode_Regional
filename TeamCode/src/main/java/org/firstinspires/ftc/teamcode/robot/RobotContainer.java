@@ -35,8 +35,6 @@ public class RobotContainer {
     private final DrivetrainSubsystem drivetrain;
     private final IntakeSubsystem intake;
     private final ShooterSubsystem shooter;
-    private final VisionSubsystem vision;
-    private final IndexerSubsystem indexer;
 
     /**
      * The constructor for the RobotContainer. It is responsible for initializing all
@@ -51,14 +49,14 @@ public class RobotContainer {
         drivetrain = new DrivetrainSubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap);
         shooter = new ShooterSubsystem(hardwareMap, telemetry);
-        vision = new VisionSubsystem(hardwareMap, telemetry);
-        indexer = new IndexerSubsystem(hardwareMap, telemetry);
+        VisionSubsystem vision = new VisionSubsystem(hardwareMap, telemetry);
+        IndexerSubsystem indexer = new IndexerSubsystem(hardwareMap, telemetry);
 
         // Initialize robot's starting pose, attempting to use Vision first
         drivetrain.getFollower().setPose(vision.getRobotPose(Math.PI).orElse(new Pose(60,-11,Math.PI)));
 
         // Set default commands
-        vision.setDefaultCommand(new UpdateLimelightYawCommand(drivetrain,vision));
+        vision.setDefaultCommand(new UpdateLimelightYawCommand(drivetrain, vision));
         if (driver != null) {
             drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver));
 
@@ -67,7 +65,7 @@ public class RobotContainer {
                     .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, shooter, telemetry,driver));
 
             new GamepadButton(driver, GamepadKeys.Button.X)
-                    .whileHeld(new TeleOpDriveAimingCommand(drivetrain,driver, 1.8796, -1.8796));
+                    .whileHeld(new TeleOpDriveAimingCommand(drivetrain, driver, 144, 144));
         }
 
         if (operator != null) {

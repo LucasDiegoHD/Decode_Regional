@@ -10,6 +10,8 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
+import org.firstinspires.ftc.teamcode.utils.AllianceEnum;
+import org.firstinspires.ftc.teamcode.utils.DataStorage;
 
 @Autonomous(name = "Auto: Vermelho Triangulo pequeno")
 public class AutoRedRear extends CommandOpMode {
@@ -22,6 +24,7 @@ public class AutoRedRear extends CommandOpMode {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
         RobotContainer robot = new RobotContainer(hardwareMap, telemetryM, null, null);
+        DataStorage.alliance = AllianceEnum.Red;
 
         // Pega o NOVO comando que criamos para atirar 3
         Command autonomousCommand = robot.getAutonomousRedRearCommand();

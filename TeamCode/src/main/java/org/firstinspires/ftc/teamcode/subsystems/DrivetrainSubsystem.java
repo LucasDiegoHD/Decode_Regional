@@ -14,6 +14,7 @@ import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.utils.DataStorage;
 
 
 /**
@@ -60,7 +61,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Drawing.drawRobot(follower.getPose());
         Drawing.sendPacket();
         Drawing.drawDebug(follower);
-
+        DataStorage.actualPose = follower.getPose();
 
     }
 }
