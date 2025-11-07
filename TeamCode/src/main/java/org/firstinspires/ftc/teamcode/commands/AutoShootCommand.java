@@ -33,7 +33,7 @@ public class AutoShootCommand extends SequentialCommandGroup {
     public AutoShootCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, ShooterSubsystem shooter, IntakeSubsystem intake, IndexerSubsystem indexer) {
         addCommands(
                 // Step 1: Aim the robot and spin up the shooter to the correct speed.
-                new AimByPoseCommand(drivetrain, 144, 144),
+                //new AimByPoseCommand(drivetrain, 144, 144),
                 new AdjustHoodCommand(shooter, vision),
                 new AdjustShooterCommand(shooter, vision),
 

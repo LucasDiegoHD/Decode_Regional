@@ -93,7 +93,7 @@ public class AlignToAprilTagCommand extends CommandBase {
 
         // Calculate turn power using PID on the vision target's horizontal offset (tx)
         double turnPower = turnController.calculate(vision.getTargetTx().orElse(0.0));
-        turnPower = Math.max(-0.3, Math.min(0.3, turnPower)); // Clamp turn power
+        turnPower = Math.max(-0.4, Math.min(0.4, turnPower)); // Clamp turn power
 
         telemetry.debug("Align TX: " + vision.getTargetTx().orElse(0.0));
         telemetry.debug("Turn Power: " + turnPower);

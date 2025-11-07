@@ -32,4 +32,5 @@ public class VisionConstants {
     public static double TARGET_HEIGHT_METERS = 0.72;
     /** The pitch of the camera in degrees. */
     public static double CAMERA_PITCH_DEGREES = 24.44;
+    public static double UPDATE_POSE_VISION_TIMEOUT = 2000;
 }

@@ -137,6 +137,7 @@ public class VisionSubsystem extends SubsystemBase {
     public Optional<Pose> getRobotPose(double yaw) {
         limelight.updateRobotOrientation(Math.toDegrees(yaw));
         latestResult = limelight.getLatestResult();
+
         if(!hasTarget()){
             return Optional.empty();
         }

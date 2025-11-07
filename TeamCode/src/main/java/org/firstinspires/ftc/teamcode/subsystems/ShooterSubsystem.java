@@ -58,8 +58,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setHoodPosition(double position) {
-        position = Math.max(ShooterConstants.MINIMUM_HOOD, Math.min(ShooterConstants.MAXIMUM_HOOD, position));
-        hoodServo.setPosition(position);
+        hoodPosition = position;
+        hoodServo.setPosition(hoodPosition);
     }
     /**
      * Sets the target velocity of the shooter in RPM.

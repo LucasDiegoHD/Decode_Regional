@@ -5,10 +5,14 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.VisionConstants;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
+
+import java.util.Timer;
 
 /**
  * A command that continuously updates the Limelight camera's internal robot yaw orientation.
@@ -19,7 +23,7 @@ public class UpdateLimelightYawCommand extends CommandBase {
 
     private final DrivetrainSubsystem drivetrain;
     private final VisionSubsystem vision;
-
+    private final ElapsedTime timeoutPose = new ElapsedTime();
 
     /**
      * Creates a new UpdateLimelightYawCommand.
@@ -42,11 +46,13 @@ public class UpdateLimelightYawCommand extends CommandBase {
     public void execute() {
         double yaw = drivetrain.getFollower().getHeading();
         vision.updateLimelightYaw(yaw);
-
+        if (timeoutPose.milliseconds() > VisionConstants.UPDATE_POSE_VISION_TIMEOUT) {
         // The commented-out code below could be used to have the Limelight's pose
         // estimation override the follower's pose, effectively re-localizing the robot.
-        // Pose p = drivetrain.getFollower().getPose();
-        // drivetrain.getFollower().setPose(vision.getRobotPose(yaw).orElse(p));
+            Pose p = drivetrain.getFollower().getPose();
+            drivetrain.getFollower().setPose(vision.getRobotPose(yaw).orElse(p));
+            timeoutPose.reset();
+        }
 
     }
 
