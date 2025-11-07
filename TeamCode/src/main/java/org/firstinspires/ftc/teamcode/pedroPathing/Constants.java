@@ -8,6 +8,7 @@ import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
@@ -77,5 +78,8 @@ public class Constants {
                 .pathConstraints(pathConstraints)
                 .build();
     }
+
+    public static Pose initialBluePose = new Pose(60, 10, Math.PI / 2, PedroCoordinates.INSTANCE);
+    public static Pose initialRedPose = new Pose(85, 10, Math.PI / 2, PedroCoordinates.INSTANCE);
 
 }

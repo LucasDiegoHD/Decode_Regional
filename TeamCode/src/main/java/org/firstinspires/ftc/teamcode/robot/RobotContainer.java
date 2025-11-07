@@ -20,11 +20,13 @@ import org.firstinspires.ftc.teamcode.commands.SpinShooterCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveAimingCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.UpdateLimelightYawCommand;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IndexerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.utils.AllianceEnum;
 
 /**
  * This class is the main container for the robot. It holds all subsystems, configures button
@@ -48,7 +50,7 @@ public class RobotContainer {
      * @param driver      The driver's gamepad (GamepadEx) for controlling the robot's movement.
      * @param operator    The operator's gamepad (GamepadEx) for controlling robot mechanisms.
      */
-    public RobotContainer(HardwareMap hardwareMap, TelemetryManager telemetry, GamepadEx driver, GamepadEx operator) {
+    public RobotContainer(HardwareMap hardwareMap, TelemetryManager telemetry, GamepadEx driver, GamepadEx operator, AllianceEnum alliance) {
         drivetrain = new DrivetrainSubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap);
         shooter = new ShooterSubsystem(hardwareMap, telemetry);
@@ -56,14 +58,14 @@ public class RobotContainer {
         indexer = new IndexerSubsystem(hardwareMap, telemetry);
 
         // Initialize robot's starting pose, attempting to use Vision first
-        Pose robotPose = vision.getRobotPose(Math.PI);
-        if (robotPose == null) {
-            robotPose = new Pose(60, -11, Math.PI);
+        Pose robotPose = Constants.initialRedPose;
+        if (alliance == AllianceEnum.Blue) {
+            robotPose = Constants.initialBluePose;
         }
         drivetrain.getFollower().setPose(robotPose);
 
         // Set default commands
-        vision.setDefaultCommand(new UpdateLimelightYawCommand(drivetrain, vision));
+        //vision.setDefaultCommand(new UpdateLimelightYawCommand(drivetrain, vision));
         if (driver != null) {
             drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver));
 

@@ -87,7 +87,7 @@ class Drawing {
      * Initializes the Panels Field with default FTC offsets.
      */
     public static void init() {
-        panelsField.setOffsets(PanelsField.INSTANCE.getPresets().getDEFAULT_FTC());
+        panelsField.setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());
     }
 
     /**

@@ -23,7 +23,7 @@ public class AutoBlueRear extends CommandOpMode {
     public void initialize() {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
-        RobotContainer robot = new RobotContainer(hardwareMap, telemetryM, null, null);
+        RobotContainer robot = new RobotContainer(hardwareMap, telemetryM, null, null, AllianceEnum.Blue);
         DataStorage.alliance = AllianceEnum.Blue;
         // Pega o NOVO comando que criamos para atirar 3
         Command autonomousCommand = robot.getAutonomousBlueRearCommand();

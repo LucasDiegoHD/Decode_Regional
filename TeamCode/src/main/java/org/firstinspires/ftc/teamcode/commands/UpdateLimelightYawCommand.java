@@ -50,12 +50,12 @@ public class UpdateLimelightYawCommand extends CommandBase {
 
         double yaw = drivetrain.getFollower().getHeading();
         Pose p = vision.getRobotPose(yaw);
-        if (timeoutPose.milliseconds() > VisionConstants.UPDATE_POSE_VISION_TIMEOUT && p != null) {
+        /*if (timeoutPose.milliseconds() > VisionConstants.UPDATE_POSE_VISION_TIMEOUT && p != null) {
 
             drivetrain.getFollower().setPose(p);
             timeoutPose.reset();
             telemetryM.addData("Pose Updated", p);
-        }
+        }*/
 
     }
 

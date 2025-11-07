@@ -60,7 +60,6 @@ public class AutonomousCommands extends SequentialCommandGroup {
     public AutonomousCommands(@NonNull DrivetrainSubsystem drivetrain, ShooterSubsystem shooter, IntakeSubsystem intake, IndexerSubsystem indexer, List<Pose> poses, boolean LongFisrt) {
 
         addCommands(
-                new InstantCommand(() -> drivetrain.getFollower().setPose(poses.get(PosesNames.StartPose.ordinal()))),
                 new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.LONG_SHOOT : SpinShooterCommand.Action.SHORT_SHOOT),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot1.ordinal())),
                 new ShootCommand(shooter, intake, indexer, 3).withTimeout(5000),
