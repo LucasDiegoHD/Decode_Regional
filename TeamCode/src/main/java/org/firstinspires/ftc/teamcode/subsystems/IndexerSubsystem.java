@@ -54,13 +54,8 @@ public class IndexerSubsystem extends SubsystemBase {
     public void periodic() {
         telemetry.addData("Distance (cm)",
                 sensorDistance.getDistance(DistanceUnit.CM));
-        telemetry.addData("Alpha", sensorColor.alpha());
-        telemetry.addData("Red  ", sensorColor.red());
-        telemetry.addData("Green", sensorColor.green());
-        telemetry.addData("Blue ", sensorColor.blue());
         telemetry.addData("Entry", getEntrySensor());
         telemetry.addData("Exit", getExitSensor());
-        telemetry.addData("Counter", pieceCount);
 
     }
 

@@ -134,19 +134,19 @@ public class VisionSubsystem extends SubsystemBase {
      * @param yaw The robot's current yaw in radians, used to improve the estimate.
      * @return An Optional containing the robot's Pose if a target is visible.
      */
-    public Optional<Pose> getRobotPose(double yaw) {
+    public Pose getRobotPose(double yaw) {
         limelight.updateRobotOrientation(Math.toDegrees(yaw));
         latestResult = limelight.getLatestResult();
 
         if(!hasTarget()){
-            return Optional.empty();
+            return null;
         }
         Pose3D robotPose = latestResult.getBotpose_MT2(); // Using MegaTag2 for potentially better accuracy
         if(robotPose == null){
-            return Optional.empty();
+            return null;
         }
         // Convert from meters (Limelight standard) to inches (PedroPathing standard)
-        return Optional.of(new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw()), FTCCoordinates.INSTANCE));
+        return new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw()), FTCCoordinates.INSTANCE);
     }
 
     /**
@@ -158,11 +158,7 @@ public class VisionSubsystem extends SubsystemBase {
 
         if (latestResult != null) {
             telemetry.addData("LL Valid", latestResult.isValid());
-            telemetry.addData("LL tx", latestResult.getTx());
-            telemetry.addData("LL ty", latestResult.getTy());
-            telemetry.addData("LL ta", latestResult.getTa());
-            telemetry.addData("LL Pose MT2",latestResult.getBotpose_MT2());
-            telemetry.addData("LL Pose MT1",latestResult.getBotpose());
+            telemetry.addData("LL Pose MT2", latestResult.getBotpose_MT2());
             getHorizontalDistanceToTarget().ifPresent(distance -> telemetry.addData("Distância Horizontal (M)", distance));
             getDirectDistanceToTarget().ifPresent(distance -> telemetry.addData("Distância Direta (M)", distance));
 

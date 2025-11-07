@@ -56,7 +56,11 @@ public class RobotContainer {
         indexer = new IndexerSubsystem(hardwareMap, telemetry);
 
         // Initialize robot's starting pose, attempting to use Vision first
-        drivetrain.getFollower().setPose(vision.getRobotPose(Math.PI).orElse(new Pose(60,-11,Math.PI)));
+        Pose robotPose = vision.getRobotPose(Math.PI);
+        if (robotPose == null) {
+            robotPose = new Pose(60, -11, Math.PI);
+        }
+        drivetrain.getFollower().setPose(robotPose);
 
         // Set default commands
         vision.setDefaultCommand(new UpdateLimelightYawCommand(drivetrain, vision));

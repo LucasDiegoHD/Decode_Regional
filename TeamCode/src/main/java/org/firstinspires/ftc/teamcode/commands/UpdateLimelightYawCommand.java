@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,7 +26,7 @@ public class UpdateLimelightYawCommand extends CommandBase {
     private final DrivetrainSubsystem drivetrain;
     private final VisionSubsystem vision;
     private final ElapsedTime timeoutPose = new ElapsedTime();
-
+    private final TelemetryManager telemetryM;
     /**
      * Creates a new UpdateLimelightYawCommand.
      *
@@ -35,7 +37,7 @@ public class UpdateLimelightYawCommand extends CommandBase {
         this.drivetrain = drivetrain;
         this.vision = vision;
         addRequirements(vision); // This command modifies the state of the vision subsystem
-
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
     /**
@@ -44,14 +46,15 @@ public class UpdateLimelightYawCommand extends CommandBase {
      */
     @Override
     public void execute() {
+
+
         double yaw = drivetrain.getFollower().getHeading();
-        vision.updateLimelightYaw(yaw);
-        if (timeoutPose.milliseconds() > VisionConstants.UPDATE_POSE_VISION_TIMEOUT) {
-        // The commented-out code below could be used to have the Limelight's pose
-        // estimation override the follower's pose, effectively re-localizing the robot.
-            Pose p = drivetrain.getFollower().getPose();
-            drivetrain.getFollower().setPose(vision.getRobotPose(yaw).orElse(p));
+        Pose p = vision.getRobotPose(yaw);
+        if (timeoutPose.milliseconds() > VisionConstants.UPDATE_POSE_VISION_TIMEOUT && p != null) {
+
+            drivetrain.getFollower().setPose(p);
             timeoutPose.reset();
+            telemetryM.addData("Pose Updated", p);
         }
 
     }
