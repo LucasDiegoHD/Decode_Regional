@@ -17,9 +17,7 @@ import org.firstinspires.ftc.teamcode.commands.AlignToAprilTagCommand;
 import org.firstinspires.ftc.teamcode.commands.AutoShootCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.SpinShooterCommand;
-import org.firstinspires.ftc.teamcode.commands.TeleOpDriveAimingCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
-import org.firstinspires.ftc.teamcode.commands.UpdateLimelightYawCommand;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IndexerSubsystem;
@@ -71,7 +69,7 @@ public class RobotContainer {
 
             // Driver controller bindings
             new GamepadButton(driver, GamepadKeys.Button.Y)
-                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, shooter, telemetry,driver));
+                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry, driver));
 
             new GamepadButton(driver, GamepadKeys.Button.X)
                     .whileHeld(new AimByPoseCommand(drivetrain, 144, 144));
@@ -88,7 +86,7 @@ public class RobotContainer {
      * @return A {@link Command} object representing the complete autonomous sequence.
      */
     public Command getAutonomousBlueRearCommand() {
-        return new AutonomousCommands(drivetrain, shooter, intake, indexer, BlueRearPoses.asList(), true);
+        return new AutonomousCommands(drivetrain, shooter, intake, indexer, vision, BlueRearPoses.asList());
     }
 
     /**
@@ -97,7 +95,7 @@ public class RobotContainer {
      * @return A {@link Command} object representing the complete autonomous sequence.
      */
     public Command getAutonomousRedRearCommand() {
-        return new AutonomousCommands(drivetrain, shooter, intake, indexer, RedRearPoses.asList(), true);
+        return new AutonomousCommands(drivetrain, shooter, intake, indexer, vision, RedRearPoses.asList());
     }
 
     /**

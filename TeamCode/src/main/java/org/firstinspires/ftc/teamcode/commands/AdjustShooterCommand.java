@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.VisionConstants;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
 /**
@@ -14,9 +15,6 @@ public class AdjustShooterCommand extends CommandBase {
 
     private final ShooterSubsystem shooter;
     private final VisionSubsystem vision;
-    /**
-     * Defines the possible actions for the shooter.
-     */
 
 
     /**
@@ -38,6 +36,10 @@ public class AdjustShooterCommand extends CommandBase {
     public void initialize() {
         double distance = vision.getDirectDistanceToTarget().orElse((double) 0);
         double rpm = ShooterConstants.RPM_N0 + ShooterConstants.RPM_N1 * distance;
+        if (distance > VisionConstants.LONGEST_DISTANCE) {
+            rpm = VisionConstants.LONGEST_RPM;
+
+        }
         shooter.setTargetVelocity(rpm);
     }
 

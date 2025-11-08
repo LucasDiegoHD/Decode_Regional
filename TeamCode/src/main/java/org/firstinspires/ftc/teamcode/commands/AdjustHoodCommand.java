@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.VisionConstants;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
 /**
@@ -14,9 +15,6 @@ public class AdjustHoodCommand extends CommandBase {
 
     private final ShooterSubsystem shooter;
     private final VisionSubsystem vision;
-    /**
-     * Defines the possible actions for the shooter.
-     */
 
 
     /**
@@ -39,6 +37,10 @@ public class AdjustHoodCommand extends CommandBase {
         double distance = vision.getDirectDistanceToTarget().orElse((double) 0);
         double hood = ShooterConstants.HOOD_N0 + ShooterConstants.HOOD_N1 * distance
                 + ShooterConstants.HOOD_N2 * Math.pow(distance, 2) + ShooterConstants.HOOD_N3 * Math.pow(distance, 3);
+        if (distance > VisionConstants.LONGEST_DISTANCE) {
+            hood = VisionConstants.LONGEST_HOOD;
+
+        }
         shooter.setHoodPosition(hood);
     }
 

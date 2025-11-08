@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IndexerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
 import java.util.List;
 
@@ -55,13 +56,12 @@ public class AutonomousCommands extends SequentialCommandGroup {
      * @param intake     The intake subsystem for collecting rings.
      * @param poses      A list of {@link Pose} objects defining the robot's path and key locations.
      *                   The order and meaning of these poses are defined by the {@link PosesNames} enum.
-     * @param LongFisrt  A boolean flag to determine the initial shooting distance. If true, the first shot is a long shot; otherwise, it's a short shot.
      */
-    public AutonomousCommands(@NonNull DrivetrainSubsystem drivetrain, ShooterSubsystem shooter, IntakeSubsystem intake, IndexerSubsystem indexer, List<Pose> poses, boolean LongFisrt) {
+    public AutonomousCommands(@NonNull DrivetrainSubsystem drivetrain, ShooterSubsystem shooter, IntakeSubsystem intake, IndexerSubsystem indexer, VisionSubsystem vision, List<Pose> poses) {
 
         addCommands(
-                new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.LONG_SHOOT : SpinShooterCommand.Action.SHORT_SHOOT),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot1.ordinal())),
+                new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
                 new ShootCommand(shooter, intake, indexer, 3).withTimeout(5000),
                 new SpinShooterCommand(shooter, SpinShooterCommand.Action.STOP),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine1.ordinal())),
@@ -69,7 +69,7 @@ public class AutonomousCommands extends SequentialCommandGroup {
                 new InstantCommand(intake::run),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine1.ordinal())),
                 new ParallelCommandGroup(new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot2.ordinal())), new InstantCommand(intake::stop)),
-                new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.LONG_SHOOT : SpinShooterCommand.Action.SHORT_SHOOT),
+                new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
                 new ShootCommand(shooter, intake, indexer, 3).withTimeout(5000),
                 new SpinShooterCommand(shooter, SpinShooterCommand.Action.STOP),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine2.ordinal())),
@@ -77,7 +77,7 @@ public class AutonomousCommands extends SequentialCommandGroup {
                 new InstantCommand(intake::run),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine2.ordinal())),
                 new ParallelCommandGroup(new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot3.ordinal())), new InstantCommand(intake::stop)),
-                new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.LONG_SHOOT : SpinShooterCommand.Action.SHORT_SHOOT),
+                new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
                 new ShootCommand(shooter, intake, indexer, 3).withTimeout(5000),
                 new SpinShooterCommand(shooter, SpinShooterCommand.Action.STOP),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine3.ordinal())),
@@ -85,7 +85,7 @@ public class AutonomousCommands extends SequentialCommandGroup {
                 new InstantCommand(intake::run),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine3.ordinal())),
                 new ParallelCommandGroup(new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot4.ordinal())), new InstantCommand(intake::stop)),
-                new SpinShooterCommand(shooter, LongFisrt ? SpinShooterCommand.Action.SHORT_SHOOT : SpinShooterCommand.Action.LONG_SHOOT),
+                new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot1.ordinal())),
                 new ShootCommand(shooter, intake, indexer, 3).withTimeout(5000),
                 new SpinShooterCommand(shooter, SpinShooterCommand.Action.STOP)

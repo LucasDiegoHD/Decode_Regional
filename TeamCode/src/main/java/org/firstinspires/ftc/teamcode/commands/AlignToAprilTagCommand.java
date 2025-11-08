@@ -5,12 +5,9 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
-import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterConstants;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.VisionConstants;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
@@ -23,7 +20,6 @@ public class AlignToAprilTagCommand extends CommandBase {
 
     private final Follower follower;
     private final VisionSubsystem vision;
-    private final ShooterSubsystem shooter;
     private final TelemetryManager telemetry;
     private final PIDFController turnController;
     private int IsAprilTagNotSeemCounter = 0;
@@ -37,18 +33,16 @@ public class AlignToAprilTagCommand extends CommandBase {
      *
      * @param drivetrain    The DrivetrainSubsystem to control.
      * @param vision        The VisionSubsystem to get target data from.
-     * @param shooter       The ShooterSubsystem to adjust.
      * @param telemetry     The TelemetryManager for logging.
      * @param driverGamepad The driver's gamepad for movement input.
      */
-    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, ShooterSubsystem shooter, TelemetryManager telemetry,  GamepadEx driverGamepad) {
+    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, TelemetryManager telemetry, GamepadEx driverGamepad) {
         this.follower = drivetrain.getFollower();
         this.vision = vision;
-        this.shooter = shooter;
         this.telemetry = telemetry;
         this.driverGamepad = driverGamepad;
         this.turnController = new  PIDFController(VisionConstants.TURN_KP, VisionConstants.TURN_KI, VisionConstants.TURN_KD, VisionConstants.TURN_KF);
-        addRequirements(drivetrain, vision, shooter);
+        addRequirements(drivetrain, vision);
     }
 
     /**
@@ -85,9 +79,12 @@ public class AlignToAprilTagCommand extends CommandBase {
 
         // Allow driver to control forward/backward and strafe while aligning
         double heading = follower.getHeading();
-        double y = driverGamepad.getLeftY(); // forward/backward
-        double x = -driverGamepad.getLeftX(); // strafe
-
+        double y = 0;
+        double x = 0;
+        if (driverGamepad != null) {
+            y = driverGamepad.getLeftY(); // forward/backward
+            x = -driverGamepad.getLeftX(); // strafe
+        }
         double xField = x * Math.cos(heading) - y * Math.sin(heading);
         double yField = x * Math.sin(heading) + y * Math.cos(heading);
 
@@ -101,12 +98,7 @@ public class AlignToAprilTagCommand extends CommandBase {
 
         follower.setTeleOpDrive(yField, xField, turnPower, true);
 
-        // Calculate desired hood position based on target area (distance)
-        double hoodPosition = ShooterConstants.MINIMUM_HOOD + (ShooterConstants.MAXIMUM_HOOD - ShooterConstants.MINIMUM_HOOD) *
-                ((VisionConstants.MAXIMUM_TA - vision.getTargetTa().orElse(0.0)) / (VisionConstants.MAXIMUM_TA - VisionConstants.MINIMUM_TA));
 
-        // shooter.setHoodPosition(hoodPosition); // This line is currently disabled
-        telemetry.addData("Hood Setting", hoodPosition);
     }
 
     /**
