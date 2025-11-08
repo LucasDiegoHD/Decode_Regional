@@ -35,13 +35,17 @@ public class IntakeSubsystem extends SubsystemBase {
     /**
      * Reverses the intake motor.
      */
-    public void reverse() { intakeMotor.setPower(-1.0);
+    public void reverse() {
+        intakeMotor.setPower(-1.0);
+        triggerMotor.setPower(1.0);
     }
 
     /**
      * Stops the intake motor.
      */
-    public void stop() { intakeMotor.setPower(0);
+    public void stop() {
+        intakeMotor.setPower(0);
+        triggerMotor.setPower(0);
     }
 
     /**

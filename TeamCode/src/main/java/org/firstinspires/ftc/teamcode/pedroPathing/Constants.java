@@ -27,13 +27,13 @@ public class Constants {
         }
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(13)
-            .forwardZeroPowerAcceleration(-42.33732593025041)
+            .forwardZeroPowerAcceleration(-22.33732593025041)
             .lateralZeroPowerAcceleration(-97.42340280933647)
             .useSecondaryTranslationalPIDF(false)
             .useSecondaryHeadingPIDF(false)
             .useSecondaryDrivePIDF(false)
             .centripetalScaling(0.0005)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0.0001, 0.01, 0.025))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0.0001, 0.02, 0.025))
             .headingPIDFCoefficients(new PIDFCoefficients(3, 0.1, 0.2, 0.025))
             .drivePIDFCoefficients(
                     new FilteredPIDFCoefficients(0.03, 0.001, 0.001, 1, 0.15)

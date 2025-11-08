@@ -27,12 +27,9 @@ public class AutoShootCommand extends SequentialCommandGroup {
      * @param vision     The vision subsystem for target detection.
      * @param shooter    The shooter subsystem for launching the note.
      * @param intake     The intake subsystem for feeding the note.
-     * @param telemetry  The telemetry manager for logging.
-     * @param operator   The operator gamepad for manual override/control.
      */
     public AutoShootCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, ShooterSubsystem shooter, IntakeSubsystem intake, IndexerSubsystem indexer) {
         addCommands(
-                // Step 1: Aim the robot and spin up the shooter to the correct speed.
                 //new AimByPoseCommand(drivetrain, 144, 144),
                 new AdjustHoodCommand(shooter, vision),
                 new AdjustShooterCommand(shooter, vision),

@@ -32,9 +32,9 @@ public class ShooterConstants {
     /** The target velocity in RPM for short shots. */
         public static double TARGET_VELOCITY_SHORT = 4420;
     /** The target velocity in RPM for long shots. */
-        public static double TARGET_VELOCITY_LONG = 5200;
+        public static double TARGET_VELOCITY_LONG = 5000;
     /** The acceptable error margin for the shooter's target velocity in RPM. */
-        public static double VELOCITY_TOLERANCE = 200;
+        public static double VELOCITY_TOLERANCE = 250;
     /** The minimum position of the hood servo. */
         public static double MINIMUM_HOOD = 0.25;
     /** The maximum position of the hood servo. */
