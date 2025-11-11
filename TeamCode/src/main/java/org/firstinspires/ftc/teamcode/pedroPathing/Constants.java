@@ -27,7 +27,7 @@ public class Constants {
         }
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(13)
-            .forwardZeroPowerAcceleration(-22.33732593025041)
+            .forwardZeroPowerAcceleration(-33.315092662612045)
             .lateralZeroPowerAcceleration(-97.42340280933647)
             .useSecondaryTranslationalPIDF(false)
             .useSecondaryHeadingPIDF(false)

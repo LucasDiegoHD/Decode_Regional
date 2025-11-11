@@ -21,18 +21,12 @@ public class ShooterConstants {
      * The number of encoder ticks per revolution for the shooter motors.
      */
     public static final double TICKS_PER_REV = 28.0; // Adjust based on the motor
-    /** The proportional gain for the shooter velocity controller. */
-        public static double kP = 0.01;
-    /** The integral gain for the shooter velocity controller. */
-        public static double kI = 0.000;
-    /** The derivative gain for the shooter velocity controller. */
-        public static double kD = 0.00001;
-    /** The feedforward gain for the shooter velocity controller. */
-        public static double kF = 0;
-    /** The target velocity in RPM for short shots. */
+    /**
+     * The target velocity in RPM for short shots.
+     */
         public static double TARGET_VELOCITY_SHORT = 4420;
     /** The target velocity in RPM for long shots. */
-        public static double TARGET_VELOCITY_LONG = 5000;
+    public static double TARGET_VELOCITY_LONG = 6000;
     /** The acceptable error margin for the shooter's target velocity in RPM. */
         public static double VELOCITY_TOLERANCE = 250;
     /** The minimum position of the hood servo. */
@@ -41,8 +35,7 @@ public class ShooterConstants {
         public static double MAXIMUM_HOOD = 0.9;
     /** The amount to increment or decrement the hood position. */
         public static double HOOD_INCREMENT = 0.02;
-    /** The time in milliseconds to wait after intaking before shooting. */
-        public static double INTAKE_TIMER_TO_SHOOT = 500;
+
     /**
      * The time in milliseconds to wait after triggering before shooting.
      */
