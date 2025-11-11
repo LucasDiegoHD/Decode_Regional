@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.autos;
 
-import com.bylazar.configurables.annotations.IgnoreConfigurable;
-import com.bylazar.telemetry.TelemetryManager;
-import com.pedropathing.follower.Follower;
 import com.pedropathing.telemetry.SelectableOpMode;
-import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import java.util.ArrayList;

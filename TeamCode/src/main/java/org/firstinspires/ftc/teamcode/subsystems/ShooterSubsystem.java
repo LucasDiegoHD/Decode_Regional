@@ -8,9 +8,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-
-
 /**
  * The ShooterSubsystem is responsible for controlling the robot's shooting mechanism.
  * This includes managing the speed of the shooter motors and the angle of the hood.

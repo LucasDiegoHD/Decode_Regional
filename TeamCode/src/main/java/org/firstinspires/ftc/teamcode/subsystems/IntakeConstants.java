@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.geometry.Pose;
+
 
 /**
  * Constants for the IntakeSubsystem.

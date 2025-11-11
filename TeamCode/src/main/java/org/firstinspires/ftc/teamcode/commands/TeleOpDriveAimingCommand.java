@@ -3,11 +3,7 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.hardware.IMU;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
 
 /**
@@ -78,11 +74,10 @@ public class TeleOpDriveAimingCommand extends CommandBase {
         Pose pose = drivetrain.getFollower().getPose();
         double robotX = pose.getX();
         double robotY = pose.getY();
-        double robotHeading = heading;
 
         // Calculate desired heading toward the target
         double desiredTheta = Math.atan2(targetY - robotY, targetX - robotX);
-        double error = desiredTheta - robotHeading;
+        double error = desiredTheta - heading;
         error = Math.atan2(Math.sin(error), Math.cos(error)); // Normalize to [-π, π]
 
         double omega = angleController.calculate(0, error);

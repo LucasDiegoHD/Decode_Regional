@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
-
-
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.bylazar.configurables.annotations.IgnoreConfigurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -13,8 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +25,6 @@ public class MotorDirections extends OpMode {
     private DcMotorEx leftRear;
     private DcMotorEx rightFront;
     private DcMotorEx rightRear;
-    private List<DcMotorEx> motors;
 
     @Override
     public void init() {
@@ -45,7 +39,7 @@ public class MotorDirections extends OpMode {
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
+        List<DcMotorEx> motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();

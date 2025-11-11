@@ -18,7 +18,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class IndexerSubsystem extends SubsystemBase {
 
     private final DigitalChannel sensorEntry;
-    private final ColorSensor sensorColor;
     private final DistanceSensor sensorDistance;
     private final TelemetryManager telemetry;
 
@@ -37,7 +36,7 @@ public class IndexerSubsystem extends SubsystemBase {
         this.telemetry = telemetry;
 
         // get a reference to the color sensor.
-        sensorColor = hardwareMap.get(ColorSensor.class, IndexerConstants.EXIT_SENSOR_NAME);
+        ColorSensor sensorColor = hardwareMap.get(ColorSensor.class, IndexerConstants.EXIT_SENSOR_NAME);
 
         // get a reference to the distance sensor that shares the same name.
         sensorDistance = hardwareMap.get(DistanceSensor.class, IndexerConstants.EXIT_SENSOR_NAME);

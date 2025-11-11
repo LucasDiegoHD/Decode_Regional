@@ -68,21 +68,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontLeftDrive = null;
-    private DcMotor backLeftDrive = null;
-    private DcMotor frontRightDrive = null;
-    private DcMotor backRightDrive = null;
+    private final ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
-        backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
+        DcMotor frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
+        DcMotor backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
+        DcMotor frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
+        DcMotor backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -159,7 +155,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             backRightDrive.setPower(backRightPower);
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Status", "Run Time: " + runtime);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
             telemetry.update();
