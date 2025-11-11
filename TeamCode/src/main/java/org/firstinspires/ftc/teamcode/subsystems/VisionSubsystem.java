@@ -149,6 +149,21 @@ public class VisionSubsystem extends SubsystemBase {
         return new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw()), FTCCoordinates.INSTANCE);
     }
 
+    public Pose getRobotPose() {
+        latestResult = limelight.getLatestResult();
+
+        if (!hasTarget()) {
+            return null;
+        }
+        Pose3D robotPose = latestResult.getBotpose(); // Using MegaTag2 for potentially better accuracy
+        if (robotPose == null) {
+            return null;
+        }
+        // Convert from meters (Limelight standard) to inches (PedroPathing standard)
+        return new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw()), FTCCoordinates.INSTANCE);
+    }
+
+
     /**
      * This method is called periodically to update the subsystem's state and telemetry.
      */

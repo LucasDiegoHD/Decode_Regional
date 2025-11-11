@@ -41,8 +41,7 @@ public class UpdatePoseLimelightCommand extends CommandBase {
     public void initialize() {
 
 
-        double yaw = pose.getHeading();
-        Pose p = vision.getRobotPose(yaw);
+        Pose p = vision.getRobotPose();
         if (p != null) {
 
             drivetrain.getFollower().setPose(p);
