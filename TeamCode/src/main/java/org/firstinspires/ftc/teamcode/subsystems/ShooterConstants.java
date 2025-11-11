@@ -35,7 +35,7 @@ public class ShooterConstants {
         public static double MAXIMUM_HOOD = 0.9;
     /** The amount to increment or decrement the hood position. */
         public static double HOOD_INCREMENT = 0.02;
-    public static double INTAKE_TIME_TO_SHOOT = 200;
+    public static double INTAKE_TIME_TO_SHOOT = 800;
     /**
      * The time in milliseconds to wait after triggering before shooting.
      */
