@@ -35,7 +35,7 @@ public class ShooterConstants {
         public static double MAXIMUM_HOOD = 0.9;
     /** The amount to increment or decrement the hood position. */
         public static double HOOD_INCREMENT = 0.02;
-
+    public static double INTAKE_TIME_TO_SHOOT = 200;
     /**
      * The time in milliseconds to wait after triggering before shooting.
      */
@@ -46,7 +46,7 @@ public class ShooterConstants {
      * x= distância dada pela limelight
      * y= 0.2799x^3-1.7289x^2+3.7225x-2.1911
      */
-    public static double HOOD_N0 = -2.1911;
+    public static double HOOD_N0 = -1.9811;
     public static double HOOD_N1 = 3.7225;
     public static double HOOD_N2 = -1.7289;
     public static double HOOD_N3 = 0.2799;

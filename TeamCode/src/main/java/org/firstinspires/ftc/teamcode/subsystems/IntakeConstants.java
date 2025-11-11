@@ -18,5 +18,6 @@ public class IntakeConstants {
      * The hardware map name for the intake motor.
      */
     public static String INTAKE_MOTOR = "intakeMotor";
+    public static double TIME_TO_SHOOT = 200;
 
 }

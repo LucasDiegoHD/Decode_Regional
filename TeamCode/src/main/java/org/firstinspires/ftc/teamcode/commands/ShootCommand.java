@@ -28,6 +28,7 @@ public class ShootCommand extends CommandBase {
          * The state where the conveyor is running to feed a piece.
          */
         Conveyor,
+        ConveyorTimer,
         /**
          * The state where the shooter motors are accelerating to the target speed.
          */
@@ -91,6 +92,12 @@ public class ShootCommand extends CommandBase {
             case Conveyor:
                 //if(timer.getElapsedTime() > ShooterConstants.INTAKE_TIMER_TO_SHOOT){
                 if (indexer.getExitSensor()) {
+                    state = SHOOT_STATES.ConveyorTimer;
+                    timer.resetTimer();
+                }
+                break;
+            case ConveyorTimer:
+                if (timer.getElapsedTime() > ShooterConstants.INTAKE_TIME_TO_SHOOT) {
                     state = SHOOT_STATES.Acceleration;
                     timer.resetTimer();
                     intake.stop();

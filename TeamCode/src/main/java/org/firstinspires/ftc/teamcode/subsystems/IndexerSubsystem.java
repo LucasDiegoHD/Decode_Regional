@@ -20,7 +20,7 @@ public class IndexerSubsystem extends SubsystemBase {
     private final DigitalChannel sensorEntry;
     private final DistanceSensor sensorDistance;
     private final TelemetryManager telemetry;
-
+    private final ColorSensor sensorColor;
     private int pieceCount = 0;
 
     private final boolean lastEntryState = false;
@@ -36,7 +36,7 @@ public class IndexerSubsystem extends SubsystemBase {
         this.telemetry = telemetry;
 
         // get a reference to the color sensor.
-        ColorSensor sensorColor = hardwareMap.get(ColorSensor.class, IndexerConstants.EXIT_SENSOR_NAME);
+        sensorColor = hardwareMap.get(ColorSensor.class, IndexerConstants.EXIT_SENSOR_NAME);
 
         // get a reference to the distance sensor that shares the same name.
         sensorDistance = hardwareMap.get(DistanceSensor.class, IndexerConstants.EXIT_SENSOR_NAME);
@@ -55,6 +55,10 @@ public class IndexerSubsystem extends SubsystemBase {
                 sensorDistance.getDistance(DistanceUnit.CM));
         telemetry.addData("Entry", getEntrySensor());
         telemetry.addData("Exit", getExitSensor());
+        telemetry.addData("R", sensorColor.red());
+        telemetry.addData("G", sensorColor.green());
+        telemetry.addData("B", sensorColor.blue());
+        telemetry.addData("ARGB", sensorColor.argb());
 
     }
 
@@ -72,7 +76,8 @@ public class IndexerSubsystem extends SubsystemBase {
      * @return True if the sensor is triggered, false otherwise.
      */
     public boolean getExitSensor() {
-        return sensorDistance.getDistance(DistanceUnit.CM) < IndexerConstants.DISTANCE_OFFSET;
+        return (sensorColor.blue() > IndexerConstants.COLOR_OFFSET || sensorColor.green() > IndexerConstants.COLOR_OFFSET || sensorColor.red() > IndexerConstants.COLOR_OFFSET) ||
+                sensorDistance.getDistance(DistanceUnit.CM) < IndexerConstants.DISTANCE_OFFSET;
     }
 
 

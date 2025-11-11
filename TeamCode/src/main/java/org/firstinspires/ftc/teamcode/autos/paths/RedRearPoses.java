@@ -8,12 +8,12 @@ public class RedRearPoses {
 
     public static final Pose[] POSES = {
             new Pose(82.411, 8.399, Math.toRadians(90)),
-            new Pose(84.510, 17.497, Math.toRadians(70)),
+            new Pose(84.510, 17.497, Math.toRadians(68)),
 
             new Pose(94.134, 35.169, Math.toRadians(180)),
-            new Pose(135.776, 35.169, Math.toRadians(180)),
+            new Pose(125.776, 35.169, Math.toRadians(180)),
 
-            new Pose(84.335, 17.147, Math.toRadians(80)),
+            new Pose(84.335, 17.147, Math.toRadians(68)),
             new Pose(93.959, 59.840, Math.toRadians(180)),
             new Pose(141.550, 59.665, Math.toRadians(180)),
 

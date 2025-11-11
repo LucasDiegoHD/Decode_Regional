@@ -117,7 +117,7 @@ public class RobotContainer {
 
         // Continuous shooting
         new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER)
-                .whenActive(new AutoShootCommand(drivetrain, vision, shooter, intake, indexer));
+                .whileHeld(new AutoShootCommand(drivetrain, vision, shooter, intake, indexer));
         // Stop shooter
         new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(shooter::stop, shooter));
