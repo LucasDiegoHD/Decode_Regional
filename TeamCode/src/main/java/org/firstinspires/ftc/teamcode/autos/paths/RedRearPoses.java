@@ -7,7 +7,7 @@ import java.util.List;
 public class RedRearPoses {
 
     public static final Pose[] POSES = {
-            //new Pose(82.411, 8.399, Math.toRadians(90)),
+            new Pose(82.411, 8.399, Math.toRadians(90)),
             new Pose(84.510, 17.497, Math.toRadians(80)),
 
             new Pose(94.134, 35.169, Math.toRadians(180)),

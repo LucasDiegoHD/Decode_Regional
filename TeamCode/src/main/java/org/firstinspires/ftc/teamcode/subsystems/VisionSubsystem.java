@@ -135,7 +135,7 @@ public class VisionSubsystem extends SubsystemBase {
      * @return An Optional containing the robot's Pose if a target is visible.
      */
     public Pose getRobotPose(double yaw) {
-        limelight.updateRobotOrientation(Math.toDegrees(yaw));
+        limelight.updateRobotOrientation(Math.toDegrees(yaw) - 90);
         latestResult = limelight.getLatestResult();
 
         if(!hasTarget()){

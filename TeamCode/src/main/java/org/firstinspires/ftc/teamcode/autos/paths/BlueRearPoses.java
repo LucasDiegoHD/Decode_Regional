@@ -8,6 +8,8 @@ public class BlueRearPoses {
 
 
     public static final Pose[] POSES = {
+            new Pose(65.78, 8.399, Math.toRadians(90)),
+
             new Pose(58.615, 7.874, Math.toRadians(100)),
             new Pose(55.640, 35.869, Math.toRadians(0)),
             new Pose(7.524, 34.994, Math.toRadians(0)),

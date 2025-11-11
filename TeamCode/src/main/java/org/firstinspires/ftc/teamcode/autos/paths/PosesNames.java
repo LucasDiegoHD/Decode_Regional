@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.autos.paths;
 
 public enum PosesNames {
-    //StartPose,
+    StartPose,
     GoToShoot1,
     GoToLine1,
     CatchLine1,
