@@ -46,7 +46,7 @@ public class ShooterConstants {
      * x= distância dada pela limelight
      * y= 0.2799x^3-1.7289x^2+3.7225x-2.1911
      */
-    public static double HOOD_N0 = -1.9811;
+    public static double HOOD_N0 = -2.1011;
     public static double HOOD_N1 = 3.7225;
     public static double HOOD_N2 = -1.7289;
     public static double HOOD_N3 = 0.2799;

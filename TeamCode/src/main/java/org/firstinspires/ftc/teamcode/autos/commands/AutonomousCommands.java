@@ -69,6 +69,7 @@ public class AutonomousCommands extends SequentialCommandGroup {
                 new WaitCommand(500),
                 new InstantCommand(intake::run),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine1.ordinal())),
+                new WaitCommand(1000),
                 new InstantCommand(intake::stop),
                 new WaitCommand(500),
                 new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot2.ordinal())),
@@ -77,22 +78,7 @@ public class AutonomousCommands extends SequentialCommandGroup {
                 new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
                 new ShootCommand(shooter, intake, indexer, 3),
                 new SpinShooterCommand(shooter, SpinShooterCommand.Action.STOP)
-                /*
-                new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine2.ordinal())),
-                new WaitCommand(500),
-                new InstantCommand(intake::run),
-                new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine2.ordinal())),
-                new ParallelCommandGroup(new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot3.ordinal())), new InstantCommand(intake::stop)),
-                new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
-                new ShootCommand(shooter, intake, indexer, 3).withTimeout(5000),
-                new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine3.ordinal())),
-                new WaitCommand(500),
-                new InstantCommand(intake::run),
-                new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine3.ordinal())).withTimeout(500),
-                new ParallelCommandGroup(new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot4.ordinal())), new InstantCommand(intake::stop)),
-                new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
-                new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot1.ordinal())),
-                new ShootCommand(shooter, intake, indexer, 3).withTimeout(5000)*/
+               
         );
         addRequirements(drivetrain, shooter, intake);
     }
