@@ -26,20 +26,21 @@ public class Constants {
             public static String PINPOINT_LOCALIZER = "pinpoint";
         }
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(13)
+            .mass(13.5)
             .forwardZeroPowerAcceleration(-33.315092662612045)
             .lateralZeroPowerAcceleration(-97.42340280933647)
             .useSecondaryTranslationalPIDF(false)
             .useSecondaryHeadingPIDF(false)
             .useSecondaryDrivePIDF(false)
             .centripetalScaling(0.0005)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0.0001, 0.02, 0.025))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0.0005, 0.02, 0.025))
             .headingPIDFCoefficients(new PIDFCoefficients(3, 0.1, 0.2, 0.025))
             .drivePIDFCoefficients(
-                    new FilteredPIDFCoefficients(0.02, 0.001, 0.001, 1, 0.1)
+                    new FilteredPIDFCoefficients(0.001, 0.000, 0.00, 0.6, 0.1)
             );
 
     public static MecanumConstants driveConstants = new MecanumConstants()
+            .maxPower(0.8)
             .leftFrontMotorName(Drivetrain.LEFT_FRONT_MOTOR)
             .leftRearMotorName(Drivetrain.LEFT_REAR_MOTOR)
             .rightFrontMotorName(Drivetrain.RIGHT_FRONT_MOTOR)
@@ -66,9 +67,14 @@ public class Constants {
 
     public static PathConstraints pathConstraints = new PathConstraints(
             0.995,
+            0.05,
+            0.05,
+            2.0,
             500,
             1.5,
-            0.8
+            10,
+            0.7
+
     );
 
     public static Follower createFollower(HardwareMap hardwareMap) {
@@ -81,5 +87,6 @@ public class Constants {
 
     public static Pose initialBluePose = new Pose(60, 10, Math.PI / 2, PedroCoordinates.INSTANCE);
     public static Pose initialRedPose = new Pose(85, 10, Math.PI / 2, PedroCoordinates.INSTANCE);
+    public static double TIME_BETWEEN_LINES = 2000;
 
 }
