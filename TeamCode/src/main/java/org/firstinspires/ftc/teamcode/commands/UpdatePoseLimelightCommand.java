@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.pedropathing.geometry.CoordinateSystem;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
@@ -37,16 +39,22 @@ public class UpdatePoseLimelightCommand extends CommandBase {
     @Override
     public void initialize() {
 
-
-        /*Pose p = vision.getRobotPose();
+        double yaw = vision.getRobotPose().getHeading();
+        Pose p = vision.getRobotPose();
         if (p != null) {
 
             drivetrain.getFollower().setPose(p);
 
-        } else {*/
+        } else {
             drivetrain.getFollower().setPose(pose);
-        //}
+        }
 
     }
+
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
+
 
 }

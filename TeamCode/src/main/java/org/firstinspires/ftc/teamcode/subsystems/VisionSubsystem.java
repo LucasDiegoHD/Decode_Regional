@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -25,6 +26,7 @@ public class VisionSubsystem extends SubsystemBase {
     private final TelemetryManager telemetry;
 
     private static final double INCHES_IN_METER = 39.3701;
+    private static final double PEDROPATHING_OFFSET = 72.0;
 
     /**
      * Constructs a new VisionSubsystem.
@@ -135,7 +137,7 @@ public class VisionSubsystem extends SubsystemBase {
      * @return An Optional containing the robot's Pose if a target is visible.
      */
     public Pose getRobotPose(double yaw) {
-        limelight.updateRobotOrientation(Math.toDegrees(yaw) - 90);
+        limelight.updateRobotOrientation(Math.toDegrees(yaw) + 90);
         latestResult = limelight.getLatestResult();
 
         if(!hasTarget()){
@@ -146,7 +148,7 @@ public class VisionSubsystem extends SubsystemBase {
             return null;
         }
         // Convert from meters (Limelight standard) to inches (PedroPathing standard)
-        return new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw()), FTCCoordinates.INSTANCE);
+        return FTCCoordinates.INSTANCE.convertToPedro(new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw())));
     }
 
     public Pose getRobotPose() {
@@ -160,7 +162,7 @@ public class VisionSubsystem extends SubsystemBase {
             return null;
         }
         // Convert from meters (Limelight standard) to inches (PedroPathing standard)
-        return new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw()), FTCCoordinates.INSTANCE);
+        return FTCCoordinates.INSTANCE.convertToPedro(new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw())));
     }
 
 
