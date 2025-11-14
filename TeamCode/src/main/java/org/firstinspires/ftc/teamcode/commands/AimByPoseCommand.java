@@ -62,6 +62,8 @@ public class AimByPoseCommand extends CommandBase {
         double robotY = pose.getY();
 
         double heading = drivetrain.getFollower().getHeading(); // radianos
+        heading = heading + Math.PI;  // vira 180°
+
 
         // Ângulo alvo
         double desiredTheta = Math.atan2(
