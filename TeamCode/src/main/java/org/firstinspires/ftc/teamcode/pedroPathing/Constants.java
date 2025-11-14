@@ -34,33 +34,19 @@ public class Constants {
             .useSecondaryDrivePIDF(false)
             .centripetalScaling(0.0005)
             .translationalPIDFCoefficients(
-                    new PIDFCoefficients(
-                            0.03,  // P mais baixo (antes 0.1)
-                            0.0,   // I desligado
-                            0.0,   // D desligado nesse primeiro momento
-                            0.015  // F mais baixo também
-                    )
+                    new PIDFCoefficients(0.06, 0.0, 0.005, 0.015)
             )
+
             .headingPIDFCoefficients(
-                    new PIDFCoefficients(
-                            0.8,  // P bem mais baixo (você estava com 3!)
-                            0.0,  // sem I
-                            0.05, // D leve, só pra frear um pouco
-                            0.01  // F pequeno
-                    )
+                    new PIDFCoefficients(1.2, 0.0, 0.07, 0.01)
             )
+
             .drivePIDFCoefficients(
-                    new FilteredPIDFCoefficients(
-                            0.05,   // P sobe bastante
-                            0.0,    // I desligado
-                            0.0003, // D pequeno, ajuda a frear no final do caminho
-                            0.6,    // T -> filtro da derivada, 0.6 é ok
-                            0.02    // F bem menor que 0.1
-                    )
+                    new FilteredPIDFCoefficients(0.04, 0.0, 0.0003, 0.6, 0.0)
             );
 
     public static MecanumConstants driveConstants = new MecanumConstants()
-            .maxPower(0.8)
+            .maxPower(1)
             .leftFrontMotorName(Drivetrain.LEFT_FRONT_MOTOR)
             .leftRearMotorName(Drivetrain.LEFT_REAR_MOTOR)
             .rightFrontMotorName(Drivetrain.RIGHT_FRONT_MOTOR)
@@ -69,8 +55,11 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(77.11611423342248)
-            .yVelocity(59.88718660609929)
+            //.xVelocity(77.11611423342248)
+            //.yVelocity(59.88718660609929)
+            .xVelocity(25)
+            .yVelocity(25)
+
             .useBrakeModeInTeleOp(true);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
@@ -91,9 +80,9 @@ public class Constants {
             0.02,   // translationalConstraint (ANTES: 0.05)
             0.5,    // headingConstraint (ANTES: 2.0) -> gira bem mais devagar
             500,    // timeoutConstraint
-            0.8,    // brakingStrength (ANTES: 1.5) -> freia menos "bruscamente"
+            2,    // brakingStrength (ANTES: 1.5) -> freia menos "bruscamente"
             10,     // bezier limit
-            0.7     // brakingStart (ok)
+            1     // brakingStart (ok)
     );
 
 

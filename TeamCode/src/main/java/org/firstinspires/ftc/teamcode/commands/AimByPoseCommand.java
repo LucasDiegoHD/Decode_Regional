@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.bylazar.panels.Panels;
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
@@ -51,34 +53,47 @@ public class AimByPoseCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        angleController.setPID(
+                ShooterConstants.ANGLE_KP,
+                ShooterConstants.ANGLE_KI,
+                ShooterConstants.ANGLE_KD
+        );
+
         angleController.reset();
     }
 
     @Override
     public void execute() {
 
+
         Pose pose = drivetrain.getFollower().getPose();
         double robotX = pose.getX();
         double robotY = pose.getY();
 
-        double heading = drivetrain.getFollower().getHeading(); // radianos
-        heading = heading + Math.PI;  // vira 180°
+        // 1) Heading do pedropathing
+        double headingPedro = drivetrain.getFollower().getHeading();
 
+        // 2) Transformação correta: invertido + rotacionado
+        double heading = -(headingPedro + Math.PI);
+        heading = Math.atan2(Math.sin(heading), Math.cos(heading));
 
-        // Ângulo alvo
-        double desiredTheta = Math.atan2(
-                targetY - robotY,
-                targetX - robotX
-        );
+        // 3) Desired em radianos
+        double desired = Math.atan2(targetY - robotY, targetX - robotX);
+        desired = Math.atan2(Math.sin(desired), Math.cos(desired));
 
-        // ❗ Continuous input manual:
-        double error = desiredTheta - heading;
-        error = Math.atan2(Math.sin(error), Math.cos(error)); // wrap [-π, π]
+        // 4) Erro contínuo
+        double error = desired - heading;
+        error = Math.atan2(Math.sin(error), Math.cos(error));
 
-        // FTCLib usa calculate(error)
+        System.out.println("ALIGN HEADING: " + heading);
+        System.out.println("ALIGN DESIRED: " + desired);
+        System.out.println("ALIGN ERROR: " + error);
+
         double omega = angleController.calculate(error);
 
         drivetrain.getFollower().setTeleOpDrive(0, 0, omega, true);
+
+
     }
 
 

@@ -37,7 +37,7 @@ public class AdjustHoodCommand extends CommandBase {
         double distance = vision.getDirectDistanceToTarget().orElse((double) 0);
         double hood = ShooterConstants.HOOD_N0 + ShooterConstants.HOOD_N1 * distance
                 + ShooterConstants.HOOD_N2 * Math.pow(distance, 2) + ShooterConstants.HOOD_N3 * Math.pow(distance, 3);
-        if (distance > VisionConstants.LONGEST_DISTANCE) {
+        if (distance > VisionConstants.LONGEST_DISTANCE || distance == 0) {
             hood = VisionConstants.LONGEST_HOOD;
 
         }

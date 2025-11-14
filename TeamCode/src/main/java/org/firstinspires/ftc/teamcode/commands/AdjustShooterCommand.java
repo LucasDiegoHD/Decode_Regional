@@ -36,7 +36,7 @@ public class AdjustShooterCommand extends CommandBase {
     public void initialize() {
         double distance = vision.getDirectDistanceToTarget().orElse((double) 0);
         double rpm = ShooterConstants.RPM_N0 + ShooterConstants.RPM_N1 * distance;
-        if (distance > VisionConstants.LONGEST_DISTANCE) {
+        if ((distance > VisionConstants.LONGEST_DISTANCE || distance == 0)) {
             rpm = VisionConstants.LONGEST_RPM;
 
         }
