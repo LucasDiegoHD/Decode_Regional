@@ -33,10 +33,30 @@ public class Constants {
             .useSecondaryHeadingPIDF(false)
             .useSecondaryDrivePIDF(false)
             .centripetalScaling(0.0005)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0.0005, 0.02, 0.025))
-            .headingPIDFCoefficients(new PIDFCoefficients(3, 0.1, 0.2, 0.025))
+            .translationalPIDFCoefficients(
+                    new PIDFCoefficients(
+                            0.03,  // P mais baixo (antes 0.1)
+                            0.0,   // I desligado
+                            0.0,   // D desligado nesse primeiro momento
+                            0.015  // F mais baixo também
+                    )
+            )
+            .headingPIDFCoefficients(
+                    new PIDFCoefficients(
+                            0.8,  // P bem mais baixo (você estava com 3!)
+                            0.0,  // sem I
+                            0.05, // D leve, só pra frear um pouco
+                            0.01  // F pequeno
+                    )
+            )
             .drivePIDFCoefficients(
-                    new FilteredPIDFCoefficients(0.001, 0.000, 0.00, 0.6, 0.1)
+                    new FilteredPIDFCoefficients(
+                            0.05,   // P sobe bastante
+                            0.0,    // I desligado
+                            0.0003, // D pequeno, ajuda a frear no final do caminho
+                            0.6,    // T -> filtro da derivada, 0.6 é ok
+                            0.02    // F bem menor que 0.1
+                    )
             );
 
     public static MecanumConstants driveConstants = new MecanumConstants()
@@ -66,16 +86,16 @@ public class Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
     public static PathConstraints pathConstraints = new PathConstraints(
-            0.995,
-            0.05,
-            0.05,
-            2.0,
-            500,
-            1.5,
-            10,
-            0.7
-
+            0.995,  // tValueConstraint (ok)
+            0.02,   // velocityConstraint (ANTES: 0.05) -> bem mais lento
+            0.02,   // translationalConstraint (ANTES: 0.05)
+            0.5,    // headingConstraint (ANTES: 2.0) -> gira bem mais devagar
+            500,    // timeoutConstraint
+            0.8,    // brakingStrength (ANTES: 1.5) -> freia menos "bruscamente"
+            10,     // bezier limit
+            0.7     // brakingStart (ok)
     );
+
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)

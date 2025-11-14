@@ -38,14 +38,14 @@ public class UpdatePoseLimelightCommand extends CommandBase {
     public void initialize() {
 
 
-        Pose p = vision.getRobotPose();
+        /*Pose p = vision.getRobotPose();
         if (p != null) {
 
             drivetrain.getFollower().setPose(p);
 
-        } else {
+        } else {*/
             drivetrain.getFollower().setPose(pose);
-        }
+        //}
 
     }
 
