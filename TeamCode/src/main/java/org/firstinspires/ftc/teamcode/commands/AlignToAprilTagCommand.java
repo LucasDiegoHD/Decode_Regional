@@ -49,7 +49,7 @@ public class AlignToAprilTagCommand extends CommandBase {
     @Override
     public void initialize() {
         turnController.reset();
-        turnController.setTolerance(2);
+        turnController.setTolerance(0.2);
     }
 
     /**

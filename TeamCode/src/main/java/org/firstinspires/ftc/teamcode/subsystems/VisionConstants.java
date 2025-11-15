@@ -15,7 +15,7 @@ public class VisionConstants {
     /**
      * The proportional gain for the turn controller.
      */
-    public static double TURN_KP = 0.01;
+    public static double TURN_KP = 0.015;
     /** The integral gain for the turn controller. */
     public static double TURN_KI = 0.07;
     /** The derivative gain for the turn controller. */
