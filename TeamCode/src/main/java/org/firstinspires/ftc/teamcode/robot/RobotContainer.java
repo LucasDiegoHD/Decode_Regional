@@ -67,12 +67,22 @@ public class RobotContainer {
         if (driver != null) {
             drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver));
 
-            // Driver controller bindings
             new GamepadButton(driver, GamepadKeys.Button.Y)
-                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry, driver));
+                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry));
+            double targetX, targetY;
+
+            if (alliance == AllianceEnum.Red) {
+                // Alvo para Aliança Vermelha
+                targetX = 144;
+                targetY = 144;
+            } else {
+                // Alvo para Aliança Azul (eu acho)
+                targetX = 0;
+                targetY = 144;
+            }
 
             new GamepadButton(driver, GamepadKeys.Button.X)
-                    .whileHeld(new AimByPoseCommand(drivetrain, 144, 144));
+                    .whileHeld(new AimByPoseCommand(drivetrain, targetX, targetY));
         }
 
         if (operator != null) {

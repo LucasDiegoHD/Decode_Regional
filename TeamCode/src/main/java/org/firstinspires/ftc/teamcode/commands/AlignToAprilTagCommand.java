@@ -23,8 +23,6 @@ public class AlignToAprilTagCommand extends CommandBase {
     private int IsAprilTagNotSeemCounter = 0;
     private static final int ApriltagNotSeemMaximumCounter = 20;
 
-    private final GamepadEx driverGamepad;
-
 
     /**
      * Creates a new AlignToAprilTagCommand.
@@ -32,13 +30,11 @@ public class AlignToAprilTagCommand extends CommandBase {
      * @param drivetrain    The DrivetrainSubsystem to control.
      * @param vision        The VisionSubsystem to get target data from.
      * @param telemetry     The TelemetryManager for logging.
-     * @param driverGamepad The driver's gamepad for movement input.
      */
-    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, TelemetryManager telemetry, GamepadEx driverGamepad) {
+    public AlignToAprilTagCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision, TelemetryManager telemetry) {
         this.follower = drivetrain.getFollower();
         this.vision = vision;
         this.telemetry = telemetry;
-        this.driverGamepad = driverGamepad;
         this.turnController = new  PIDFController(VisionConstants.TURN_KP, VisionConstants.TURN_KI, VisionConstants.TURN_KD, VisionConstants.TURN_KF);
         addRequirements(drivetrain, vision);
     }
@@ -78,22 +74,15 @@ public class AlignToAprilTagCommand extends CommandBase {
         double heading = follower.getHeading();
         double y = 0;
         double x = 0;
-        if (driverGamepad != null) {
-            y = driverGamepad.getLeftY(); // forward/backward
-            x = -driverGamepad.getLeftX(); // strafe
-        }
-        double xField = x * Math.cos(heading) - y * Math.sin(heading);
-        double yField = x * Math.sin(heading) + y * Math.cos(heading);
 
-        // Calculate turn power using PID on the vision target's horizontal offset (tx)
         double turnPower = turnController.calculate(vision.getTargetTx().orElse(0.0));
-        turnPower = Math.max(-0.4, Math.min(0.4, turnPower)); // Clamp turn power
+        turnPower = Math.max(-0.6, Math.min(0.6, turnPower)); // Clamp turn power
 
         telemetry.debug("Align TX: " + vision.getTargetTx().orElse(0.0));
         telemetry.debug("Turn Power: " + turnPower);
 
 
-        follower.setTeleOpDrive(yField, xField, turnPower, true);
+        follower.setTeleOpDrive(y, x, turnPower, true);
 
 
     }
