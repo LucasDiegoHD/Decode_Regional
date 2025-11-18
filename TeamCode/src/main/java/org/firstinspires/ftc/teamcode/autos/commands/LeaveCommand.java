@@ -17,29 +17,28 @@ import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
  */
 public class LeaveCommand extends CommandBase {
     private final DrivetrainSubsystem drivetrain;
-    private final PathChain path;
-
+    private final Pose pose;
 
     /**
      * Constructs a new GoToPoseCommand.
      *
      * @param drivetrain The drivetrain subsystem required by this command.
      */
-    public LeaveCommand(@NonNull DrivetrainSubsystem drivetrain) {
+    public LeaveCommand(@NonNull DrivetrainSubsystem drivetrain, Pose p) {
         this.drivetrain = drivetrain;
-        Pose p = drivetrain.getFollower().getPose().plus(new Pose(10, 10, 0));
-        this.path = drivetrain.getFollower()
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(drivetrain.getFollower().getPose(), p)
-                )
-                .setLinearHeadingInterpolation(drivetrain.getFollower().getHeading(), p.getHeading())
-                .build();
+        pose = p;
         addRequirements(drivetrain);
     }
 
     @Override
     public void initialize() {
+        PathChain path = drivetrain.getFollower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(drivetrain.getFollower().getPose(), pose)
+                )
+                .setLinearHeadingInterpolation(drivetrain.getFollower().getHeading(), pose.getHeading())
+                .build();
         drivetrain.getFollower().followPath(path);
     }
 
