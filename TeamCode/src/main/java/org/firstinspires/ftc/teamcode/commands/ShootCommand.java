@@ -93,6 +93,7 @@ public class ShootCommand extends CommandBase {
                 //if(timer.getElapsedTime() > ShooterConstants.INTAKE_TIMER_TO_SHOOT){
                 if (indexer.getExitSensor()) {
                     state = SHOOT_STATES.ConveyorTimer;
+                    shooter.setMax();
                     timer.resetTimer();
                 }
                 break;

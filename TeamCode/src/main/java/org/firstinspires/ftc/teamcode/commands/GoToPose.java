@@ -1,4 +1,4 @@
-// Ficheiro: commands/drivetrain/GoToPoseCommand.java
+// Ficheiro: commands/drivetrain/GoToPose.java
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
 /**
  * A command to move the robot to a specified target Pose using a simple Bezier curve.
  */
-public class GoToPoseCommand extends CommandBase {
+public class GoToPose extends CommandBase {
     private final DrivetrainSubsystem drivetrain;
     private final Pose targetPose;
 
@@ -20,7 +20,7 @@ public class GoToPoseCommand extends CommandBase {
      * @param drivetrain The DrivetrainSubsystem to use for movement.
      * @param targetPose The target Pose to move the robot to.
      */
-    public GoToPoseCommand(DrivetrainSubsystem drivetrain, Pose targetPose) {
+    public GoToPose(DrivetrainSubsystem drivetrain, Pose targetPose) {
         this.drivetrain = drivetrain;
         this.targetPose = targetPose;
         addRequirements(drivetrain);
@@ -51,6 +51,6 @@ public class GoToPoseCommand extends CommandBase {
      */
     @Override
     public boolean isFinished() {
-        return !drivetrain.getFollower().isBusy();
+        return false;
     }
 }

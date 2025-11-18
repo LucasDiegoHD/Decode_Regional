@@ -11,10 +11,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.autos.commands.AutonomousCommands;
 import org.firstinspires.ftc.teamcode.autos.paths.BlueRearPoses;
+import org.firstinspires.ftc.teamcode.autos.paths.PosesNames;
 import org.firstinspires.ftc.teamcode.autos.paths.RedRearPoses;
 import org.firstinspires.ftc.teamcode.commands.AimByPoseCommand;
 import org.firstinspires.ftc.teamcode.commands.AlignToAprilTagCommand;
 import org.firstinspires.ftc.teamcode.commands.AutoShootCommand;
+import org.firstinspires.ftc.teamcode.commands.GoToPose;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.SpinShooterCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
@@ -69,10 +71,22 @@ public class RobotContainer {
 
             // Driver controller bindings
             new GamepadButton(driver, GamepadKeys.Button.Y)
-                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry, driver));
+                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry, driver, operator));
+            Pose EndPose;
+
+            if (alliance == AllianceEnum.Red) {
+                EndPose = BlueRearPoses.getPose(PosesNames.EndPose);
+            } else {
+                EndPose = RedRearPoses.getPose(PosesNames.EndPose);
+            }
 
             new GamepadButton(driver, GamepadKeys.Button.X)
                     .whileHeld(new AimByPoseCommand(drivetrain, 144, 144));
+
+
+            new GamepadButton(driver, GamepadKeys.Button.A)
+                    .whileHeld(new GoToPose(drivetrain,EndPose));
+
         }
 
         if (operator != null) {

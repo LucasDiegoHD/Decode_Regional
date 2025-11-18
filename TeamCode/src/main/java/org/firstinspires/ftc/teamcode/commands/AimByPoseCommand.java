@@ -70,18 +70,14 @@ public class AimByPoseCommand extends CommandBase {
         double robotX = pose.getX();
         double robotY = pose.getY();
 
-        // 1) Heading do pedropathing
         double headingPedro = drivetrain.getFollower().getHeading();
 
-        // 2) Transformação correta: invertido + rotacionado
         double heading = -(headingPedro + Math.PI);
         heading = Math.atan2(Math.sin(heading), Math.cos(heading));
 
-        // 3) Desired em radianos
         double desired = Math.atan2(targetY - robotY, targetX - robotX);
         desired = Math.atan2(Math.sin(desired), Math.cos(desired));
 
-        // 4) Erro contínuo
         double error = desired - heading;
         error = Math.atan2(Math.sin(error), Math.cos(error));
 

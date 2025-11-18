@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.pedropathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.autos.paths.PosesNames;
-import org.firstinspires.ftc.teamcode.commands.GoToPoseCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.SpinShooterCommand;
 import org.firstinspires.ftc.teamcode.commands.UpdatePoseLimelightCommand;
@@ -62,19 +61,19 @@ public class AutonomousCommands extends SequentialCommandGroup {
                 new UpdatePoseLimelightCommand(drivetrain, vision, poses.get(PosesNames.StartPose.ordinal())),
                 new SequentialCommandGroup(
 
-                        new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot1.ordinal())),
+                        new org.firstinspires.ftc.teamcode.autos.commands.GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot1.ordinal())),
                         new SpinShooterCommand(shooter, SpinShooterCommand.Action.LONG_SHOOT),
-                        new WaitCommand(700),
+                        new WaitCommand(500),
                         new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
                         new ShootCommand(shooter, intake, indexer, 3),
-                        new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine1.ordinal())),
+                        new org.firstinspires.ftc.teamcode.autos.commands.GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine1.ordinal())),
                         new WaitCommand(500),
                         new InstantCommand(intake::run),
-                        new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine1.ordinal())),
+                        new org.firstinspires.ftc.teamcode.autos.commands.GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine1.ordinal())),
                         new WaitCommand(1000),
                         new InstantCommand(intake::stop),
                         new WaitCommand(500),
-                        new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot2.ordinal())),
+                        new org.firstinspires.ftc.teamcode.autos.commands.GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot2.ordinal())),
                         new SpinShooterCommand(shooter, SpinShooterCommand.Action.LONG_SHOOT),
                         new WaitCommand(500),
                         new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),

@@ -67,6 +67,10 @@ public class ShooterSubsystem extends SubsystemBase {
         lShooterMotor.setVelocity(RPMToTicks(rpm));
         rShooterMotor.setVelocity(RPMToTicks(rpm));
     }
+    public void setMax(){
+        rShooterMotor.setPower(1.0);
+        lShooterMotor.setPower(1.0);
+    }
 
     /**
      * Completely stops the shooter.
