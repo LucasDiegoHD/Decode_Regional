@@ -24,7 +24,7 @@ public class ShooterConstants {
     /**
      * The target velocity in RPM for short shots.
      */
-        public static double TARGET_VELOCITY_SHORT = 4420;
+        public static double TARGET_VELOCITY_SHORT = 3800;
     /** The target velocity in RPM for long shots. */
     public static double TARGET_VELOCITY_LONG = 6000;
     /** The acceptable error margin for the shooter's target velocity in RPM. */
@@ -35,11 +35,11 @@ public class ShooterConstants {
         public static double MAXIMUM_HOOD = 0.9;
     /** The amount to increment or decrement the hood position. */
         public static double HOOD_INCREMENT = 0.02;
-    public static double INTAKE_TIME_TO_SHOOT = 800;
+    public static double INTAKE_TIME_TO_SHOOT = 350;
     /**
      * The time in milliseconds to wait after triggering before shooting.
      */
-    public static double TRIGGER_TIMER_TO_SHOOT = 1000;
+    public static double TRIGGER_TIMER_TO_SHOOT = 400;
     /**
      * Equations for hood
      * y= ângulo do hood
