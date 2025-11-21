@@ -71,7 +71,7 @@ public class RobotContainer {
 
             // Driver controller bindings
             new GamepadButton(driver, GamepadKeys.Button.Y)
-                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry, driver, operator));
+                    .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry, operator));
             Pose EndPose;
 
             if (alliance == AllianceEnum.Red) {
