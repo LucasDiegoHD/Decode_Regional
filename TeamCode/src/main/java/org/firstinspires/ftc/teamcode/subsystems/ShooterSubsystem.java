@@ -157,7 +157,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // Even if overshoot is extreme (calculatedPower < 0), never apply negative power (reverse)
             // to a spinning flywheel. Cutting power to 0 allows friction to slow it down safely.
-            power = Math.max(0, Math.min(1.0, calculatedPower));
+            power = Math.max(calculatedPower, 0.0);
 
             rShooterMotor.setPower(power);
             lShooterMotor.setPower(power);

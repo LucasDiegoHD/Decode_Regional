@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IndexerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.autos.commands.GoToPoseCommand;
 
 import java.util.List;
 
@@ -59,27 +60,31 @@ public class AutonomousCommands extends SequentialCommandGroup {
 
         addCommands(
                 new UpdatePoseLimelightCommand(drivetrain, vision, poses.get(PosesNames.StartPose.ordinal())),
-                new SequentialCommandGroup(
+                new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot1.ordinal())),
+                new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
+                new ShootCommand(shooter, intake, indexer, 3),
+                new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine1.ordinal())),
+                new InstantCommand(intake::run),
+                new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine1Middle.ordinal())),
+                new WaitCommand(500),
+                new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine1.ordinal())).withTimeout(1000),
+                new WaitCommand(1000),
+                new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot2.ordinal())),
+                new InstantCommand(intake::stop),
+                new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
+                new ShootCommand(shooter, intake, indexer, 3).withTimeout(5000),
+                new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine2.ordinal())),
+                new WaitCommand(500),
+                new InstantCommand(intake::run),
+                new GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine2.ordinal())),
+                new WaitCommand(500),
+                new InstantCommand(intake::stop),
+                new GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot3.ordinal())),
+                new SpinShooterCommand(shooter, SpinShooterCommand.Action.LONG_SHOOT),
+                new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
+                new ShootCommand(shooter, intake, indexer, 3).withTimeout(7000),
+                new LeaveCommand(drivetrain, poses.get(PosesNames.EndPose.ordinal()))
 
-                        new org.firstinspires.ftc.teamcode.autos.commands.GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot1.ordinal())),
-                        new SpinShooterCommand(shooter, SpinShooterCommand.Action.LONG_SHOOT),
-                        new WaitCommand(500),
-                        new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
-                        new ShootCommand(shooter, intake, indexer, 3),
-                        new org.firstinspires.ftc.teamcode.autos.commands.GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToLine1.ordinal())),
-                        new WaitCommand(500),
-                        new InstantCommand(intake::run),
-                        new org.firstinspires.ftc.teamcode.autos.commands.GoToPoseCommand(drivetrain, poses.get(PosesNames.CatchLine1.ordinal())),
-                        new WaitCommand(1000),
-                        new InstantCommand(intake::stop),
-                        new WaitCommand(500),
-                        new org.firstinspires.ftc.teamcode.autos.commands.GoToPoseCommand(drivetrain, poses.get(PosesNames.GoToShoot2.ordinal())),
-                        new SpinShooterCommand(shooter, SpinShooterCommand.Action.LONG_SHOOT),
-                        new WaitCommand(500),
-                        new AlignAndAdjustAutoCommand(drivetrain, vision, shooter),
-                        new ShootCommand(shooter, intake, indexer, 3),
-                        new LeaveCommand(drivetrain, poses.get(PosesNames.EndPose.ordinal()))
-                )
         );
         addRequirements(drivetrain, shooter, intake);
     }

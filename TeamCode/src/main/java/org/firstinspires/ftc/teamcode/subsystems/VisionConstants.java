@@ -33,7 +33,7 @@ public class VisionConstants {
     /** The pitch of the camera in degrees. */
     public static double CAMERA_PITCH_DEGREES = 24.44;
     public static double UPDATE_POSE_VISION_TIMEOUT = 2000;
-    public static double LONGEST_HOOD = 0.8;
-    public static double LONGEST_RPM = 2700;
+    public static double LONGEST_HOOD = 0.7;
+    public static double LONGEST_RPM = 4500.0;
     public static double LONGEST_DISTANCE = 2.2;
 }
