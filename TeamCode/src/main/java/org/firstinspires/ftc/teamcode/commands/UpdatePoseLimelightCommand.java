@@ -43,11 +43,12 @@ public class UpdatePoseLimelightCommand extends CommandBase {
      */
     @Override
     public void initialize() {
-        AtomicReference<Double> yaw = new AtomicReference<>(pose.getHeading());
         drivetrain.getFollower().setPose(pose);
 
-        vision.getRobotPose().ifPresent(pose -> yaw.set(pose.getHeading()));
-        vision.getRobotPose(yaw.get()).ifPresent(pose -> drivetrain.getFollower().setPose(pose));
+        vision.getRobotPose().ifPresent(pose -> {
+            vision.getRobotPose(pose.getHeading()).ifPresent(pose1 -> drivetrain.getFollower().setPose(pose));
+        });
+
 
     }
 

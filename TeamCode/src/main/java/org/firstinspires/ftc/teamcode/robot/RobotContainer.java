@@ -99,11 +99,6 @@ public class RobotContainer {
         }
         drivetrain.getFollower().setPose(robotPose);
 
-        Pose limelightPose = vision.getRobotPose(robotPose.getHeading());
-        if (limelightPose != null) {
-            drivetrain.getFollower().setPose(limelightPose);
-        }
-
 
         drivetrain.periodic();
 
