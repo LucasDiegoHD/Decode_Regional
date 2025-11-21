@@ -161,12 +161,21 @@ public class RobotContainer {
                 .whenPressed(new InstantCommand(intake::reverse, intake))
                 .whenReleased(new InstantCommand(intake::stop, intake));
 
+        new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(new InstantCommand(intake::runTrigger, intake))
+                .whenReleased(new InstantCommand(intake::stop, intake));
+
         // Spin shooter to preset speeds
         new GamepadButton(operator, GamepadKeys.Button.B)
                 .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.SHORT_SHOOT));
 
         new GamepadButton(operator,GamepadKeys.Button.X)
                 .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.LONG_SHOOT));
+
+        new GamepadButton(operator, GamepadKeys.Button.A)
+                .whenPressed(new InstantCommand(shooter::increaseHood, shooter));
+        new GamepadButton(operator, GamepadKeys.Button.A)
+                .whenPressed(new InstantCommand(shooter::decreaseHood, shooter));
     }
 
 }
