@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.bylazar.configurables.annotations.IgnoreConfigurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
@@ -29,7 +30,13 @@ public class AutoRedRear extends CommandOpMode {
         // Pega o NOVO comando que criamos para atirar 3
         Command autonomousCommand = robot.getAutonomousRedRearCommand();
         // Agenda o comando para ser executado após o START
+        while (!isStarted()) {
+            robot.updateRobotPose(AllianceEnum.Red);
+
+
+        }
         schedule(autonomousCommand);
+
     }
 
     @Override

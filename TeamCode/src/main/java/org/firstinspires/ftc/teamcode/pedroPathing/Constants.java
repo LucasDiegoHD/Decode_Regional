@@ -94,8 +94,8 @@ public class Constants {
                 .build();
     }
 
-    public static Pose initialBluePose = new Pose(60, 10, Math.PI / 2, PedroCoordinates.INSTANCE);
-    public static Pose initialRedPose = new Pose(85, 10, Math.PI / 2, PedroCoordinates.INSTANCE);
+    public static double AUTONOMOUS_SPEED = 0.25;
+    public static double TIMEOUT_SLOW_COMMAND = 5000;
     public static double TIME_BETWEEN_LINES = 2000;
 
 }

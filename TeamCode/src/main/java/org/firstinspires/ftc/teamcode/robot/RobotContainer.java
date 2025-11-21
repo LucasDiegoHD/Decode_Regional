@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -58,11 +59,8 @@ public class RobotContainer {
         indexer = new IndexerSubsystem(hardwareMap, telemetry);
 
         // Initialize robot's starting pose, attempting to use Vision first
-        Pose robotPose = Constants.initialRedPose;
-        if (alliance == AllianceEnum.Blue) {
-            robotPose = Constants.initialBluePose;
-        }
-        drivetrain.getFollower().setPose(robotPose);
+
+        updateRobotPose(alliance);
 
         // Set default commands
         //vision.setDefaultCommand(new UpdateLimelightYawCommand(drivetrain, vision));
@@ -94,6 +92,24 @@ public class RobotContainer {
         }
     }
 
+    public void updateRobotPose(AllianceEnum alliance) {
+        Pose robotPose = RedRearPoses.getPose(PosesNames.StartPose);
+        if (alliance == AllianceEnum.Blue) {
+            robotPose = BlueRearPoses.getPose(PosesNames.StartPose);
+        }
+        drivetrain.getFollower().setPose(robotPose);
+
+        Pose limelightPose = vision.getRobotPose(robotPose.getHeading());
+        if (limelightPose != null) {
+            drivetrain.getFollower().setPose(limelightPose);
+        }
+
+
+        drivetrain.periodic();
+
+        PanelsTelemetry.INSTANCE.getTelemetry().update();
+
+    }
     /**
      * Gets the command group for the Blue Rear autonomous routine.
      *
