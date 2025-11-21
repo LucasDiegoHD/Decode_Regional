@@ -23,5 +23,5 @@ public class IndexerConstants {
     public static int MAX_PIECE_CAPACITY = 3;
     /** The distance threshold in centimeters for the exit sensor to be considered triggered. */
     public static double DISTANCE_OFFSET = 3.4;
-    public static int COLOR_OFFSET = 100;
+    public static int COLOR_OFFSET = 120;
 }

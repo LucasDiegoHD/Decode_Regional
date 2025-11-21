@@ -32,6 +32,11 @@ public class UpdatePoseLimelightCommand extends CommandBase {
         addRequirements(vision); // This command modifies the state of the vision subsystem
     }
 
+    public UpdatePoseLimelightCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision) {
+        this(drivetrain, vision, drivetrain.getFollower().getPose());
+    }
+
+
     /**
      * Called repeatedly while the command is scheduled. Gets the robot's current yaw from the
      * drivetrain and sends it to the vision subsystem.

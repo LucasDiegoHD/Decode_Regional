@@ -47,6 +47,7 @@ public class ShootCommand extends CommandBase {
     private int shooterCounter;
     private final TelemetryManager telemetryM;
     private final IndexerSubsystem indexer;
+    private final boolean lastSensor = false;
     /**
      * Constructs a new ShootCommand.
      * @param shooter The ShooterSubsystem to use.
@@ -59,7 +60,6 @@ public class ShootCommand extends CommandBase {
         this.shooterCounter = shoots;
         this.shooter = shooter;
         this.intake = intake;
-        timer.resetTimer();
         addRequirements(shooter, intake, indexer);
     }
 
@@ -78,9 +78,7 @@ public class ShootCommand extends CommandBase {
     @Override
     public void initialize() {
         intake.run();
-        timer.resetTimer();
         state = SHOOT_STATES.Conveyor;
-        telemetryM.addData("Shoot State", state);
     }
 
     /**
@@ -88,36 +86,23 @@ public class ShootCommand extends CommandBase {
      */
     @Override
     public void execute() {
+
         switch (state) {
             case Conveyor:
-                //if(timer.getElapsedTime() > ShooterConstants.INTAKE_TIMER_TO_SHOOT){
                 if (indexer.getExitSensor()) {
-                    state = SHOOT_STATES.ConveyorTimer;
-                    timer.resetTimer();
-                }
-                break;
-            case ConveyorTimer:
-                if (timer.getElapsedTime() > ShooterConstants.INTAKE_TIME_TO_SHOOT) {
                     state = SHOOT_STATES.Acceleration;
-                    timer.resetTimer();
                     intake.stop();
                 }
                 break;
+
             case Acceleration:
                 if (shooter.getShooterAtTarget()) {
-                    state = SHOOT_STATES.Triggering;
-                    timer.resetTimer();
+                    state = SHOOT_STATES.Shooting;
                     intake.runTrigger();
                 }
                 break;
-            case Triggering:
-                if (!shooter.getShooterAtTarget()) { // Detects the dip in speed when a piece is shot
-                    timer.resetTimer();
-                    state = SHOOT_STATES.Shooting;
-                }
-                break;
             case Shooting:
-                if (timer.getElapsedTime() > ShooterConstants.TRIGGER_TIMER_TO_SHOOT || !indexer.getExitSensor()) {
+                if (!indexer.getExitSensor()) {
                     state = SHOOT_STATES.Conveyor;
                     timer.resetTimer();
                     intake.stopTrigger();
@@ -128,7 +113,6 @@ public class ShootCommand extends CommandBase {
                 }
 
         }
-        telemetryM.addData("Shoot State", state);
 
     }
 

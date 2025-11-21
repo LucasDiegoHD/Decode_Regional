@@ -9,7 +9,7 @@ import com.bylazar.configurables.annotations.Configurable;
 public class ShooterConstants {
 
 
-    public static double kP = 0.03;
+    public static double kP = 5.0;
 
 
     public static double kI = 0.0;
@@ -18,7 +18,7 @@ public class ShooterConstants {
     public static double kD = 0.0;
 
 
-    public static double kF = 0.0002;
+    public static double kF = 0.0001;
 
 
     /** The hardware map name for the right shooter motor. */
@@ -61,7 +61,7 @@ public class ShooterConstants {
      * x = Distance (from Limelight)
      * Formula: y = 0.2799x^3 - 1.7289x^2 + 3.7225x - 2.1911
      */
-    public static double HOOD_N0 = -2.1011;
+    public static double HOOD_N0 = -2.1211;
     public static double HOOD_N1 = 3.7225;
     public static double HOOD_N2 = -1.7289;
     public static double HOOD_N3 = 0.2799;

@@ -76,7 +76,9 @@ public class IndexerSubsystem extends SubsystemBase {
      * @return True if the sensor is triggered, false otherwise.
      */
     public boolean getExitSensor() {
-        return (sensorColor.blue() > IndexerConstants.COLOR_OFFSET || sensorColor.green() > IndexerConstants.COLOR_OFFSET || sensorColor.red() > IndexerConstants.COLOR_OFFSET) ||
+        return (sensorColor.blue() > IndexerConstants.COLOR_OFFSET ||
+                sensorColor.green() > IndexerConstants.COLOR_OFFSET ||
+                sensorColor.red() > IndexerConstants.COLOR_OFFSET) ||
                 sensorDistance.getDistance(DistanceUnit.CM) < IndexerConstants.DISTANCE_OFFSET;
     }
 
