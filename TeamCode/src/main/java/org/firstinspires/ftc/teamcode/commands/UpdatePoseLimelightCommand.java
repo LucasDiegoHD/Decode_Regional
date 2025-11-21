@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.pedropathing.geometry.CoordinateSystem;
-import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A command that continuously updates the Limelight camera's internal robot yaw orientation.
@@ -43,16 +43,11 @@ public class UpdatePoseLimelightCommand extends CommandBase {
      */
     @Override
     public void initialize() {
-
-        double yaw = vision.getRobotPose().getHeading();
-        Pose p = vision.getRobotPose(yaw);
+        AtomicReference<Double> yaw = new AtomicReference<>(pose.getHeading());
         drivetrain.getFollower().setPose(pose);
 
-        if (p != null) {
-
-            drivetrain.getFollower().setPose(p);
-
-        }
+        vision.getRobotPose().ifPresent(pose -> yaw.set(pose.getHeading()));
+        vision.getRobotPose(yaw.get()).ifPresent(pose -> drivetrain.getFollower().setPose(pose));
 
     }
 

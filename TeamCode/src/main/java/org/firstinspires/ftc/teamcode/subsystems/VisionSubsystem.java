@@ -136,33 +136,33 @@ public class VisionSubsystem extends SubsystemBase {
      * @param yaw The robot's current yaw in radians, used to improve the estimate.
      * @return An Optional containing the robot's Pose if a target is visible.
      */
-    public Pose getRobotPose(double yaw) {
+    public Optional<Pose> getRobotPose(double yaw) {
         limelight.updateRobotOrientation(Math.toDegrees(yaw) + 90);
         latestResult = limelight.getLatestResult();
 
         if(!hasTarget()){
-            return null;
+            return Optional.empty();
         }
         Pose3D robotPose = latestResult.getBotpose_MT2(); // Using MegaTag2 for potentially better accuracy
         if(robotPose == null){
-            return null;
+            return Optional.empty();
         }
         // Convert from meters (Limelight standard) to inches (PedroPathing standard)
-        return FTCCoordinates.INSTANCE.convertToPedro(new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw())));
+        return Optional.of(FTCCoordinates.INSTANCE.convertToPedro(new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw()))));
     }
 
-    public Pose getRobotPose() {
+    public Optional<Pose> getRobotPose() {
         latestResult = limelight.getLatestResult();
 
         if (!hasTarget()) {
-            return null;
+            return Optional.empty();
         }
         Pose3D robotPose = latestResult.getBotpose(); // Using MegaTag2 for potentially better accuracy
         if (robotPose == null) {
-            return null;
+            return Optional.empty();
         }
         // Convert from meters (Limelight standard) to inches (PedroPathing standard)
-        return FTCCoordinates.INSTANCE.convertToPedro(new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw())));
+        return Optional.of(FTCCoordinates.INSTANCE.convertToPedro(new Pose(robotPose.getPosition().x * INCHES_IN_METER, robotPose.getPosition().y * INCHES_IN_METER, Math.toRadians(robotPose.getOrientation().getYaw()))));
     }
 
 
