@@ -95,11 +95,10 @@ public class ShootCommand extends CommandBase {
                     state = SHOOT_STATES.Shooting;
                     intake.runTrigger();
                     timer.reset();
-
                 }
                 break;
             case Shooting:
-                if (!indexer.getExitSensor() || timer.milliseconds()>ShooterConstants.TRIGGER_TIMER_TO_SHOOT) {
+                if (!indexer.getExitSensor() || timer.milliseconds()>ShooterConstants.TRIGGER_TIMER_TRIGGERING) {
                     state = SHOOT_STATES.Conveyor;
                     intake.run();
                     intake.stopTrigger();

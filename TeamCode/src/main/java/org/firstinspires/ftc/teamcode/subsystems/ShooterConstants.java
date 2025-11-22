@@ -54,6 +54,7 @@ public class ShooterConstants {
     public static double INTAKE_TIME_TO_SHOOT = 350;
     /** The time in milliseconds to wait after triggering before shooting. */
     public static double TRIGGER_TIMER_TO_SHOOT = 500;
+    public static double TRIGGER_TIMER_TRIGGERING = 2000;
 
     /**
      * Equations for hood
@@ -74,8 +75,8 @@ public class ShooterConstants {
      */
     public static double RPM_N0 = 2790.7711;
     public static double RPM_N1 = 842.9828;
-    public static double ANGLE_KP = 0.5;
-    public static double ANGLE_KI = 0.01;
+    public static double ANGLE_KP = 0.9;
+    public static double ANGLE_KI = 0.03;
     public static double ANGLE_KD = 0.0;
     public static double ANGLE_KF = 0.01;
 }

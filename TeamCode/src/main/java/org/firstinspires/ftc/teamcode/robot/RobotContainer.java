@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 import org.firstinspires.ftc.teamcode.utils.AllianceEnum;
+import org.firstinspires.ftc.teamcode.utils.DataStorage;
 
 /**
  * This class is the main container for the robot. It holds all subsystems, configures button
@@ -65,6 +66,7 @@ public class RobotContainer {
         // Set default commands
         //vision.setDefaultCommand(new UpdateLimelightYawCommand(drivetrain, vision));
         if (driver != null) {
+            drivetrain.getFollower().setPose(DataStorage.actualPose);
             drivetrain.setDefaultCommand(new TeleOpDriveCommand(drivetrain, driver));
 
             // Driver controller bindings
@@ -77,8 +79,8 @@ public class RobotContainer {
                 targetx = 144;
                 targety = 144;
             } else {
-                targetx = 0;
-                targety = 144;
+                targetx = 144;
+                targety = 0;
             }
 
             new GamepadButton(driver, GamepadKeys.Button.X)
