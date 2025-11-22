@@ -72,18 +72,28 @@ public class RobotContainer {
                     .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry, operator));
             Pose EndPose;
 
+            new GamepadButton(driver, GamepadKeys.Button.X)
+                    .whileHeld(new AimByPoseCommand(drivetrain, 144, 144));
+
             if (alliance == AllianceEnum.Red) {
                 EndPose = BlueRearPoses.getPose(PosesNames.EndPose);
             } else {
                 EndPose = RedRearPoses.getPose(PosesNames.EndPose);
             }
 
-            new GamepadButton(driver, GamepadKeys.Button.X)
-                    .whileHeld(new AimByPoseCommand(drivetrain, 144, 144));
-
-
             new GamepadButton(driver, GamepadKeys.Button.A)
                     .whileHeld(new GoToPose(drivetrain,EndPose));
+
+            Pose ShootPose;
+
+            if (alliance == AllianceEnum.Red) {
+                ShootPose = RedRearPoses.getPose(PosesNames.GoToShoot1);
+            } else {
+                ShootPose = BlueRearPoses.getPose(PosesNames.GoToShoot2);
+            }
+
+            new GamepadButton(driver, GamepadKeys.Button.B)
+                    .whileHeld(new GoToPose(drivetrain,ShootPose));
 
         }
 
@@ -166,11 +176,6 @@ public class RobotContainer {
 
         new GamepadButton(operator,GamepadKeys.Button.X)
                 .whenPressed(new SpinShooterCommand(shooter, SpinShooterCommand.Action.LONG_SHOOT));
-
-        new GamepadButton(operator, GamepadKeys.Button.A)
-                .whenPressed(new InstantCommand(shooter::increaseHood, shooter));
-        new GamepadButton(operator, GamepadKeys.Button.A)
-                .whenPressed(new InstantCommand(shooter::decreaseHood, shooter));
     }
 
 }
