@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.IndexerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
@@ -18,7 +19,7 @@ public class ShootCommand extends CommandBase {
 
     private final ShooterSubsystem shooter;
     private final IntakeSubsystem intake;
-    private final Timer timer = new Timer();
+    private final ElapsedTime timer = new ElapsedTime();
 
     /**
      * Defines the states of the shooting process.
@@ -28,15 +29,8 @@ public class ShootCommand extends CommandBase {
          * The state where the conveyor is running to feed a piece.
          */
         Conveyor,
-        ConveyorTimer,
-        /**
-         * The state where the shooter motors are accelerating to the target speed.
-         */
+
         Acceleration,
-        /**
-         * The state where the trigger is activated to push the piece into the shooter.
-         */
-        Triggering,
         /**
          * The state after a piece is shot, waiting for the shooter to regain speed.
          */
@@ -79,6 +73,7 @@ public class ShootCommand extends CommandBase {
     public void initialize() {
         intake.run();
         state = SHOOT_STATES.Conveyor;
+        timer.reset();
     }
 
     /**
@@ -89,7 +84,7 @@ public class ShootCommand extends CommandBase {
 
         switch (state) {
             case Conveyor:
-                if (indexer.getExitSensor()) {
+                if (indexer.getExitSensor() || timer.milliseconds()>ShooterConstants.TRIGGER_TIMER_TO_SHOOT) {
                     state = SHOOT_STATES.Acceleration;
                     intake.stop();
                 }
@@ -99,14 +94,16 @@ public class ShootCommand extends CommandBase {
                 if (shooter.getShooterAtTarget()) {
                     state = SHOOT_STATES.Shooting;
                     intake.runTrigger();
+                    timer.reset();
+
                 }
                 break;
             case Shooting:
-                if (!indexer.getExitSensor()) {
+                if (!indexer.getExitSensor() || timer.milliseconds()>ShooterConstants.TRIGGER_TIMER_TO_SHOOT) {
                     state = SHOOT_STATES.Conveyor;
-                    timer.resetTimer();
-                    intake.stopTrigger();
                     intake.run();
+                    intake.stopTrigger();
+                    timer.reset();
                     if (shooterCounter > 0) {
                         shooterCounter--;
                     }

@@ -25,9 +25,13 @@ public class AutoBlueRear extends CommandOpMode {
 
         RobotContainer robot = new RobotContainer(hardwareMap, telemetryM, null, null, AllianceEnum.Blue);
         DataStorage.alliance = AllianceEnum.Blue;
-        // Pega o NOVO comando que criamos para atirar 3
+
         Command autonomousCommand = robot.getAutonomousBlueRearCommand();
-        // Agenda o comando para ser executado após o START
+        while (!isStarted()) {
+            robot.updateRobotPose(AllianceEnum.Blue);
+
+
+        }
         schedule(autonomousCommand);
     }
 

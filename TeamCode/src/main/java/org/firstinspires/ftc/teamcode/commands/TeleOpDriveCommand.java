@@ -5,6 +5,8 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSubsystem;
+import org.firstinspires.ftc.teamcode.utils.AllianceEnum;
+import org.firstinspires.ftc.teamcode.utils.DataStorage;
 
 /**
  * A command for controlling the robot's drivetrain during the tele-operated period.
@@ -15,7 +17,7 @@ public class TeleOpDriveCommand extends CommandBase {
 
     private final DrivetrainSubsystem drivetrain;
     private final GamepadEx driverGamepad;
-
+    private final AllianceEnum alliance;
 
     /**
      * Creates a new TeleOpDriveCommand.
@@ -26,7 +28,7 @@ public class TeleOpDriveCommand extends CommandBase {
     public TeleOpDriveCommand(DrivetrainSubsystem drivetrain, GamepadEx driverGamepad) {
         this.drivetrain = drivetrain;
         this.driverGamepad = driverGamepad;
-
+        this.alliance = DataStorage.alliance;
         addRequirements(drivetrain);
     }
 
@@ -53,7 +55,10 @@ public class TeleOpDriveCommand extends CommandBase {
         // Field-centric transformation
         double xField = x * Math.cos(heading) - y * Math.sin(heading);
         double yField = x * Math.sin(heading) + y * Math.cos(heading);
-
+        if(alliance == AllianceEnum.Blue){
+            xField =-xField;
+            yField =-yField;
+        }
         // Apply power to the drivetrain
         drivetrain.getFollower().setTeleOpDrive(
                 xField, // Forward/backward power

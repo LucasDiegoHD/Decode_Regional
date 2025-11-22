@@ -72,8 +72,17 @@ public class RobotContainer {
                     .whileHeld(new AlignToAprilTagCommand(drivetrain, vision, telemetry, operator));
             Pose EndPose;
 
+            double targetx, targety;
+            if (alliance == AllianceEnum.Red) {
+                targetx = 144;
+                targety = 144;
+            } else {
+                targetx = 0;
+                targety = 144;
+            }
+
             new GamepadButton(driver, GamepadKeys.Button.X)
-                    .whileHeld(new AimByPoseCommand(drivetrain, 144, 144));
+                    .whileHeld(new AimByPoseCommand(drivetrain, targetx, targety, telemetry));
 
             if (alliance == AllianceEnum.Red) {
                 EndPose = BlueRearPoses.getPose(PosesNames.EndPose);
